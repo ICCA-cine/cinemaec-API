@@ -32,7 +32,80 @@ export enum PermissionEnum {
 
 ## Endpoints
 
-### 1. Actualizar Permisos de un Usuario
+### 1. Obtener Todos los Usuarios (Lista Completa)
+
+**Endpoint:** `GET /users`
+
+**Requiere:**
+
+- Token JWT (Bearer Token) en header `Authorization`
+- Solicitante debe ser ADMIN
+- Solicitante debe tener permiso `admin_users`
+
+**Response (200):**
+
+```json
+[
+  {
+    "id": 1,
+    "email": "admin@example.com",
+    "cedula": "1234567890",
+    "role": "admin",
+    "isActive": true,
+    "permissions": [
+      "admin_spaces",
+      "admin_movies",
+      "admin_users",
+      "assign_roles"
+    ],
+    "profileId": 1,
+    "lastLogin": "2024-12-23T10:30:00.000Z",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "email": "user@example.com",
+    "cedula": "0987654321",
+    "role": "user",
+    "isActive": true,
+    "permissions": null,
+    "profileId": 2,
+    "lastLogin": "2024-12-22T15:20:00.000Z",
+    "createdAt": "2024-02-01T00:00:00.000Z"
+  },
+  {
+    "id": 3,
+    "email": "editor@example.com",
+    "cedula": "1122334455",
+    "role": "editor",
+    "isActive": false,
+    "permissions": null,
+    "profileId": null,
+    "lastLogin": null,
+    "createdAt": "2024-03-01T00:00:00.000Z"
+  }
+]
+```
+
+**Respuesta 403 (No autorizado):**
+
+```json
+{
+  "statusCode": 403,
+  "message": "No tienes permiso para ver la lista de usuarios",
+  "error": "Forbidden"
+}
+```
+
+**Notas:**
+
+- Los usuarios se ordenan por fecha de creación (más recientes primero)
+- Incluye todos los campos: id, email, cedula, role, isActive, permissions, profileId, lastLogin, createdAt
+- Útil para construir tablas de gestión de usuarios en el frontend
+
+---
+
+### 2. Actualizar Permisos de un Usuario
 
 **Endpoint:** `PUT /users/:id/permissions`
 
@@ -109,7 +182,7 @@ export enum PermissionEnum {
 }
 ```
 
-### 2. Obtener Información de un Usuario
+### 3. Obtener Información de un Usuario
 
 **Endpoint:** `GET /users/:id`
 
@@ -144,6 +217,16 @@ export enum PermissionEnum {
 import axios from 'axios'
 
 const API_BASE = 'http://localhost:3000'
+
+// Obtener lista completa de usuarios (solo admins con admin_users)
+export const getAllUsers = async (token: string) => {
+  const response = await axios.get(`${API_BASE}/users`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  return response.data
+}
 
 // Actualizar permisos de un usuario
 export const updateUserPermissions = async (

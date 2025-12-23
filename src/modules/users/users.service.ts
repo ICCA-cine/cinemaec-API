@@ -11,7 +11,7 @@ import { Repository } from 'typeorm'
 import * as bcrypt from 'bcrypt'
 import { randomBytes } from 'crypto'
 import { JwtService } from '@nestjs/jwt'
-import { User, UserRole } from './entities/user.entity'
+import { User, UserRole, PermissionEnum } from './entities/user.entity'
 import { RegisterDto } from './dto/register.dto'
 import { LoginDto } from './dto/login.dto'
 import { UpdateUserPermissionsDto } from './dto/update-user-permissions.dto'
@@ -429,5 +429,48 @@ export class UsersService {
     }
 
     return userInfo
+  }
+
+  /**
+   * Obtener todos los usuarios (solo admins con admin_users)
+   */
+  async getAllUsers(adminId: number): Promise<any[]> {
+    // Verificar que el solicitante es admin con permiso admin_users
+    const admin = await this.usersRepository.findOne({
+      where: { id: adminId },
+    })
+
+    if (!admin || admin.role !== UserRole.ADMIN) {
+      throw new ForbiddenException(
+        'No tienes permisos para realizar esta acción',
+      )
+    }
+
+    const hasPermission =
+      Array.isArray(admin.permissions) &&
+      admin.permissions.includes(PermissionEnum.ADMIN_USERS)
+    if (!hasPermission) {
+      throw new ForbiddenException(
+        'No tienes permiso para ver la lista de usuarios',
+      )
+    }
+
+    // Obtener todos los usuarios
+    const users = await this.usersRepository.find({
+      order: { createdAt: 'DESC' },
+    })
+
+    // Retornar información de usuarios
+    return users.map((user) => ({
+      id: user.id,
+      email: user.email,
+      cedula: user.cedula,
+      role: user.role,
+      isActive: user.isActive,
+      permissions: user.permissions,
+      profileId: user.profileId,
+      lastLogin: user.lastLogin,
+      createdAt: user.createdAt,
+    }))
   }
 }

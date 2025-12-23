@@ -404,4 +404,53 @@ export class UsersController {
     const requesterId = req.user.sub
     return this.usersService.getUserInfo(userId, requesterId)
   }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Obtener todos los usuarios (Admin)',
+    description:
+      'Obtiene la lista completa de usuarios con sus roles y permisos. Requiere ser ADMIN con permiso admin_users.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de usuarios obtenida exitosamente',
+    content: {
+      'application/json': {
+        example: [
+          {
+            id: 1,
+            email: 'admin@example.com',
+            cedula: '1234567890',
+            role: 'admin',
+            isActive: true,
+            permissions: ['admin_spaces', 'admin_movies', 'admin_users'],
+            profileId: 1,
+            lastLogin: '2024-12-23T10:30:00.000Z',
+            createdAt: '2024-01-01T00:00:00.000Z',
+          },
+          {
+            id: 2,
+            email: 'user@example.com',
+            cedula: '0987654321',
+            role: 'user',
+            isActive: true,
+            permissions: null,
+            profileId: 2,
+            lastLogin: '2024-12-22T15:20:00.000Z',
+            createdAt: '2024-02-01T00:00:00.000Z',
+          },
+        ],
+      },
+    },
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'No tienes permisos para realizar esta acción',
+  })
+  async getAllUsers(@Request() req: any) {
+    const adminId = req.user.sub
+    return this.usersService.getAllUsers(adminId)
+  }
 }
