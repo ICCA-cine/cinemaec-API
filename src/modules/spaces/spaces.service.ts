@@ -259,7 +259,7 @@ export class SpacesService {
         referenceId: space.id,
       })
     } else if (dto.decision === SpaceReviewDecisionEnum.REQUEST_CHANGES) {
-      await this.updateSpaceStatus(space.id, 'under_review')
+      await this.updateSpaceStatus(space.id, 'pending')
       const issuesText = (dto.issues || [])
         .map((i) => `• ${i.field}: ${i.comment}`)
         .join('\n')

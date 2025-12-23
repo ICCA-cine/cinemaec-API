@@ -3,16 +3,16 @@
 ## Resumen del flujo
 
 1. Admin con permiso `admin_spaces` inicia sesión y entra al módulo de revisión.
-2. Lista espacios por estado: `pending` (nuevos), `under_review` (correcciones), `rejected`, `verified`.
+2. Lista espacios por estado: `pending` (nuevos o esperando correcciones), `rejected`, `verified`.
 3. Abre detalle, revisa info y timeline de revisiones.
 4. Envía decisión:
    - `approve` → espacio pasa a `verified`.
-   - `request_changes` → pasa a `under_review`, usuario corrige campos indicados.
+   - `request_changes` → pasa a `pending` (espera correcciones del usuario).
    - `reject` → pasa a `rejected`.
 
 ## Endpoints clave
 
-- Listar espacios (filtrar por estado): `GET /spaces?status=pending` (o `under_review`).
+- Listar espacios (filtrar por estado): `GET /spaces?status=pending`.
 - Detalle de espacio: `GET /spaces/:id`.
 - Historial de revisiones: `GET /spaces/:id/reviews`.
 - Enviar revisión: `POST /spaces/:id/review` con body:
@@ -35,7 +35,7 @@
 
 ## Reglas de negocio (ya en backend)
 
-- Transiciones: `approve` → `verified`; `request_changes` → `under_review`; `reject` → `rejected`.
+- Transiciones: `approve` → `verified`; `request_changes` → `pending` (usuario debe corregir); `reject` → `rejected`.
 - Solo admins con `admin_spaces` pueden revisar.
 - Al crear espacio: notificación al dueño y a admins (`admin_spaces`).
 - Al revisar: notificación al dueño según decisión (success/warning/error).
@@ -56,14 +56,14 @@
 
 - Con admin `admin_spaces`:
   - `GET /spaces?status=pending` → devuelve nuevos.
-  - `POST /spaces/:id/review` con `request_changes` → status a `under_review` y notificación al dueño.
+  - `POST /spaces/:id/review` con `request_changes` → status a `pending` y notificación al dueño.
   - `POST /spaces/:id/review` con `approve` → status a `verified` y notificación de éxito.
 - Badge de notificaciones: `GET /notifications/unread/count` aumenta tras revisar.
 
 ## Tip: mapeo de estados en UI
 
-- `pending`: pendiente de revisión.
-- `under_review`: usuario corrige; admin debe reevaluar.
+- `pending`: pendiente de revisión o esperando correcciones del usuario.
+- `under_review`: (no se usa actualmente).
 - `verified`: aprobado.
 - `rejected`: rechazado.
 
