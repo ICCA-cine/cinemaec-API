@@ -40,7 +40,7 @@ export enum PermissionEnum {
 
 - Token JWT (Bearer Token) en header `Authorization`
 - Solicitante debe ser ADMIN
-- Solicitante debe tener permiso `admin_users`
+- Solicitante debe tener permiso `assign_roles`
 
 **Response (200):**
 
@@ -102,6 +102,7 @@ export enum PermissionEnum {
 - Los usuarios se ordenan por fecha de creación (más recientes primero)
 - Incluye todos los campos: id, email, cedula, role, isActive, permissions, profileId, lastLogin, createdAt
 - Útil para construir tablas de gestión de usuarios en el frontend
+- Solo admins con permiso `assign_roles` pueden ver la lista completa
 
 ---
 
@@ -218,7 +219,7 @@ import axios from 'axios'
 
 const API_BASE = 'http://localhost:3000'
 
-// Obtener lista completa de usuarios (solo admins con admin_users)
+// Obtener lista completa de usuarios (solo admins con assign_roles)
 export const getAllUsers = async (token: string) => {
   const response = await axios.get(`${API_BASE}/users`, {
     headers: {

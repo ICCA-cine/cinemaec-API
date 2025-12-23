@@ -432,10 +432,10 @@ export class UsersService {
   }
 
   /**
-   * Obtener todos los usuarios (solo admins con admin_users)
+   * Obtener todos los usuarios (solo admins con assign_roles)
    */
   async getAllUsers(adminId: number): Promise<any[]> {
-    // Verificar que el solicitante es admin con permiso admin_users
+    // Verificar que el solicitante es admin con permiso assign_roles
     const admin = await this.usersRepository.findOne({
       where: { id: adminId },
     })
@@ -448,7 +448,7 @@ export class UsersService {
 
     const hasPermission =
       Array.isArray(admin.permissions) &&
-      admin.permissions.includes(PermissionEnum.ADMIN_USERS)
+      admin.permissions.includes(PermissionEnum.ASSIGN_ROLES)
     if (!hasPermission) {
       throw new ForbiddenException(
         'No tienes permiso para ver la lista de usuarios',

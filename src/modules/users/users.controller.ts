@@ -411,7 +411,7 @@ export class UsersController {
   @ApiOperation({
     summary: 'Obtener todos los usuarios (Admin)',
     description:
-      'Obtiene la lista completa de usuarios con sus roles y permisos. Requiere ser ADMIN con permiso admin_users.',
+      'Obtiene la lista completa de usuarios con sus roles y permisos. Requiere ser ADMIN con permiso assign_roles.',
   })
   @ApiResponse({
     status: 200,
