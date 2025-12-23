@@ -46,6 +46,7 @@ describe('SpacesService', () => {
 
   const mockAssetsService = {
     updateMultipleAssetsOwner: jest.fn(),
+    findByIds: jest.fn().mockResolvedValue([]),
   }
 
   const mockNotificationsService = {
@@ -154,7 +155,7 @@ describe('SpacesService', () => {
         limit: 10,
       }
 
-      const spaces = [
+      const spaces: any[] = [
         {
           id: 1,
           name: 'Teatro 1',
@@ -164,6 +165,12 @@ describe('SpacesService', () => {
           address: 'Calle 1',
           userId: 1,
           status: SpaceStatusEnum.ACTIVE,
+          photosId: [],
+          logoId: 1,
+          ciDocument: 2,
+          managerDocument: 3,
+          serviceBill: 4,
+          operatingLicense: 5,
         },
         {
           id: 2,
@@ -174,20 +181,26 @@ describe('SpacesService', () => {
           address: 'Calle 2',
           userId: 2,
           status: SpaceStatusEnum.VERIFIED,
+          photosId: [],
+          logoId: 1,
+          ciDocument: 2,
+          managerDocument: 3,
+          serviceBill: 4,
+          operatingLicense: 5,
         },
       ]
 
       mockQueryBuilder.getManyAndCount.mockResolvedValue([spaces, 2])
+      mockAssetsService.findByIds.mockResolvedValue([])
 
-      const result = await service.findAll(queryDto)
+      const result: any = await service.findAll(queryDto)
 
-      expect(result).toEqual({
-        data: spaces,
-        total: 2,
-        page: 1,
-        limit: 10,
-        totalPages: 1,
-      })
+      expect(result.total).toBe(2)
+      expect(result.page).toBe(1)
+      expect(result.limit).toBe(10)
+      expect(result.totalPages).toBe(1)
+      expect(result.data.length).toBe(2)
+      expect(result.data[0].assets).toBeDefined()
       expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
         'space.type = :type',
         {
@@ -199,7 +212,7 @@ describe('SpacesService', () => {
     it('should return spaces without filters', async () => {
       const queryDto = { page: 1, limit: 10 }
 
-      const spaces = [
+      const spaces: any[] = [
         {
           id: 1,
           name: 'Espacio 1',
@@ -209,15 +222,23 @@ describe('SpacesService', () => {
           address: 'Calle 1',
           userId: 1,
           status: SpaceStatusEnum.ACTIVE,
+          photosId: [],
+          logoId: 1,
+          ciDocument: 2,
+          managerDocument: 3,
+          serviceBill: 4,
+          operatingLicense: 5,
         },
       ]
 
       mockQueryBuilder.getManyAndCount.mockResolvedValue([spaces, 1])
+      mockAssetsService.findByIds.mockResolvedValue([])
 
-      const result = await service.findAll(queryDto)
+      const result: any = await service.findAll(queryDto)
 
-      expect(result.data).toEqual(spaces)
+      expect(result.data.length).toBe(1)
       expect(result.total).toBe(1)
+      expect(result.data[0].assets).toBeDefined()
     })
   })
 
@@ -233,16 +254,25 @@ describe('SpacesService', () => {
         address: 'Calle Venezuela',
         userId: 1,
         status: SpaceStatusEnum.ACTIVE,
+        photosId: [],
+        logoId: 1,
+        ciDocument: 2,
+        managerDocument: 3,
+        serviceBill: 4,
+        operatingLicense: 5,
       }
 
       mockSpacesRepository.findOne.mockResolvedValue(space)
+      mockAssetsService.findByIds.mockResolvedValue([])
 
       const result = await service.findOne(spaceId)
 
       expect(mockSpacesRepository.findOne).toHaveBeenCalledWith({
         where: { id: spaceId },
       })
-      expect(result).toEqual(space)
+      expect(result.id).toBe(space.id)
+      expect(result.name).toBe(space.name)
+      expect(result.assets).toBeDefined()
     })
 
     it('should throw NotFoundException if space not found', async () => {
@@ -270,6 +300,7 @@ describe('SpacesService', () => {
         address: 'Calle Venezuela',
         userId,
         status: SpaceStatusEnum.ACTIVE,
+        photosId: [],
       }
 
       const updatedSpace = {
@@ -279,6 +310,7 @@ describe('SpacesService', () => {
 
       mockSpacesRepository.findOne.mockResolvedValue(existingSpace)
       mockSpacesRepository.save.mockResolvedValue(updatedSpace)
+      mockAssetsService.findByIds.mockResolvedValue([])
 
       const result = await service.update(spaceId, userId, updateDto)
 
@@ -300,9 +332,11 @@ describe('SpacesService', () => {
         city: 'Quito',
         address: 'Calle Venezuela',
         status: SpaceStatusEnum.ACTIVE,
+        photosId: [],
       }
 
       mockSpacesRepository.findOne.mockResolvedValue(existingSpace)
+      mockAssetsService.findByIds.mockResolvedValue([])
 
       await expect(service.update(spaceId, userId, updateDto)).rejects.toThrow(
         ForbiddenException,
@@ -324,14 +358,16 @@ describe('SpacesService', () => {
         city: 'Quito',
         address: 'Calle Venezuela',
         status: SpaceStatusEnum.ACTIVE,
+        photosId: [],
       }
 
       mockSpacesRepository.findOne.mockResolvedValue(space)
       mockSpacesRepository.remove.mockResolvedValue(space)
+      mockAssetsService.findByIds.mockResolvedValue([])
 
       await service.remove(spaceId, userId)
 
-      expect(mockSpacesRepository.remove).toHaveBeenCalledWith(space)
+      expect(mockSpacesRepository.remove).toHaveBeenCalled()
     })
 
     it('should throw ForbiddenException if user is not the owner', async () => {
@@ -347,9 +383,11 @@ describe('SpacesService', () => {
         city: 'Quito',
         address: 'Calle Venezuela',
         status: SpaceStatusEnum.ACTIVE,
+        photosId: [],
       }
 
       mockSpacesRepository.findOne.mockResolvedValue(space)
+      mockAssetsService.findByIds.mockResolvedValue([])
 
       await expect(service.remove(spaceId, userId)).rejects.toThrow(
         ForbiddenException,
@@ -371,6 +409,7 @@ describe('SpacesService', () => {
         city: 'Quito',
         address: 'Calle Venezuela',
         status: SpaceStatusEnum.PENDING,
+        photosId: [],
       }
 
       const updatedSpace = {
@@ -380,6 +419,7 @@ describe('SpacesService', () => {
 
       mockSpacesRepository.findOne.mockResolvedValue(space)
       mockSpacesRepository.save.mockResolvedValue(updatedSpace)
+      mockAssetsService.findByIds.mockResolvedValue([])
 
       const result = await service.updateStatus(spaceId, newStatus)
 

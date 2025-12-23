@@ -166,6 +166,21 @@ export class AssetsService {
   }
 
   /**
+   * Obtiene múltiples assets por sus IDs
+   * Devuelve solo los assets que existen
+   */
+  async findByIds(ids: number[]): Promise<Asset[]> {
+    if (ids.length === 0) {
+      return []
+    }
+
+    return await this.assetsRepository
+      .createQueryBuilder('asset')
+      .whereInIds(ids)
+      .getMany()
+  }
+
+  /**
    * Reemplaza un archivo existente con uno nuevo
    */
   async replaceAsset(

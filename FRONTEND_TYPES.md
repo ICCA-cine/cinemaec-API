@@ -36,6 +36,31 @@ export enum AssetOwnerEnum {
   MOVIE_STILLS = 'movie_stills',
   MOVIE_POSTER = 'movie_poster',
 }
+
+// Space Status
+export enum SpaceStatusEnum {
+  PENDING = 'pending',
+  UNDER_REVIEW = 'under_review',
+  VERIFIED = 'verified',
+  REJECTED = 'rejected',
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+}
+
+// Space Review Decisions
+export enum SpaceReviewDecisionEnum {
+  APPROVE = 'approve',
+  REQUEST_CHANGES = 'request_changes',
+  REJECT = 'reject',
+}
+
+// Notification Types
+export enum NotificationTypeEnum {
+  INFO = 'info',
+  SUCCESS = 'success',
+  WARNING = 'warning',
+  ERROR = 'error',
+}
 ```
 
 ## User Types
@@ -66,6 +91,7 @@ export interface LoginResponse {
     role: string
     is_active: boolean // Este campo se mantiene en snake_case en la respuesta
     has_profile: boolean // Este campo se mantiene en snake_case en la respuesta
+    permissions: string[]
   }
 }
 
@@ -169,18 +195,122 @@ export interface ProfileResponse {
 }
 ```
 
+## Space Types
+
+```typescript
+// Minimal Space Entity (para listados y detalle básico)
+export interface Space {
+  id: number
+  name: string
+  province: string
+  city: string
+  address: string
+  userId: number
+  status: SpaceStatusEnum
+  createdAt: Date
+  updatedAt: Date
+  // Assets completos con URLs públicas (no solo IDs)
+  assets: SpaceAssets
+}
+
+// Assets de un espacio organizados por tipo
+export interface SpaceAssets {
+  logo: Asset | null
+  photos: Asset[]
+  documents: {
+    ci: Asset | null
+    ruc: Asset | null
+    manager: Asset | null
+    serviceBill: Asset | null
+    operatingLicense: Asset | null
+  }
+}
+
+// Espacio con detalles completos (incluye todos los campos + assets)
+export interface SpaceDetail extends Space {
+  type: string
+  email: string
+  phone: string
+  coordinates: number[]
+  description: string
+  target: string
+  managerName: string
+  managerEmail: string
+  managerPhone: string
+  technicianInCharge: string
+  technicianRole: string
+  technicianPhone: string
+  technicianEmail: string
+  capacity: number
+  projectionEquipment: string[]
+  soundEquipment: string[]
+  screen: string[]
+  boxofficeRegistration: string
+  accessibilities: string[]
+  services: string[]
+  operatingHistory: string
+  mainActivity: string
+  otherActivities: string[]
+  commercialActivities: string[]
+  // Asset IDs (ya están en assets completo)
+  logoId: number
+  photosId: number[]
+  ciDocument: number
+  rucDocument?: number | null
+  managerDocument: number
+  serviceBill: number
+  operatingLicense: number
+}
+
+// Query Spaces DTO (filtros comunes)
+export interface QuerySpacesDto {
+  status?: SpaceStatusEnum
+  page?: number
+  limit?: number
+}
+```
+
+## Space Review Types
+
+```typescript
+// Issue marcado por el admin durante la revisión
+export interface ReviewIssue {
+  field: string
+  comment: string
+  severity?: 'low' | 'medium' | 'high'
+}
+
+// Historial de revisión
+export interface SpaceReview {
+  id: number
+  spaceId: number
+  reviewerUserId: number
+  decision: SpaceReviewDecisionEnum
+  generalComment?: string | null
+  issues?: ReviewIssue[] | null
+  createdAt: Date
+}
+
+// Payload para enviar revisión
+export interface SubmitSpaceReviewDto {
+  decision: SpaceReviewDecisionEnum
+  generalComment?: string
+  issues?: Array<{ field: string; comment: string }>
+}
+```
+
 ## Asset Types
 
 ```typescript
-// Asset Entity
+// Asset Entity (con URL pública de Firebase)
 export interface Asset {
   id: number
   userId: number
   documentType: AssetTypeEnum
   ownerType: AssetOwnerEnum
   ownerId: number | null
-  url: string
-  firebasePath: string | null
+  url: string // URL pública de Firebase Storage (ej: https://storage.googleapis.com/...)
+  firebasePath: string | null // Ruta interna en Firebase
   createdAt: Date
   updatedAt: Date
 }
@@ -199,7 +329,14 @@ export interface QueryAssetsDto {
   ownerType?: AssetOwnerEnum
   ownerId?: number
 }
+
+// Asset Response (GET /assets/:id devuelve Asset con URL pública)
+// Uso directo en frontend:
+// <img src={asset.url} /> para imágenes
+// <a href={asset.url} download>Descargar</a> para documentos
 ```
+
+````
 
 ## API Response Types
 
@@ -223,6 +360,24 @@ export interface PaginatedResponse<T> {
   page: number
   limit: number
   totalPages: number
+}
+````
+
+## Notification Types
+
+```typescript
+export interface Notification {
+  id: number
+  userId: number
+  title: string
+  message: string
+  type: NotificationTypeEnum
+  isRead: boolean
+  link?: string | null
+  referenceType?: string | null
+  referenceId?: number | null
+  createdAt: Date
+  updatedAt: Date
 }
 ```
 
@@ -330,6 +485,67 @@ export const replaceAsset = async (id: number, file: File): Promise<Asset> => {
       'Content-Type': 'multipart/form-data',
     },
   })
+  return response.data
+}
+
+// Spaces API (revisión)
+export const getSpaces = async (filters?: QuerySpacesDto): Promise<Space[]> => {
+  const response = await api.get<Space[]>('/spaces', { params: filters })
+  return response.data
+}
+
+export const getSpaceReviews = async (
+  spaceId: number,
+): Promise<SpaceReview[]> => {
+  const response = await api.get<SpaceReview[]>(`/spaces/${spaceId}/reviews`)
+  return response.data
+}
+
+export const submitSpaceReview = async (
+  spaceId: number,
+  dto: SubmitSpaceReviewDto,
+): Promise<SpaceReview> => {
+  const response = await api.post<SpaceReview>(`/spaces/${spaceId}/review`, dto)
+  return response.data
+}
+
+// Notifications API
+export const getUnreadNotifications = async (): Promise<Notification[]> => {
+  const response = await api.get<Notification[]>('/notifications/unread')
+  return response.data
+}
+
+export const getUnreadNotificationCount = async (): Promise<{
+  count: number
+}> => {
+  const response = await api.get<{ count: number }>(
+    '/notifications/unread/count',
+  )
+  return response.data
+}
+
+export const markNotificationAsRead = async (
+  id: number,
+): Promise<SuccessResponse> => {
+  const response = await api.patch<SuccessResponse>(`/notifications/${id}/read`)
+  return response.data
+}
+
+export const markAllNotificationsAsRead =
+  async (): Promise<SuccessResponse> => {
+    const response = await api.patch<SuccessResponse>('/notifications/read-all')
+    return response.data
+  }
+
+export const deleteNotification = async (
+  id: number,
+): Promise<SuccessResponse> => {
+  const response = await api.delete<SuccessResponse>(`/notifications/${id}`)
+  return response.data
+}
+
+export const deleteAllNotifications = async (): Promise<SuccessResponse> => {
+  const response = await api.delete<SuccessResponse>('/notifications')
   return response.data
 }
 ```

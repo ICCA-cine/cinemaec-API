@@ -34,6 +34,82 @@ export class SpacesService {
   ) {}
 
   /**
+   * Obtiene los assets completos para un espacio
+   * Devuelve un objeto con los assets organizados por tipo
+   */
+  private async getSpaceAssets(space: Space) {
+    try {
+      const assetIds = [
+        space.logoId,
+        ...(Array.isArray(space.photosId) ? space.photosId : []),
+        space.ciDocument,
+        space.managerDocument,
+        space.serviceBill,
+        space.operatingLicense,
+      ]
+
+      if (space.rucDocument) {
+        assetIds.push(space.rucDocument)
+      }
+
+      // Filtrar IDs válidos
+      const validAssetIds = assetIds.filter(
+        (id) => id && typeof id === 'number',
+      )
+
+      if (validAssetIds.length === 0) {
+        return {
+          logo: null,
+          photos: [],
+          documents: {
+            ci: null,
+            ruc: null,
+            manager: null,
+            serviceBill: null,
+            operatingLicense: null,
+          },
+        }
+      }
+
+      // Obtener todos los assets
+      const assets = await this.assetsService.findByIds(validAssetIds)
+
+      // Crear un mapa de assets por ID para acceso rápido
+      const assetMap = new Map(assets.map((asset) => [asset.id, asset]))
+
+      return {
+        logo: assetMap.get(space.logoId) || null,
+        photos: (Array.isArray(space.photosId) ? space.photosId : [])
+          .map((id) => assetMap.get(id))
+          .filter((a) => a !== undefined),
+        documents: {
+          ci: assetMap.get(space.ciDocument) || null,
+          ruc: space.rucDocument
+            ? assetMap.get(space.rucDocument) || null
+            : null,
+          manager: assetMap.get(space.managerDocument) || null,
+          serviceBill: assetMap.get(space.serviceBill) || null,
+          operatingLicense: assetMap.get(space.operatingLicense) || null,
+        },
+      }
+    } catch (error) {
+      // Si hay error al obtener los assets, devolver estructura vacía
+      console.error('Error obteniendo assets del espacio:', error)
+      return {
+        logo: null,
+        photos: [],
+        documents: {
+          ci: null,
+          ruc: null,
+          manager: null,
+          serviceBill: null,
+          operatingLicense: null,
+        },
+      }
+    }
+  }
+
+  /**
    * Crear un nuevo espacio
    */
   async create(userId: number, createSpaceDto: CreateSpaceDto): Promise<Space> {
@@ -302,8 +378,19 @@ export class SpacesService {
     // Ejecutar consulta
     const [data, total] = await queryBuilder.getManyAndCount()
 
+    // Obtener assets para cada espacio
+    const dataWithAssets = await Promise.all(
+      data.map(async (space) => {
+        const assets = await this.getSpaceAssets(space)
+        return {
+          ...space,
+          assets,
+        }
+      }),
+    )
+
     return {
-      data,
+      data: dataWithAssets,
       total,
       page,
       limit,
@@ -330,14 +417,20 @@ export class SpacesService {
   /**
    * Obtener un espacio por ID
    */
-  async findOne(id: number): Promise<Space> {
+  async findOne(id: number): Promise<any> {
     const space = await this.spacesRepository.findOne({ where: { id } })
 
     if (!space) {
       throw new NotFoundException(`Espacio con ID ${id} no encontrado`)
     }
 
-    return space
+    // Obtener los assets completos
+    const assets = await this.getSpaceAssets(space)
+
+    return {
+      ...space,
+      assets,
+    }
   }
 
   /**
