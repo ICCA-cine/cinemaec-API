@@ -23,11 +23,48 @@ async function bootstrap() {
     }),
   )
 
-  // CORS configuration
+  // CORS configuration - soporte para múltiples orígenes incluyendo Cloudflare Tunnel
+  const corsOrigins =
+    config.get<string>('CORS_ORIGIN') || 'http://localhost:3000'
+  const allowedOrigins = corsOrigins.split(',').map((origin) => origin.trim())
+
   app.enableCors({
-    origin: config.get<string>('CORS_ORIGIN') || 'http://localhost:3000',
+    origin: (origin, callback) => {
+      // Permitir requests sin origen (ej: Postman, mobile apps)
+      if (!origin) {
+        return callback(null, true)
+      }
+
+      // Verificar si el origen está en la lista permitida
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true)
+      }
+
+      // Permitir cualquier dominio de Cloudflare Tunnel
+      if (origin.includes('trycloudflare.com')) {
+        return callback(null, true)
+      }
+
+      // Permitir localhost en desarrollo
+      if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+        return callback(null, true)
+      }
+
+      // Rechazar otros orígenes
+      callback(new Error('Not allowed by CORS'))
+    },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'Accept',
+      'Origin',
+      'X-Requested-With',
+    ],
+    exposedHeaders: ['Authorization'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   })
 
   // Swagger setup

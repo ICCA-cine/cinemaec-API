@@ -21,4 +21,7 @@ export default registerAs('env', () => ({
   MAIL_USER: process.env.MAIL_USER,
   MAIL_PASSWORD: process.env.MAIL_PASSWORD,
   MAIL_FROM: process.env.MAIL_FROM || 'CinemaEC <noreply@cinemaec.com>',
+
+  // CORS configuration
+  CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:3000',
 }))

@@ -68,8 +68,8 @@ export class Space {
   @Column({ type: 'text', nullable: false })
   description: string
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
-  target: string
+  @Column({ type: 'text', array: true, nullable: false })
+  target: string[]
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   managerName: string

@@ -98,12 +98,12 @@ export class CreateSpaceDto {
 
   @ApiProperty({
     description: 'Público objetivo del espacio',
-    example: 'Público general, estudiantes, familias',
-    maxLength: 255,
+    example: ['Público general', 'Estudiantes', 'Familias'],
+    type: [String],
   })
-  @IsString()
-  @MaxLength(255)
-  target: string
+  @IsArray()
+  @IsString({ each: true })
+  target: string[]
 
   @ApiProperty({
     description: 'Nombre del administrador',
