@@ -26,6 +26,17 @@ export class CreateSpaceReviewsTable1735000000003
           { name: 'generalComment', type: 'text', isNullable: true },
           { name: 'issues', type: 'jsonb', isNullable: true },
           {
+            name: 'resolved',
+            type: 'boolean',
+            default: false,
+            isNullable: false,
+          },
+          {
+            name: 'resolvedAt',
+            type: 'timestamp',
+            isNullable: true,
+          },
+          {
             name: 'createdAt',
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
