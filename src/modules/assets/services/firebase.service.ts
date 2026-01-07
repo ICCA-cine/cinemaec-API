@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import * as admin from 'firebase-admin'
 import { ConfigService } from '@nestjs/config'
+import { Multer } from 'multer'
 
 @Injectable()
 export class FirebaseService {
@@ -73,7 +74,7 @@ export class FirebaseService {
    * Sube un archivo a Firebase Storage de forma ordenada
    */
   async uploadFile(
-    file: Express.Multer.File,
+    file: Multer.File,
     path: string,
   ): Promise<{ url: string; fullPath: string }> {
     if (!this.isConfigured) {

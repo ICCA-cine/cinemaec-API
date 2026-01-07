@@ -4,6 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
+import { Multer } from 'multer'
 import { Repository } from 'typeorm'
 import { Asset } from './entities/asset.entity'
 import { UploadAssetDto } from './dto/upload-asset.dto'
@@ -23,7 +24,7 @@ export class AssetsService {
    */
   async uploadAsset(
     userId: number,
-    file: Express.Multer.File,
+    file: Multer.File,
     uploadAssetDto: UploadAssetDto,
   ): Promise<Asset> {
     if (!file) {
@@ -186,7 +187,7 @@ export class AssetsService {
   async replaceAsset(
     id: number,
     userId: number,
-    file: Express.Multer.File,
+    file: Multer.File,
   ): Promise<Asset> {
     if (!file) {
       throw new BadRequestException('No se proporcionó ningún archivo')
