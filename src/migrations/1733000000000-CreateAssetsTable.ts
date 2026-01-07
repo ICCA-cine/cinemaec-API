@@ -27,7 +27,7 @@ export class CreateAssetsTable1733000000000 implements MigrationInterface {
       )
     `)
 
-    // Crear tabla assets
+    // Crear tabla assets (with camelCase columns for consistency)
     await queryRunner.createTable(
       new Table({
         name: 'assets',
@@ -38,22 +38,22 @@ export class CreateAssetsTable1733000000000 implements MigrationInterface {
             isPrimary: true,
           },
           {
-            name: 'user_id',
+            name: 'userId',
             type: 'int',
             isNullable: false,
           },
           {
-            name: 'document_type',
+            name: 'documentType',
             type: 'asset_type_enum',
             isNullable: false,
           },
           {
-            name: 'owner_type',
+            name: 'ownerType',
             type: 'asset_owner_enum',
             isNullable: false,
           },
           {
-            name: 'owner_id',
+            name: 'ownerId',
             type: 'int',
             isNullable: true,
           },
@@ -63,17 +63,17 @@ export class CreateAssetsTable1733000000000 implements MigrationInterface {
             isNullable: false,
           },
           {
-            name: 'firebase_path',
+            name: 'firebasePath',
             type: 'text',
             isNullable: true,
           },
           {
-            name: 'created_at',
+            name: 'createdAt',
             type: 'timestamp',
             default: 'now()',
           },
           {
-            name: 'updated_at',
+            name: 'updatedAt',
             type: 'timestamp',
             default: 'now()',
           },
@@ -86,7 +86,7 @@ export class CreateAssetsTable1733000000000 implements MigrationInterface {
     await queryRunner.createForeignKey(
       'assets',
       new TableForeignKey({
-        columnNames: ['user_id'],
+        columnNames: ['userId'],
         referencedTableName: 'users',
         referencedColumnNames: ['id'],
         onDelete: 'CASCADE',
@@ -98,7 +98,7 @@ export class CreateAssetsTable1733000000000 implements MigrationInterface {
       'assets',
       new TableIndex({
         name: 'IDX_ASSETS_USER_ID',
-        columnNames: ['user_id'],
+        columnNames: ['userId'],
       }),
     )
 
@@ -106,7 +106,7 @@ export class CreateAssetsTable1733000000000 implements MigrationInterface {
       'assets',
       new TableIndex({
         name: 'IDX_ASSETS_OWNER_TYPE',
-        columnNames: ['owner_type'],
+        columnNames: ['ownerType'],
       }),
     )
 
@@ -114,7 +114,7 @@ export class CreateAssetsTable1733000000000 implements MigrationInterface {
       'assets',
       new TableIndex({
         name: 'IDX_ASSETS_OWNER_ID',
-        columnNames: ['owner_id'],
+        columnNames: ['ownerId'],
       }),
     )
 

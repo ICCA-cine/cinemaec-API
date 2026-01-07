@@ -16,7 +16,7 @@ export class UpdateUserEntity1732071600000 implements MigrationInterface {
     // Renombrar columna cedula a cedula (si es necesario mantener datos)
     const tableExists = await queryRunner.hasTable('users')
     if (!tableExists) {
-      // Create users table if it doesn't exist
+      // Create users table if it doesn't exist (with camelCase columns for new databases)
       await queryRunner.createTable(
         new Table({
           name: 'users',
@@ -38,12 +38,12 @@ export class UpdateUserEntity1732071600000 implements MigrationInterface {
               isNullable: false,
             },
             {
-              name: 'first_name',
+              name: 'firstName',
               type: 'varchar',
               isNullable: true,
             },
             {
-              name: 'last_name',
+              name: 'lastName',
               type: 'varchar',
               isNullable: true,
             },
@@ -53,23 +53,23 @@ export class UpdateUserEntity1732071600000 implements MigrationInterface {
               isNullable: true,
             },
             {
-              name: 'is_active',
+              name: 'isActive',
               type: 'boolean',
               default: true,
               isNullable: false,
             },
             {
-              name: 'email_verification_token',
+              name: 'emailVerificationToken',
               type: 'varchar',
               isNullable: true,
             },
             {
-              name: 'password_reset_token',
+              name: 'passwordResetToken',
               type: 'varchar',
               isNullable: true,
             },
             {
-              name: 'password_reset_expires',
+              name: 'passwordResetExpires',
               type: 'timestamp',
               isNullable: true,
             },
@@ -80,17 +80,17 @@ export class UpdateUserEntity1732071600000 implements MigrationInterface {
               isNullable: false,
             },
             {
-              name: 'profile_id',
+              name: 'profileId',
               type: 'integer',
               isNullable: true,
             },
             {
-              name: 'last_login',
+              name: 'lastLogin',
               type: 'timestamp',
               isNullable: true,
             },
             {
-              name: 'created_at',
+              name: 'createdAt',
               type: 'timestamp',
               default: 'now()',
             },
