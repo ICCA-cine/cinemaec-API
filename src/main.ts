@@ -9,7 +9,10 @@ import { DataSource } from 'typeorm'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   const config = app.get(ConfigService)
-  const port = config.get<number>('PORT') || 3000
+  // En Cloud Run, PORT es reservado. Usar 8080 en producción, 3000 en desarrollo
+  const nodeEnv = config.get<string>('NODE_ENV') || 'development'
+  const port =
+    nodeEnv === 'production' ? 8080 : config.get<number>('PORT') || 3000
   const logger = new Logger('Bootstrap')
 
   // Ejecutar migraciones pendientes (siempre) para asegurar esquema actualizado
