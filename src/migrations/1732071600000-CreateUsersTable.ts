@@ -29,16 +29,6 @@ export class CreateUsersTable1732071600000 implements MigrationInterface {
             isNullable: false,
           },
           {
-            name: 'firstName',
-            type: 'varchar',
-            isNullable: true,
-          },
-          {
-            name: 'lastName',
-            type: 'varchar',
-            isNullable: true,
-          },
-          {
             name: 'cedula',
             type: 'varchar',
             isNullable: true,
