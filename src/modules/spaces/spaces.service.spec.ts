@@ -7,6 +7,7 @@ import { User } from '../users/entities/user.entity'
 import { SpaceReview } from './entities/space-review.entity'
 import { AssetsService } from '../assets/assets.service'
 import { NotificationsService } from '../notifications/notifications.service'
+import { EmailsService } from '../emails/emails.service'
 
 describe('SpacesService', () => {
   let service: SpacesService
@@ -53,6 +54,10 @@ describe('SpacesService', () => {
     create: jest.fn(),
   }
 
+  const mockEmailsService = {
+    sendEmail: jest.fn(),
+  }
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -76,6 +81,10 @@ describe('SpacesService', () => {
         {
           provide: NotificationsService,
           useValue: mockNotificationsService,
+        },
+        {
+          provide: EmailsService,
+          useValue: mockEmailsService,
         },
       ],
     }).compile()

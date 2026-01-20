@@ -7,6 +7,7 @@ import { UsersService } from './users.service'
 import { User, UserRole } from './entities/user.entity'
 import { Profile } from '../profiles/entities/profile.entity'
 import { EmailsService } from '../emails/emails.service'
+import { NotificationsService } from '../notifications/notifications.service'
 import { RegisterDto } from './dto/register.dto'
 import { LoginDto } from './dto/login.dto'
 
@@ -34,6 +35,10 @@ describe('UsersService', () => {
     sendVerificationEmail: jest.fn(),
   }
 
+  const mockNotificationsService = {
+    create: jest.fn(),
+  }
+
   const mockJwtService = {
     sign: jest.fn(),
   }
@@ -53,6 +58,10 @@ describe('UsersService', () => {
         {
           provide: EmailsService,
           useValue: mockEmailsService,
+        },
+        {
+          provide: NotificationsService,
+          useValue: mockNotificationsService,
         },
         {
           provide: JwtService,
