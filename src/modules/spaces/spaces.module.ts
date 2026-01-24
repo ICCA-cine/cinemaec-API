@@ -5,6 +5,7 @@ import { SpacesController } from './spaces.controller'
 import { Space } from './entities/space.entity'
 import { AssetsModule } from '../assets/assets.module'
 import { NotificationsModule } from '../notifications/notifications.module'
+import { EmailsModule } from '../emails/emails.module'
 import { User } from '../users/entities/user.entity'
 import { SpaceReview } from './entities/space-review.entity'
 
@@ -13,6 +14,7 @@ import { SpaceReview } from './entities/space-review.entity'
     TypeOrmModule.forFeature([Space, User, SpaceReview]),
     AssetsModule,
     NotificationsModule,
+    EmailsModule,
   ],
   controllers: [SpacesController],
   providers: [SpacesService],

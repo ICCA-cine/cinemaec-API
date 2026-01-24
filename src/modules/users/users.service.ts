@@ -15,6 +15,11 @@ import { User, UserRole, PermissionEnum } from './entities/user.entity'
 import { RegisterDto } from './dto/register.dto'
 import { LoginDto } from './dto/login.dto'
 import { UpdateUserPermissionsDto } from './dto/update-user-permissions.dto'
+import {
+  LoginResponseDto,
+  UserProfileResponseDto,
+  UserDetailResponseDto,
+} from './dto/user-response.dto'
 import { EmailsService } from '../emails/emails.service'
 import { NotificationsService } from '../notifications/notifications.service'
 import { NotificationTypeEnum } from '../notifications/entities/notification.entity'
@@ -91,18 +96,7 @@ export class UsersService {
   /**
    * Autentica un usuario y devuelve un token JWT
    */
-  async login(loginDto: LoginDto): Promise<{
-    accessToken: string
-    user: {
-      id: number
-      email: string
-      cedula: string
-      role: string
-      is_active: boolean
-      has_profile: boolean
-      permissions: string[] | null
-    }
-  }> {
+  async login(loginDto: LoginDto): Promise<LoginResponseDto> {
     const { email, password } = loginDto
 
     // Buscar usuario por email (incluyendo el password y permissions)
@@ -150,7 +144,7 @@ export class UsersService {
     const accessToken = this.jwtService.sign(payload)
 
     // Convertir permissions de string (comma-separated) a array si es necesario
-    const permissionsArray = user.permissions || []
+    const permissionsArray = user.permissions || null
 
     return {
       accessToken,
@@ -159,8 +153,8 @@ export class UsersService {
         email: user.email,
         cedula: user.cedula,
         role: user.role,
-        is_active: user.isActive,
-        has_profile: hasProfile,
+        isActive: user.isActive,
+        hasProfile: hasProfile,
         permissions: permissionsArray,
       },
     }
@@ -248,16 +242,7 @@ export class UsersService {
   /**
    * Obtiene el perfil del usuario autenticado
    */
-  async getProfile(userId: number): Promise<{
-    id: number
-    email: string
-    cedula: string
-    role: string
-    is_active: boolean
-    has_profile: boolean
-    has_uploaded_agreement: boolean
-    last_login: Date | null
-  }> {
+  async getProfile(userId: number): Promise<UserProfileResponseDto> {
     const user = await this.usersRepository.findOne({
       where: { id: userId },
     })
@@ -277,16 +262,18 @@ export class UsersService {
     })
     const hasProfile = !!profile
     const hasUploadedAgreement = profile?.hasUploadedAgreement || false
+    const permissionsArray = user.permissions || null
 
     return {
       id: user.id,
       email: user.email,
       cedula: user.cedula,
       role: user.role,
-      is_active: user.isActive,
-      has_profile: hasProfile,
-      has_uploaded_agreement: hasUploadedAgreement,
-      last_login: user.lastLogin,
+      isActive: user.isActive,
+      hasProfile: hasProfile,
+      hasUploadedAgreement: hasUploadedAgreement,
+      lastLogin: user.lastLogin,
+      permissions: permissionsArray,
     }
   }
 

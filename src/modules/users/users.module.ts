@@ -7,6 +7,7 @@ import { UsersService } from './users.service'
 import { UsersController } from './users.controller'
 import { User } from './entities/user.entity'
 import { EmailsModule } from '../emails/emails.module'
+import { NotificationsModule } from '../notifications/notifications.module'
 import { Profile } from '../profiles/entities/profile.entity'
 import { JwtStrategy } from './strategies/jwt.strategy'
 
@@ -14,6 +15,7 @@ import { JwtStrategy } from './strategies/jwt.strategy'
   imports: [
     TypeOrmModule.forFeature([User, Profile]),
     EmailsModule,
+    NotificationsModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
