@@ -15,7 +15,6 @@ export class FirebaseService implements OnModuleInit {
     try {
       this.db = admin.firestore()
       this.auth = admin.auth()
-      console.log('✅ Firebase service initialized successfully')
     } catch (error) {
       console.error('❌ Failed to initialize Firebase service:', error)
     }

@@ -24,6 +24,7 @@ import { SpacesService } from './spaces.service'
 import { CreateSpaceDto } from './dto/create-space.dto'
 import { UpdateSpaceDto } from './dto/update-space.dto'
 import { QuerySpacesDto } from './dto/query-spaces.dto'
+import { SpaceResponseDto, SpacesListResponseDto } from './dto/space-response.dto'
 import { JwtAuthGuard } from '../users/guards/jwt-auth.guard'
 import { CurrentUser } from '../users/decorators/current-user.decorator'
 import { SubmitSpaceReviewDto } from './dto/submit-space-review.dto'
@@ -54,6 +55,7 @@ export class SpacesController {
   @ApiResponse({
     status: 201,
     description: 'Espacio creado exitosamente',
+    type: SpaceResponseDto,
   })
   @ApiResponse({
     status: 400,
@@ -62,7 +64,7 @@ export class SpacesController {
   async create(
     @CurrentUser() user: JwtPayload,
     @Body() createSpaceDto: CreateSpaceDto,
-  ) {
+  ): Promise<SpaceResponseDto> {
     // Validar IDs de assets (logos, fotos y documentos)
     this.spacesService.validateAssetIds([createSpaceDto.logoId])
     this.spacesService.validateAssetIds(createSpaceDto.photosId)
@@ -93,8 +95,9 @@ export class SpacesController {
   @ApiResponse({
     status: 200,
     description: 'Lista de espacios obtenida exitosamente',
+    type: SpacesListResponseDto,
   })
-  async findAll(@Query() queryDto: QuerySpacesDto) {
+  async findAll(@Query() queryDto: QuerySpacesDto): Promise<SpacesListResponseDto> {
     return this.spacesService.findAll(queryDto)
   }
 
@@ -106,11 +109,12 @@ export class SpacesController {
   @ApiResponse({
     status: 200,
     description: 'Lista de espacios del usuario obtenida exitosamente',
+    type: SpacesListResponseDto,
   })
   async findMySpaces(
     @CurrentUser() user: JwtPayload,
     @Query() queryDto: QuerySpacesDto,
-  ) {
+  ): Promise<SpacesListResponseDto> {
     return this.spacesService.findMySpaces(user.userId, queryDto)
   }
 
@@ -127,12 +131,13 @@ export class SpacesController {
   @ApiResponse({
     status: 200,
     description: 'Espacio encontrado',
+    type: SpaceResponseDto,
   })
   @ApiResponse({
     status: 404,
     description: 'Espacio no encontrado',
   })
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<SpaceResponseDto> {
     return this.spacesService.findOne(id)
   }
 
@@ -150,6 +155,7 @@ export class SpacesController {
   @ApiResponse({
     status: 200,
     description: 'Espacio actualizado exitosamente',
+    type: SpaceResponseDto,
   })
   @ApiResponse({
     status: 403,
@@ -163,7 +169,7 @@ export class SpacesController {
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: JwtPayload,
     @Body() updateSpaceDto: UpdateSpaceDto,
-  ) {
+  ): Promise<SpaceResponseDto> {
     // Validar IDs de assets si están presentes en la actualización
     if (updateSpaceDto.logoId) {
       this.spacesService.validateAssetIds([updateSpaceDto.logoId])

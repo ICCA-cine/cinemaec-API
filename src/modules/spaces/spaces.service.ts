@@ -10,6 +10,7 @@ import { Space, SpaceStatusEnum } from './entities/space.entity'
 import { CreateSpaceDto } from './dto/create-space.dto'
 import { UpdateSpaceDto } from './dto/update-space.dto'
 import { QuerySpacesDto } from './dto/query-spaces.dto'
+import { SpaceResponseDto } from './dto/space-response.dto'
 import { AssetsService } from '../assets/assets.service'
 import { NotificationsService } from '../notifications/notifications.service'
 import { NotificationTypeEnum } from '../notifications/entities/notification.entity'
@@ -112,9 +113,126 @@ export class SpacesService {
   }
 
   /**
+   * Convierte una entidad Space a SpaceResponseDto
+   * Incluye assets embebidos formateados correctamente
+   */
+  private async toResponseDto(space: Space): Promise<SpaceResponseDto> {
+    const assets = await this.getSpaceAssets(space)
+
+    return {
+      id: space.id,
+      userId: space.userId,
+      name: space.name,
+      type: space.type,
+      province: space.province,
+      city: space.city,
+      address: space.address,
+      email: space.email,
+      phone: space.phone,
+      ruc: space.ruc || null,
+      coordinates: space.coordinates,
+      description: space.description,
+      target: space.target,
+      managerName: space.managerName,
+      managerPhone: space.managerPhone,
+      managerEmail: space.managerEmail,
+      technicianInCharge: space.technicianInCharge,
+      technicianRole: space.technicianRole,
+      technicianPhone: space.technicianPhone,
+      technicianEmail: space.technicianEmail,
+      capacity: space.capacity,
+      projectionEquipment: space.projectionEquipment,
+      soundEquipment: space.soundEquipment,
+      screen: space.screen,
+      boxofficeRegistration: space.boxofficeRegistration,
+      accessibilities: space.accessibilities,
+      services: space.services,
+      operatingHistory: space.operatingHistory,
+      mainActivity: space.mainActivity,
+      otherActivities: space.otherActivities,
+      commercialActivities: space.commercialActivities,
+      logoId: space.logoId,
+      photosId: space.photosId,
+      ciDocument: space.ciDocument,
+      rucDocument: space.rucDocument || null,
+      managerDocument: space.managerDocument,
+      serviceBill: space.serviceBill,
+      operatingLicense: space.operatingLicense,
+      contractId: space.contractId || null,
+      assets: {
+        logo: assets.logo
+          ? {
+              id: assets.logo.id,
+              url: assets.logo.url,
+              documentType: assets.logo.documentType,
+              ownerType: assets.logo.ownerType,
+              createdAt: assets.logo.createdAt?.toString(),
+            }
+          : null,
+        photos: assets.photos.map((photo) => ({
+          id: photo.id,
+          url: photo.url,
+          documentType: photo.documentType,
+          ownerType: photo.ownerType,
+          createdAt: photo.createdAt?.toString(),
+        })),
+        documents: {
+          ci: assets.documents.ci
+            ? {
+                id: assets.documents.ci.id,
+                url: assets.documents.ci.url,
+                documentType: assets.documents.ci.documentType,
+                createdAt: assets.documents.ci.createdAt?.toString(),
+              }
+            : null,
+          ruc: assets.documents.ruc
+            ? {
+                id: assets.documents.ruc.id,
+                url: assets.documents.ruc.url,
+                documentType: assets.documents.ruc.documentType,
+                createdAt: assets.documents.ruc.createdAt?.toString(),
+              }
+            : null,
+          manager: assets.documents.manager
+            ? {
+                id: assets.documents.manager.id,
+                url: assets.documents.manager.url,
+                documentType: assets.documents.manager.documentType,
+                createdAt: assets.documents.manager.createdAt?.toString(),
+              }
+            : null,
+          serviceBill: assets.documents.serviceBill
+            ? {
+                id: assets.documents.serviceBill.id,
+                url: assets.documents.serviceBill.url,
+                documentType: assets.documents.serviceBill.documentType,
+                createdAt: assets.documents.serviceBill.createdAt?.toString(),
+              }
+            : null,
+          operatingLicense: assets.documents.operatingLicense
+            ? {
+                id: assets.documents.operatingLicense.id,
+                url: assets.documents.operatingLicense.url,
+                documentType: assets.documents.operatingLicense.documentType,
+                createdAt:
+                  assets.documents.operatingLicense.createdAt?.toString(),
+              }
+            : null,
+        },
+      },
+      status: space.status,
+      createdAt: space.createdAt.toString(),
+      updatedAt: space.updatedAt.toString(),
+    }
+  }
+
+  /**
    * Crear un nuevo espacio
    */
-  async create(userId: number, createSpaceDto: CreateSpaceDto): Promise<Space> {
+  async create(
+    userId: number,
+    createSpaceDto: CreateSpaceDto,
+  ): Promise<SpaceResponseDto> {
     const space = this.spacesRepository.create({
       ...createSpaceDto,
       userId,
@@ -155,7 +273,7 @@ export class SpacesService {
     // Notificar a todos los admins con permiso admin_spaces
     await this.notifyAdminsAboutNewSpace(savedSpace)
 
-    return savedSpace
+    return this.toResponseDto(savedSpace)
   }
 
   /**
@@ -342,7 +460,7 @@ export class SpacesService {
    * Obtener todos los espacios con filtros y paginación
    */
   async findAll(queryDto: QuerySpacesDto): Promise<{
-    data: Space[]
+    data: SpaceResponseDto[]
     total: number
     page: number
     limit: number
@@ -395,15 +513,9 @@ export class SpacesService {
     // Ejecutar consulta
     const [data, total] = await queryBuilder.getManyAndCount()
 
-    // Obtener assets para cada espacio
+    // Convertir a Response DTOs
     const dataWithAssets = await Promise.all(
-      data.map(async (space) => {
-        const assets = await this.getSpaceAssets(space)
-        return {
-          ...space,
-          assets,
-        }
-      }),
+      data.map((space) => this.toResponseDto(space)),
     )
 
     return {
@@ -422,7 +534,7 @@ export class SpacesService {
     userId: number,
     queryDto: QuerySpacesDto,
   ): Promise<{
-    data: Space[]
+    data: SpaceResponseDto[]
     total: number
     page: number
     limit: number
@@ -434,20 +546,14 @@ export class SpacesService {
   /**
    * Obtener un espacio por ID
    */
-  async findOne(id: number): Promise<any> {
+  async findOne(id: number): Promise<SpaceResponseDto> {
     const space = await this.spacesRepository.findOne({ where: { id } })
 
     if (!space) {
       throw new NotFoundException(`Espacio con ID ${id} no encontrado`)
     }
 
-    // Obtener los assets completos
-    const assets = await this.getSpaceAssets(space)
-
-    return {
-      ...space,
-      assets,
-    }
+    return this.toResponseDto(space)
   }
 
   /**
@@ -459,8 +565,12 @@ export class SpacesService {
     id: number,
     userId: number,
     updateSpaceDto: UpdateSpaceDto,
-  ): Promise<Space> {
-    const space = await this.findOne(id)
+  ): Promise<SpaceResponseDto> {
+    const space = await this.spacesRepository.findOne({ where: { id } })
+
+    if (!space) {
+      throw new NotFoundException(`Espacio con ID ${id} no encontrado`)
+    }
 
     const wasPending = space.status === SpaceStatusEnum.PENDING
 
@@ -495,7 +605,8 @@ export class SpacesService {
       }
     }
 
-    return await this.spacesRepository.save(space)
+    const updatedSpace = await this.spacesRepository.save(space)
+    return this.toResponseDto(updatedSpace)
   }
 
   /**
@@ -503,7 +614,11 @@ export class SpacesService {
    * Solo el propietario puede eliminar su espacio
    */
   async remove(id: number, userId: number): Promise<void> {
-    const space = await this.findOne(id)
+    const space = await this.spacesRepository.findOne({ where: { id } })
+
+    if (!space) {
+      throw new NotFoundException(`Espacio con ID ${id} no encontrado`)
+    }
 
     // Verificar que el usuario sea el propietario
     if (space.userId !== userId) {
