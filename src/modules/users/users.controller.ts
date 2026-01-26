@@ -27,6 +27,7 @@ import { ChangePasswordDto } from './dto/change-password.dto'
 import { ForgotPasswordDto } from './dto/forgot-password.dto'
 import { ResetPasswordDto } from './dto/reset-password.dto'
 import { UpdateUserPermissionsDto } from './dto/update-user-permissions.dto'
+import { UpdateUserRoleDto } from './dto/update-user-role.dto'
 import { JwtAuthGuard } from './guards/jwt-auth.guard'
 
 @ApiTags('users')
@@ -374,12 +375,45 @@ export class UsersController {
     @Request() req: any,
     @Body() updateUserPermissionsDto: UpdateUserPermissionsDto,
   ) {
-    const adminId = req.user.sub
-    return this.usersService.updateUserPermissions(
+    const adminId = req.user.sub as number
+    return (await this.usersService.updateUserPermissions(
       userId,
       adminId,
       updateUserPermissionsDto,
-    )
+    )) as unknown
+  }
+
+  @Put(':id/role')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Cambiar rol y permisos de un usuario',
+    description:
+      'Permite a un administrador cambiar el rol de un usuario y asignar permisos. Requiere permiso ASSIGN_ROLES.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Rol y permisos actualizados exitosamente',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'No tienes permisos para realizar esta acción',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Usuario no encontrado',
+  })
+  async updateUserRole(
+    @Param('id', ParseIntPipe) userId: number,
+    @Body() updateUserRoleDto: UpdateUserRoleDto,
+    @Request() req: any,
+  ) {
+    const adminId = req.user.sub as number
+    return (await this.usersService.updateUserRole(
+      userId,
+      adminId,
+      updateUserRoleDto,
+    )) as unknown
   }
 
   @Patch(':id/status')
@@ -406,7 +440,10 @@ export class UsersController {
     @Param('id', ParseIntPipe) userId: number,
     @Body('isActive') isActive: boolean,
   ) {
-    return this.usersService.toggleUserStatus(userId, isActive)
+    return (await this.usersService.toggleUserStatus(
+      userId,
+      isActive,
+    )) as unknown
   }
 
   @Get(':id')
@@ -429,8 +466,8 @@ export class UsersController {
     @Param('id', ParseIntPipe) userId: number,
     @Request() req: any,
   ) {
-    const requesterId = req.user.sub
-    return this.usersService.getUserInfo(userId, requesterId)
+    const requesterId = req.user.sub as number
+    return (await this.usersService.getUserInfo(userId, requesterId)) as unknown
   }
 
   @Get()
@@ -478,7 +515,7 @@ export class UsersController {
     description: 'No tienes permisos para realizar esta acción',
   })
   async getAllUsers(@Request() req: any) {
-    const adminId = req.user.sub
+    const adminId = req.user.sub as number
     return this.usersService.getAllUsers(adminId)
   }
 }

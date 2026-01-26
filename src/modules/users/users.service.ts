@@ -538,4 +538,72 @@ export class UsersService {
       createdAt: updatedUser.createdAt,
     }
   }
+
+  /**
+   * Cambiar rol y permisos de un usuario (solo admin)
+   */
+  async updateUserRole(
+    userId: number,
+    adminId: number,
+    updateUserRoleDto: any,
+  ): Promise<any> {
+    // Verificar que el solicitante es admin con permiso assign_roles
+    const admin = await this.usersRepository.findOne({
+      where: { id: adminId },
+    })
+
+    if (!admin || admin.role !== UserRole.ADMIN) {
+      throw new ForbiddenException(
+        'No tienes permisos para realizar esta acción',
+      )
+    }
+
+    const hasPermission =
+      Array.isArray(admin.permissions) &&
+      admin.permissions.includes(PermissionEnum.ASSIGN_ROLES)
+    if (!hasPermission) {
+      throw new ForbiddenException(
+        'No tienes permiso para cambiar roles de usuarios',
+      )
+    }
+
+    // Obtener usuario a actualizar
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+    })
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado')
+    }
+
+    // Actualizar rol
+    if (updateUserRoleDto.role) {
+      user.role = updateUserRoleDto.role
+    }
+
+    // Actualizar permisos si es admin
+    if (
+      updateUserRoleDto.role === UserRole.ADMIN &&
+      updateUserRoleDto.permissions
+    ) {
+      user.permissions = updateUserRoleDto.permissions
+    } else if (updateUserRoleDto.role !== UserRole.ADMIN) {
+      // Limpiar permisos si ya no es admin
+      user.permissions = []
+    }
+
+    const updatedUser = await this.usersRepository.save(user)
+
+    return {
+      id: updatedUser.id,
+      email: updatedUser.email,
+      cedula: updatedUser.cedula,
+      role: updatedUser.role,
+      isActive: updatedUser.isActive,
+      permissions: updatedUser.permissions,
+      profileId: updatedUser.profileId,
+      lastLogin: updatedUser.lastLogin,
+      createdAt: updatedUser.createdAt,
+    }
+  }
 }
