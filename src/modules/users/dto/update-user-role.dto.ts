@@ -1,7 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsArray, IsEnum, IsOptional } from 'class-validator'
-import { UserRole } from '../../../common/enums/user-role.enum'
-import { PermissionEnum } from '../../../common/enums/permissions.enum'
+import { UserRole, PermissionEnum } from '../entities/user.entity'
 
 export class UpdateUserRoleDto {
   @ApiProperty({
