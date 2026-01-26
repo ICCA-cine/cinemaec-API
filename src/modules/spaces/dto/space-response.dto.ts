@@ -110,7 +110,10 @@ export class SpaceResponseDto {
   @ApiPropertyOptional({ description: 'RUC', maxLength: 13 })
   ruc?: string | null
 
-  @ApiProperty({ description: 'Coordenadas [latitud, longitud]', type: [Number] })
+  @ApiProperty({
+    description: 'Coordenadas [latitud, longitud]',
+    type: [Number],
+  })
   coordinates: number[]
 
   @ApiProperty({ description: 'Descripción del espacio' })

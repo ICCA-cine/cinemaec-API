@@ -143,9 +143,7 @@ export class UsersService {
     }
     const accessToken = this.jwtService.sign(payload)
 
-    // Convertir permissions de string (comma-separated) a array si es necesario
-    const permissionsArray = user.permissions || null
-
+    // Devolver permisos tal cual vienen de la BD
     return {
       accessToken,
       user: {
@@ -155,7 +153,7 @@ export class UsersService {
         role: user.role,
         isActive: user.isActive,
         hasProfile: hasProfile,
-        permissions: permissionsArray,
+        permissions: user.permissions,
       },
     }
   }
@@ -262,7 +260,6 @@ export class UsersService {
     })
     const hasProfile = !!profile
     const hasUploadedAgreement = profile?.hasUploadedAgreement || false
-    const permissionsArray = user.permissions || null
 
     return {
       id: user.id,
@@ -273,7 +270,7 @@ export class UsersService {
       hasProfile: hasProfile,
       hasUploadedAgreement: hasUploadedAgreement,
       lastLogin: user.lastLogin,
-      permissions: permissionsArray,
+      permissions: user.permissions,
     }
   }
 

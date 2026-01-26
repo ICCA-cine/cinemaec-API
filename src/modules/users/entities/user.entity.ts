@@ -62,8 +62,10 @@ export class User {
   lastLogin: Date | null
 
   @Column({
-    type: 'simple-array',
+    type: 'text',
+    array: true,
     nullable: true,
+    default: null,
   })
   permissions: string[] | null
 
