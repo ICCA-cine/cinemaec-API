@@ -8,6 +8,9 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  Param,
+  ParseIntPipe,
+  Delete,
 } from '@nestjs/common'
 import {
   ApiTags,
@@ -65,6 +68,23 @@ export class ProfilesController {
     return this.profilesService.findByUserId(userId)
   }
 
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Obtener perfil por ID',
+    description: 'Obtiene un perfil específico por su ID',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Perfil encontrado',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Perfil no encontrado',
+  })
+  findById(@Param('id', ParseIntPipe) id: number) {
+    return this.profilesService.findById(id)
+  }
+
   @Patch()
   @ApiOperation({
     summary: 'Actualizar perfil del usuario autenticado',
@@ -105,5 +125,30 @@ export class ProfilesController {
   ) {
     const userId: number = req.user.sub
     return this.profilesService.uploadAgreement(userId, agreementDocumentId)
+  }
+
+  @Delete(':id/agreement')
+  @ApiOperation({
+    summary: 'Eliminar acuerdo de un perfil (solo admin)',
+    description:
+      'Elimina el documento de acuerdo firmado de un perfil. Solo administradores con permiso ADMIN_USERS pueden realizar esta acción.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Acuerdo eliminado exitosamente',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'No tienes permiso para realizar esta acción',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Perfil no encontrado',
+  })
+  async removeAgreement(
+    @Param('id', ParseIntPipe) profileId: number,
+    @Request() req: any,
+  ) {
+    return this.profilesService.removeAgreement(profileId)
   }
 }

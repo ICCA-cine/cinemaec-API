@@ -3,6 +3,7 @@ import {
   Post,
   Get,
   Put,
+  Patch,
   Body,
   HttpCode,
   HttpStatus,
@@ -379,6 +380,33 @@ export class UsersController {
       adminId,
       updateUserPermissionsDto,
     )
+  }
+
+  @Patch(':id/status')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Activar o desactivar un usuario',
+    description:
+      'Permite a un administrador activar o desactivar un usuario. Requiere permiso ADMIN_USERS.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Estado del usuario actualizado exitosamente',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'No tienes permisos para realizar esta acción',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Usuario no encontrado',
+  })
+  async toggleUserStatus(
+    @Param('id', ParseIntPipe) userId: number,
+    @Body('isActive') isActive: boolean,
+  ) {
+    return this.usersService.toggleUserStatus(userId, isActive)
   }
 
   @Get(':id')

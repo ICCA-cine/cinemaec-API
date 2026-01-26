@@ -18,7 +18,6 @@ import { UpdateUserPermissionsDto } from './dto/update-user-permissions.dto'
 import {
   LoginResponseDto,
   UserProfileResponseDto,
-  UserDetailResponseDto,
 } from './dto/user-response.dto'
 import { EmailsService } from '../emails/emails.service'
 import { NotificationsService } from '../notifications/notifications.service'
@@ -510,5 +509,33 @@ export class UsersService {
       lastLogin: user.lastLogin,
       createdAt: user.createdAt,
     }))
+  }
+
+  /**
+   * Desactivar o activar un usuario (solo admin)
+   */
+  async toggleUserStatus(userId: number, isActive: boolean): Promise<any> {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+    })
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado')
+    }
+
+    user.isActive = isActive
+    const updatedUser = await this.usersRepository.save(user)
+
+    return {
+      id: updatedUser.id,
+      email: updatedUser.email,
+      cedula: updatedUser.cedula,
+      role: updatedUser.role,
+      isActive: updatedUser.isActive,
+      permissions: updatedUser.permissions,
+      profileId: updatedUser.profileId,
+      lastLogin: updatedUser.lastLogin,
+      createdAt: updatedUser.createdAt,
+    }
   }
 }

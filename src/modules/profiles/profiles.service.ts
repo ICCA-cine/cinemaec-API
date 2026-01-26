@@ -84,6 +84,38 @@ export class ProfilesService {
   }
 
   /**
+   * Obtener un perfil por su ID
+   */
+  async findById(id: number) {
+    const profile = await this.profilesRepository.findOne({
+      where: { id },
+      select: [
+        'id',
+        'fullName',
+        'legalName',
+        'tradeName',
+        'legalStatus',
+        'birthdate',
+        'province',
+        'city',
+        'address',
+        'phone',
+        'agreementDocumentId',
+        'hasUploadedAgreement',
+        'userId',
+        'createdAt',
+        'updatedAt',
+      ],
+    })
+
+    if (!profile) {
+      throw new NotFoundException('Perfil no encontrado')
+    }
+
+    return profile
+  }
+
+  /**
    * Actualizar el perfil del usuario autenticado (sin necesidad de profileId)
    */
   async updateOwn(userId: number, updateProfileDto: UpdateProfileDto) {
@@ -131,6 +163,31 @@ export class ProfilesService {
 
     return {
       message: 'Acuerdo subido exitosamente',
+      profile: updatedProfile,
+    }
+  }
+
+  /**
+   * Eliminar el acuerdo de un perfil (solo admin)
+   */
+  async removeAgreement(
+    profileId: number,
+  ): Promise<{ message: string; profile: Profile }> {
+    const profile = await this.profilesRepository.findOne({
+      where: { id: profileId },
+    })
+
+    if (!profile) {
+      throw new NotFoundException('Perfil no encontrado')
+    }
+
+    profile.agreementDocumentId = null
+    profile.hasUploadedAgreement = false
+
+    const updatedProfile = await this.profilesRepository.save(profile)
+
+    return {
+      message: 'Acuerdo eliminado exitosamente',
       profile: updatedProfile,
     }
   }
