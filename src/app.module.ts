@@ -10,6 +10,9 @@ import { AssetsModule } from './modules/assets/assets.module'
 import { SpacesModule } from './modules/spaces/spaces.module'
 import { ContractsModule } from './modules/contracts/contracts.module'
 import { NotificationsModule } from './modules/notifications/notifications.module'
+import { ExhibitionSpacesModule } from './modules/exhibition-spaces/exhibition-spaces.module'
+import { PlatformsModule } from './modules/platforms/platforms.module'
+import { FundsModule } from './modules/funds/funds.module'
 import { FirebaseModule } from './common/firebase/firebase.module'
 import { getDatabaseConfig } from './config/database.config'
 
@@ -36,6 +39,9 @@ import envConfig from './config/env.config'
     SpacesModule,
     ContractsModule,
     NotificationsModule,
+    ExhibitionSpacesModule,
+    PlatformsModule,
+    FundsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

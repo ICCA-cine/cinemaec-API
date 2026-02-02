@@ -55,6 +55,10 @@ export class Asset {
   @Column({ type: 'int', nullable: true })
   ownerId: number | null
 
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'ownerId' })
+  owner: User | null
+
   @Column({ type: 'text', nullable: false })
   url: string
 

@@ -24,7 +24,10 @@ import { SpacesService } from './spaces.service'
 import { CreateSpaceDto } from './dto/create-space.dto'
 import { UpdateSpaceDto } from './dto/update-space.dto'
 import { QuerySpacesDto } from './dto/query-spaces.dto'
-import { SpaceResponseDto, SpacesListResponseDto } from './dto/space-response.dto'
+import {
+  SpaceResponseDto,
+  SpacesListResponseDto,
+} from './dto/space-response.dto'
 import { JwtAuthGuard } from '../users/guards/jwt-auth.guard'
 import { CurrentUser } from '../users/decorators/current-user.decorator'
 import { SubmitSpaceReviewDto } from './dto/submit-space-review.dto'
@@ -97,7 +100,9 @@ export class SpacesController {
     description: 'Lista de espacios obtenida exitosamente',
     type: SpacesListResponseDto,
   })
-  async findAll(@Query() queryDto: QuerySpacesDto): Promise<SpacesListResponseDto> {
+  async findAll(
+    @Query() queryDto: QuerySpacesDto,
+  ): Promise<SpacesListResponseDto> {
     return this.spacesService.findAll(queryDto)
   }
 
@@ -137,7 +142,9 @@ export class SpacesController {
     status: 404,
     description: 'Espacio no encontrado',
   })
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<SpaceResponseDto> {
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<SpaceResponseDto> {
     return this.spacesService.findOne(id)
   }
 
