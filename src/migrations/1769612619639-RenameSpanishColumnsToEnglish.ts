@@ -171,11 +171,34 @@ export class RenameSpanishColumnsToEnglish1769612619639
       )
     }
     
+    // Verificar qué enum existe para platforms type
+    const platformsTypeEnumExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_type 
+        WHERE typname = 'platforms_type_enum'
+        AND typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+      )
+    `)
+    
+    const platformTypeEnumExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_type 
+        WHERE typname = 'platform_type_enum'
+      )
+    `)
+    
     const hasPlatformTypeColumn = await queryRunner.hasColumn('platforms', 'type')
     if (!hasPlatformTypeColumn) {
-      await queryRunner.query(
-        `ALTER TABLE "platforms" ADD "type" "public"."platforms_type_enum" NOT NULL`,
-      )
+      // Usar el enum que exista (platforms_type_enum tiene prioridad, luego platform_type_enum)
+      if (platformsTypeEnumExists[0].exists) {
+        await queryRunner.query(
+          `ALTER TABLE "platforms" ADD "type" "public"."platforms_type_enum" NOT NULL`,
+        )
+      } else if (platformTypeEnumExists[0].exists) {
+        await queryRunner.query(
+          `ALTER TABLE "platforms" ADD "type" platform_type_enum NOT NULL`,
+        )
+      }
     }
     
     const hasFundNameColumn = await queryRunner.hasColumn('funds', 'name')
@@ -185,6 +208,7 @@ export class RenameSpanishColumnsToEnglish1769612619639
       )
     }
     
+    // Verificar ambas versiones del enum (funds_type_enum y fund_type_enum)
     const fundsTypeEnumExists = await queryRunner.query(`
       SELECT EXISTS (
         SELECT 1 FROM pg_type 
@@ -192,7 +216,15 @@ export class RenameSpanishColumnsToEnglish1769612619639
         AND typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
       )
     `)
-    if (!fundsTypeEnumExists[0].exists) {
+    
+    const fundTypeEnumExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_type 
+        WHERE typname = 'fund_type_enum'
+      )
+    `)
+    
+    if (!fundsTypeEnumExists[0].exists && !fundTypeEnumExists[0].exists) {
       await queryRunner.query(
         `CREATE TYPE "public"."funds_type_enum" AS ENUM('fondo', 'festival', 'premio', 'espacios_participacion')`,
       )
@@ -200,11 +232,19 @@ export class RenameSpanishColumnsToEnglish1769612619639
     
     const hasFundTypeColumn = await queryRunner.hasColumn('funds', 'type')
     if (!hasFundTypeColumn) {
-      await queryRunner.query(
-        `ALTER TABLE "funds" ADD "type" "public"."funds_type_enum"[] NOT NULL`,
-      )
+      // Usar el enum que exista
+      if (fundsTypeEnumExists[0].exists) {
+        await queryRunner.query(
+          `ALTER TABLE "funds" ADD "type" "public"."funds_type_enum"[] NOT NULL`,
+        )
+      } else if (fundTypeEnumExists[0].exists) {
+        await queryRunner.query(
+          `ALTER TABLE "funds" ADD "type" fund_type_enum[] NOT NULL`,
+        )
+      }
     }
     
+    // Verificar ambas versiones del enum (funds_financialorigin_enum y financial_origin_enum)
     const fundsFinancialOriginEnumExists = await queryRunner.query(`
       SELECT EXISTS (
         SELECT 1 FROM pg_type 
@@ -212,7 +252,15 @@ export class RenameSpanishColumnsToEnglish1769612619639
         AND typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
       )
     `)
-    if (!fundsFinancialOriginEnumExists[0].exists) {
+    
+    const financialOriginEnumExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_type 
+        WHERE typname = 'financial_origin_enum'
+      )
+    `)
+    
+    if (!fundsFinancialOriginEnumExists[0].exists && !financialOriginEnumExists[0].exists) {
       await queryRunner.query(
         `CREATE TYPE "public"."funds_financialorigin_enum" AS ENUM('publico', 'privado', 'mixto', 'desconocido')`,
       )
@@ -220,9 +268,16 @@ export class RenameSpanishColumnsToEnglish1769612619639
     
     const hasFundFinancialOriginColumn = await queryRunner.hasColumn('funds', 'financialOrigin')
     if (!hasFundFinancialOriginColumn) {
-      await queryRunner.query(
-        `ALTER TABLE "funds" ADD "financialOrigin" "public"."funds_financialorigin_enum" NOT NULL`,
-      )
+      // Usar el enum que exista
+      if (fundsFinancialOriginEnumExists[0].exists) {
+        await queryRunner.query(
+          `ALTER TABLE "funds" ADD "financialOrigin" "public"."funds_financialorigin_enum" NOT NULL`,
+        )
+      } else if (financialOriginEnumExists[0].exists) {
+        await queryRunner.query(
+          `ALTER TABLE "funds" ADD "financialOrigin" financial_origin_enum NOT NULL`,
+        )
+      }
     }
   }
 
