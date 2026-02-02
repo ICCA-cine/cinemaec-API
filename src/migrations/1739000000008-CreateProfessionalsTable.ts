@@ -10,7 +10,7 @@ export class CreateProfessionalsTable1739000000008
     }
 
     await queryRunner.query(
-      `CREATE TYPE IF NOT EXISTS "gender_enum" AS ENUM ('masculino', 'femenino')`,
+      `CREATE TYPE IF NOT EXISTS "gender_enum" AS ENUM('masculino', 'femenino')`,
     )
 
     await queryRunner.query(`

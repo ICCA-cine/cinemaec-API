@@ -10,7 +10,7 @@ export class CreateMovieProfessionalsTable1739000000010
     }
 
     await queryRunner.query(`
-      CREATE TYPE IF NOT EXISTS "professional_role_enum" AS ENUM (
+      CREATE TYPE IF NOT EXISTS "professional_role_enum" AS ENUM(
         'director',
         'productor',
         'guionista',

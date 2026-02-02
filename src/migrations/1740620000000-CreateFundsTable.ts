@@ -8,11 +8,11 @@ import {
 export class CreateFundsTable1740620000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-      CREATE TYPE fund_type_enum AS ENUM ('fondo', 'festival', 'premio', 'espacios_participacion');
+      CREATE TYPE fund_type_enum AS ENUM('fondo', 'festival', 'premio', 'espacios_participacion');
     `)
 
     await queryRunner.query(`
-      CREATE TYPE financial_origin_enum AS ENUM ('publico', 'privado', 'mixto', 'desconocido');
+      CREATE TYPE financial_origin_enum AS ENUM('publico', 'privado', 'mixto', 'desconocido');
     `)
 
     await queryRunner.createTable(

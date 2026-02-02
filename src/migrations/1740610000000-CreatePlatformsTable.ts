@@ -8,7 +8,7 @@ import {
 export class CreatePlatformsTable1740610000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-      CREATE TYPE platform_type_enum AS ENUM ('nacional', 'internacional');
+      CREATE TYPE platform_type_enum AS ENUM('nacional', 'internacional');
     `)
 
     await queryRunner.createTable(

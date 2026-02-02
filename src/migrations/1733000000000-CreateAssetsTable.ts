@@ -10,12 +10,12 @@ export class CreateAssetsTable1733000000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Crear enum para document_type
     await queryRunner.query(`
-      CREATE TYPE "asset_type_enum" AS ENUM ('image', 'video', 'document', 'logo', 'other')
+      CREATE TYPE "asset_type_enum" AS ENUM('image', 'video', 'document', 'logo', 'other')
     `)
 
     // Crear enum para owner_type
     await queryRunner.query(`
-      CREATE TYPE "asset_owner_enum" AS ENUM (
+      CREATE TYPE "asset_owner_enum" AS ENUM(
         'space_logo',
         'space_photo',
         'user_bc_photo',

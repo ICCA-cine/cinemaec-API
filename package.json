@@ -24,6 +24,8 @@
     "migration:revert": "npm run typeorm migration:revert -- -d src/data-source.ts",
     "migration:generate": "npm run typeorm migration:generate -- -d src/data-source.ts",
     "migration:create": "npm run typeorm migration:create",
+    "migration:validate": "bash scripts/validate-migrations.sh",
+    "migration:test": "bash scripts/test-migrations.sh",
     "docker:build": "docker build -t cinema-ec-backend:latest .",
     "docker:run": "docker run -p 3000:3000 --env-file .env.production cinema-ec-backend:latest",
     "deploy:cloud-run": "gcloud run deploy cinema-ec-backend --source . --platform managed --region us-east4 --allow-unauthenticated --set-env-vars=NODE_ENV=production",
