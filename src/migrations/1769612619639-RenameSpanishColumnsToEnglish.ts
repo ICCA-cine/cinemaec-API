@@ -9,65 +9,221 @@ export class RenameSpanishColumnsToEnglish1769612619639
     await queryRunner.query(
       `ALTER TABLE "exhibition_spaces" RENAME COLUMN "nombre" TO "name"`,
     )
-    await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN "sexo"`)
-    await queryRunner.query(`DROP TYPE "public"."professionals_sexo_enum"`)
-    await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN "nombres"`)
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN "apellidos"`,
-    )
-    await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN "cedula"`)
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN "telefono"`,
-    )
-    await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "tipo"`)
-    await queryRunner.query(`DROP TYPE "public"."platforms_tipo_enum"`)
-    await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "nombre"`)
-    await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN "tipo"`)
-    await queryRunner.query(`DROP TYPE "public"."funds_tipo_enum"`)
-    await queryRunner.query(
-      `ALTER TABLE "funds" DROP COLUMN "origenFinanciero"`,
-    )
-    await queryRunner.query(`DROP TYPE "public"."funds_origenfinanciero_enum"`)
-    await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN "nombre"`)
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD "firstName" character varying(100) NOT NULL`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD "lastName" character varying(100) NOT NULL`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD "idNumber" character varying(20)`,
-    )
-    await queryRunner.query(
-      `CREATE TYPE "public"."professionals_gender_enum" AS ENUM('masculino', 'femenino')`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD "gender" "public"."professionals_gender_enum" NOT NULL`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD "phone" character varying(20)`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "platforms" ADD "name" character varying(255) NOT NULL`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "platforms" ADD "type" "public"."platforms_type_enum" NOT NULL`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "funds" ADD "name" character varying(255) NOT NULL`,
-    )
-    await queryRunner.query(
-      `CREATE TYPE "public"."funds_type_enum" AS ENUM('fondo', 'festival', 'premio', 'espacios_participacion')`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "funds" ADD "type" "public"."funds_type_enum"[] NOT NULL`,
-    )
-    await queryRunner.query(
-      `CREATE TYPE "public"."funds_financialorigin_enum" AS ENUM('publico', 'privado', 'mixto', 'desconocido')`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "funds" ADD "financialOrigin" "public"."funds_financialorigin_enum" NOT NULL`,
-    )
+    
+    // Verificar si existe la columna sexo antes de eliminarla
+    const hasSexoColumn = await queryRunner.hasColumn('professionals', 'sexo')
+    if (hasSexoColumn) {
+      await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN "sexo"`)
+    }
+    
+    // Verificar si existe el tipo antes de eliminarlo
+    const sexoEnumExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_type 
+        WHERE typname = 'professionals_sexo_enum'
+        AND typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+      )
+    `)
+    if (sexoEnumExists[0].exists) {
+      await queryRunner.query(`DROP TYPE "public"."professionals_sexo_enum"`)
+    }
+    
+    const hasNombresColumn = await queryRunner.hasColumn('professionals', 'nombres')
+    if (hasNombresColumn) {
+      await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN "nombres"`)
+    }
+    
+    const hasApellidosColumn = await queryRunner.hasColumn('professionals', 'apellidos')
+    if (hasApellidosColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN "apellidos"`,
+      )
+    }
+    
+    const hasCedulaColumn = await queryRunner.hasColumn('professionals', 'cedula')
+    if (hasCedulaColumn) {
+      await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN "cedula"`)
+    }
+    
+    const hasTelefonoColumn = await queryRunner.hasColumn('professionals', 'telefono')
+    if (hasTelefonoColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN "telefono"`,
+      )
+    }
+    
+    // Platforms
+    const hasPlatformTipoColumn = await queryRunner.hasColumn('platforms', 'tipo')
+    if (hasPlatformTipoColumn) {
+      await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "tipo"`)
+    }
+    
+    const platformsTipoEnumExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_type 
+        WHERE typname = 'platforms_tipo_enum'
+        AND typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+      )
+    `)
+    if (platformsTipoEnumExists[0].exists) {
+      await queryRunner.query(`DROP TYPE "public"."platforms_tipo_enum"`)
+    }
+    
+    const hasPlatformNombreColumn = await queryRunner.hasColumn('platforms', 'nombre')
+    if (hasPlatformNombreColumn) {
+      await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "nombre"`)
+    }
+    
+    // Funds
+    const hasFundTipoColumn = await queryRunner.hasColumn('funds', 'tipo')
+    if (hasFundTipoColumn) {
+      await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN "tipo"`)
+    }
+    
+    const fundsTipoEnumExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_type 
+        WHERE typname = 'funds_tipo_enum'
+        AND typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+      )
+    `)
+    if (fundsTipoEnumExists[0].exists) {
+      await queryRunner.query(`DROP TYPE "public"."funds_tipo_enum"`)
+    }
+    
+    const hasFundOrigenColumn = await queryRunner.hasColumn('funds', 'origenFinanciero')
+    if (hasFundOrigenColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "funds" DROP COLUMN "origenFinanciero"`,
+      )
+    }
+    
+    const fundsOrigenEnumExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_type 
+        WHERE typname = 'funds_origenfinanciero_enum'
+        AND typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+      )
+    `)
+    if (fundsOrigenEnumExists[0].exists) {
+      await queryRunner.query(`DROP TYPE "public"."funds_origenfinanciero_enum"`)
+    }
+    
+    const hasFundNombreColumn = await queryRunner.hasColumn('funds', 'nombre')
+    if (hasFundNombreColumn) {
+      await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN "nombre"`)
+    }
+    
+    // Agregar nuevas columnas solo si no existen
+    const hasFirstNameColumn = await queryRunner.hasColumn('professionals', 'firstName')
+    if (!hasFirstNameColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD "firstName" character varying(100) NOT NULL`,
+      )
+    }
+    
+    const hasLastNameColumn = await queryRunner.hasColumn('professionals', 'lastName')
+    if (!hasLastNameColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD "lastName" character varying(100) NOT NULL`,
+      )
+    }
+    
+    const hasIdNumberColumn = await queryRunner.hasColumn('professionals', 'idNumber')
+    if (!hasIdNumberColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD "idNumber" character varying(20)`,
+      )
+    }
+    
+    // Crear enum para gender si no existe
+    const genderEnumExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_type 
+        WHERE typname = 'professionals_gender_enum'
+        AND typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+      )
+    `)
+    if (!genderEnumExists[0].exists) {
+      await queryRunner.query(
+        `CREATE TYPE "public"."professionals_gender_enum" AS ENUM('masculino', 'femenino')`,
+      )
+    }
+    
+    const hasGenderColumn = await queryRunner.hasColumn('professionals', 'gender')
+    if (!hasGenderColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD "gender" "public"."professionals_gender_enum" NOT NULL`,
+      )
+    }
+    
+    const hasPhoneColumn = await queryRunner.hasColumn('professionals', 'phone')
+    if (!hasPhoneColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD "phone" character varying(20)`,
+      )
+    }
+    
+    const hasPlatformNameColumn = await queryRunner.hasColumn('platforms', 'name')
+    if (!hasPlatformNameColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "platforms" ADD "name" character varying(255) NOT NULL`,
+      )
+    }
+    
+    const hasPlatformTypeColumn = await queryRunner.hasColumn('platforms', 'type')
+    if (!hasPlatformTypeColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "platforms" ADD "type" "public"."platforms_type_enum" NOT NULL`,
+      )
+    }
+    
+    const hasFundNameColumn = await queryRunner.hasColumn('funds', 'name')
+    if (!hasFundNameColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "funds" ADD "name" character varying(255) NOT NULL`,
+      )
+    }
+    
+    const fundsTypeEnumExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_type 
+        WHERE typname = 'funds_type_enum'
+        AND typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+      )
+    `)
+    if (!fundsTypeEnumExists[0].exists) {
+      await queryRunner.query(
+        `CREATE TYPE "public"."funds_type_enum" AS ENUM('fondo', 'festival', 'premio', 'espacios_participacion')`,
+      )
+    }
+    
+    const hasFundTypeColumn = await queryRunner.hasColumn('funds', 'type')
+    if (!hasFundTypeColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "funds" ADD "type" "public"."funds_type_enum"[] NOT NULL`,
+      )
+    }
+    
+    const fundsFinancialOriginEnumExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_type 
+        WHERE typname = 'funds_financialorigin_enum'
+        AND typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+      )
+    `)
+    if (!fundsFinancialOriginEnumExists[0].exists) {
+      await queryRunner.query(
+        `CREATE TYPE "public"."funds_financialorigin_enum" AS ENUM('publico', 'privado', 'mixto', 'desconocido')`,
+      )
+    }
+    
+    const hasFundFinancialOriginColumn = await queryRunner.hasColumn('funds', 'financialOrigin')
+    if (!hasFundFinancialOriginColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "funds" ADD "financialOrigin" "public"."funds_financialorigin_enum" NOT NULL`,
+      )
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
