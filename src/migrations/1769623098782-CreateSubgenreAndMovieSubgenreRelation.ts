@@ -143,9 +143,21 @@ export class CreateSubgenreAndMovieSubgenreRelation1769623098782
     await queryRunner.query(
       `DROP INDEX "public"."IDX_9bf4f1d3e78ce525a91b7b7edc"`,
     )
-    await queryRunner.query(
-      `CREATE TYPE IF NOT EXISTS "public"."movies_genres_enum" AS ENUM('animacion', 'antropologico', 'aventura', 'biografico', 'ciencia_ficcion', 'cine_guerrilla', 'comedia', 'deportivo', 'drama', 'etnografico', 'experimental', 'familiar', 'fantastico', 'genero', 'historico', 'infantil', 'medioambiente', 'musical', 'policial', 'religioso', 'resistencia', 'romance', 'suspenso', 'terror', 'thriller', 'vida_rural', 'western', 'otros')`,
-    )
+    
+    // Crear tipo ENUM solo si no existe
+    const typeExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_type 
+        WHERE typname = 'movies_genres_enum' 
+        AND typnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+      )
+    `)
+    
+    if (!typeExists[0].exists) {
+      await queryRunner.query(
+        `CREATE TYPE "public"."movies_genres_enum" AS ENUM('animacion', 'antropologico', 'aventura', 'biografico', 'ciencia_ficcion', 'cine_guerrilla', 'comedia', 'deportivo', 'drama', 'etnografico', 'experimental', 'familiar', 'fantastico', 'genero', 'historico', 'infantil', 'medioambiente', 'musical', 'policial', 'religioso', 'resistencia', 'romance', 'suspenso', 'terror', 'thriller', 'vida_rural', 'western', 'otros')`,
+      )
+    }
     
     // Verificar si la columna genres existe antes de agregarla
     const hasGenresColumn = await queryRunner.hasColumn('movies', 'genres')

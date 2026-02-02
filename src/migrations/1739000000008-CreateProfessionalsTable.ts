@@ -9,9 +9,18 @@ export class CreateProfessionalsTable1739000000008
       return
     }
 
-    await queryRunner.query(
-      `CREATE TYPE IF NOT EXISTS "gender_enum" AS ENUM('masculino', 'femenino')`,
-    )
+    // Crear tipo ENUM solo si no existe
+    const typeExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_type WHERE typname = 'gender_enum'
+      )
+    `)
+    
+    if (!typeExists[0].exists) {
+      await queryRunner.query(
+        `CREATE TYPE "gender_enum" AS ENUM('masculino', 'femenino')`,
+      )
+    }
 
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS "professionals" (

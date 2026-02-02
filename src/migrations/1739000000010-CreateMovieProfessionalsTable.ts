@@ -9,20 +9,29 @@ export class CreateMovieProfessionalsTable1739000000010
       return
     }
 
-    await queryRunner.query(`
-      CREATE TYPE IF NOT EXISTS "professional_role_enum" AS ENUM(
-        'director',
-        'productor',
-        'guionista',
-        'director_fotografia',
-        'editor',
-        'compositor',
-        'sonido',
-        'director_arte',
-        'actor',
-        'otro'
-      );
+    // Crear tipo ENUM solo si no existe
+    const typeExists = await queryRunner.query(`
+      SELECT EXISTS (
+        SELECT 1 FROM pg_type WHERE typname = 'professional_role_enum'
+      )
     `)
+    
+    if (!typeExists[0].exists) {
+      await queryRunner.query(`
+        CREATE TYPE "professional_role_enum" AS ENUM(
+          'director',
+          'productor',
+          'guionista',
+          'director_fotografia',
+          'editor',
+          'compositor',
+          'sonido',
+          'director_arte',
+          'actor',
+          'otro'
+        );
+      `)
+    }
 
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS "movie_professionals" (
