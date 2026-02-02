@@ -50,9 +50,7 @@ export class MoviesService {
     })
 
     if (!role) {
-      throw new NotFoundException(
-        `Cinematic role with name ${name} not found`,
-      )
+      throw new NotFoundException(`Cinematic role with name ${name} not found`)
     }
 
     return role.id
