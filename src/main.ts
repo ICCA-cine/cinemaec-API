@@ -17,31 +17,30 @@ async function bootstrap() {
 
   logger.log(`Starting application in ${nodeEnv} mode on port ${port}...`)
 
-  // Ejecutar migraciones pendientes (siempre) para asegurar esquema actualizado
-  try {
-    const dataSource = app.get(DataSource)
-    if (dataSource && !dataSource.isInitialized) {
-      logger.log('🔄 Initializing database connection...')
-      await dataSource.initialize()
-      logger.log('✅ Database connection established')
-    }
+  const runMigrations = async () => {
+    try {
+      const dataSource = app.get(DataSource)
+      if (dataSource && !dataSource.isInitialized) {
+        logger.log('🔄 Initializing database connection...')
+        await dataSource.initialize()
+        logger.log('✅ Database connection established')
+      }
 
-    if (dataSource && dataSource.isInitialized) {
-      logger.log('🔄 Running pending migrations...')
-      await dataSource.runMigrations()
-      logger.log('✅ Migrations executed successfully')
+      if (dataSource && dataSource.isInitialized) {
+        logger.log('🔄 Running pending migrations...')
+        await dataSource.runMigrations()
+        logger.log('✅ Migrations executed successfully')
+      }
+    } catch (error) {
+      logger.error('⚠️ Error during migrations:', error)
+      logger.error('Stack trace:', error.stack)
+
+      if (nodeEnv === 'production') {
+        logger.error('💥 Migrations failed in production (continuing startup)')
+      } else {
+        logger.warn('⚠️ Continuing in development mode despite migration error')
+      }
     }
-  } catch (error) {
-    logger.error('⚠️ Error during migrations:', error)
-    logger.error('Stack trace:', error.stack)
-    
-    // En producción, salir con error para evitar arrancar con esquema inconsistente
-    if (nodeEnv === 'production') {
-      logger.error('💥 Exiting due to migration failure in production')
-      process.exit(1)
-    }
-    // En desarrollo, continuar para permitir debugging
-    logger.warn('⚠️ Continuing in development mode despite migration error')
   }
 
   // Logging interceptor global
@@ -98,6 +97,12 @@ async function bootstrap() {
     `📚 Swagger documentation available at: http://0.0.0.0:${port}/api`,
   )
   logger.log('🎯 Application is ready to accept requests')
+
+  if (nodeEnv === 'production') {
+    void runMigrations()
+  } else {
+    await runMigrations()
+  }
 }
 
 void bootstrap()
