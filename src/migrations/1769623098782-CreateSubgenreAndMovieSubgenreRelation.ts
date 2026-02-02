@@ -147,7 +147,7 @@ export class CreateSubgenreAndMovieSubgenreRelation1769623098782
       `CREATE TYPE "public"."movies_genres_enum" AS ENUM('animacion', 'antropologico', 'aventura', 'biografico', 'ciencia_ficcion', 'cine_guerrilla', 'comedia', 'deportivo', 'drama', 'etnografico', 'experimental', 'familiar', 'fantastico', 'genero', 'historico', 'infantil', 'medioambiente', 'musical', 'policial', 'religioso', 'resistencia', 'romance', 'suspenso', 'terror', 'thriller', 'vida_rural', 'western', 'otros')`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies" ADD "genres" "public"."movies_genres_enum" array NOT NULL`,
+      `ALTER TABLE "movies" ADD "genres" "public"."movies_genres_enum"[] NOT NULL`,
     )
     await queryRunner.query(
       `DROP INDEX "public"."IDX_e0c3a62facdefc5914a962556c"`,

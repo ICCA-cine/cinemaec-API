@@ -60,7 +60,7 @@ export class RenameSpanishColumnsToEnglish1769612619639
       `CREATE TYPE "public"."funds_type_enum" AS ENUM('fondo', 'festival', 'premio', 'espacios_participacion')`,
     )
     await queryRunner.query(
-      `ALTER TABLE "funds" ADD "type" "public"."funds_type_enum" array NOT NULL`,
+      `ALTER TABLE "funds" ADD "type" "public"."funds_type_enum"[] NOT NULL`,
     )
     await queryRunner.query(
       `CREATE TYPE "public"."funds_financialorigin_enum" AS ENUM('publico', 'privado', 'mixto', 'desconocido')`,
@@ -103,7 +103,7 @@ export class RenameSpanishColumnsToEnglish1769612619639
       `CREATE TYPE "public"."funds_tipo_enum" AS ENUM('espacios_participacion', 'festival', 'fondo', 'premio')`,
     )
     await queryRunner.query(
-      `ALTER TABLE "funds" ADD "tipo" "public"."funds_tipo_enum" array NOT NULL`,
+      `ALTER TABLE "funds" ADD "tipo" "public"."funds_tipo_enum"[] NOT NULL`,
     )
     await queryRunner.query(
       `ALTER TABLE "platforms" ADD "nombre" character varying(255) NOT NULL`,

@@ -10,7 +10,7 @@ export class UpdatePlatformsEntity1769613408179 implements MigrationInterface {
     await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "type"`)
     await queryRunner.query(`DROP TYPE "public"."platforms_type_enum"`)
     await queryRunner.query(
-      `ALTER TABLE "platforms" ADD "type" text array NOT NULL`,
+      `ALTER TABLE "platforms" ADD "type" text[] NOT NULL`,
     )
   }
 
