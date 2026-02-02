@@ -144,11 +144,16 @@ export class CreateSubgenreAndMovieSubgenreRelation1769623098782
       `DROP INDEX "public"."IDX_9bf4f1d3e78ce525a91b7b7edc"`,
     )
     await queryRunner.query(
-      `CREATE TYPE "public"."movies_genres_enum" AS ENUM('animacion', 'antropologico', 'aventura', 'biografico', 'ciencia_ficcion', 'cine_guerrilla', 'comedia', 'deportivo', 'drama', 'etnografico', 'experimental', 'familiar', 'fantastico', 'genero', 'historico', 'infantil', 'medioambiente', 'musical', 'policial', 'religioso', 'resistencia', 'romance', 'suspenso', 'terror', 'thriller', 'vida_rural', 'western', 'otros')`,
+      `CREATE TYPE IF NOT EXISTS "public"."movies_genres_enum" AS ENUM('animacion', 'antropologico', 'aventura', 'biografico', 'ciencia_ficcion', 'cine_guerrilla', 'comedia', 'deportivo', 'drama', 'etnografico', 'experimental', 'familiar', 'fantastico', 'genero', 'historico', 'infantil', 'medioambiente', 'musical', 'policial', 'religioso', 'resistencia', 'romance', 'suspenso', 'terror', 'thriller', 'vida_rural', 'western', 'otros')`,
     )
-    await queryRunner.query(
-      `ALTER TABLE "movies" ADD "genres" "public"."movies_genres_enum"[] NOT NULL`,
-    )
+    
+    // Verificar si la columna genres existe antes de agregarla
+    const hasGenresColumn = await queryRunner.hasColumn('movies', 'genres')
+    if (!hasGenresColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "movies" ADD "genres" "public"."movies_genres_enum"[] NOT NULL`,
+      )
+    }
     await queryRunner.query(
       `DROP INDEX "public"."IDX_e0c3a62facdefc5914a962556c"`,
     )

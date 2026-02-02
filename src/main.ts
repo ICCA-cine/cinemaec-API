@@ -33,8 +33,15 @@ async function bootstrap() {
     }
   } catch (error) {
     logger.error('⚠️ Error during migrations:', error)
-    // Continuar sin lanzar error para permitir startup
-    // pero loguear el error para debugging
+    logger.error('Stack trace:', error.stack)
+    
+    // En producción, salir con error para evitar arrancar con esquema inconsistente
+    if (nodeEnv === 'production') {
+      logger.error('💥 Exiting due to migration failure in production')
+      process.exit(1)
+    }
+    // En desarrollo, continuar para permitir debugging
+    logger.warn('⚠️ Continuing in development mode despite migration error')
   }
 
   // Logging interceptor global
