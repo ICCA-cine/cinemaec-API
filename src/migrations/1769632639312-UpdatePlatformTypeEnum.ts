@@ -4,10 +4,19 @@ export class UpdatePlatformTypeEnum1769632639312 implements MigrationInterface {
   name = 'UpdatePlatformTypeEnum1769632639312'
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "type"`)
-    await queryRunner.query(
-      `ALTER TABLE "platforms" ADD "type" character varying NOT NULL`,
-    )
+    const hasTypeColumn = await queryRunner.hasColumn('platforms', 'type')
+    if (hasTypeColumn) {
+      await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "type"`)
+    }
+    
+    const hasTypeColumnAfter = await queryRunner.hasColumn('platforms', 'type')
+    if (!hasTypeColumnAfter) {
+      await queryRunner.query(
+        `ALTER TABLE "platforms" ADD "type" character varying NOT NULL`,
+      )
+    }
+    
+    // Permitir que updatedAt sea nullable
     await queryRunner.query(
       `ALTER TABLE "platforms" ALTER COLUMN "updatedAt" DROP NOT NULL`,
     )

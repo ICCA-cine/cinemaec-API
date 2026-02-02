@@ -6,25 +6,40 @@ export class CreateMovieFrameAssetsRelation1769623970293
   name = 'CreateMovieFrameAssetsRelation1769623970293'
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "movies" DROP CONSTRAINT "FK_e5fd602bd941753e6f8fa89d9ee"`,
-    )
-    await queryRunner.query(
-      `CREATE TABLE "movies_frame_assets" ("movieId" integer NOT NULL, "assetId" integer NOT NULL, CONSTRAINT "PK_e1e0302a6446c1ba508f82aae8b" PRIMARY KEY ("movieId", "assetId"))`,
-    )
-    await queryRunner.query(
-      `CREATE INDEX "IDX_662900148a35259fdc5afa1c72" ON "movies_frame_assets" ("movieId") `,
-    )
-    await queryRunner.query(
-      `CREATE INDEX "IDX_14801dce254e9eb93945b62563" ON "movies_frame_assets" ("assetId") `,
-    )
-    await queryRunner.query(`ALTER TABLE "movies" DROP COLUMN "frameAssetId"`)
-    await queryRunner.query(
-      `ALTER TABLE "movies_frame_assets" ADD CONSTRAINT "FK_662900148a35259fdc5afa1c728" FOREIGN KEY ("movieId") REFERENCES "movies"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "movies_frame_assets" ADD CONSTRAINT "FK_14801dce254e9eb93945b625635" FOREIGN KEY ("assetId") REFERENCES "assets"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
-    )
+    const hasFrameAssetId = await queryRunner.hasColumn('movies', 'frameAssetId')
+    if (hasFrameAssetId) {
+      // Primero eliminar la constraint
+      try {
+        await queryRunner.query(
+          `ALTER TABLE "movies" DROP CONSTRAINT "FK_e5fd602bd941753e6f8fa89d9ee"`,
+        )
+      } catch (e) {
+        // La constraint puede no existir
+      }
+      
+      await queryRunner.query(`ALTER TABLE "movies" DROP COLUMN "frameAssetId"`)
+    }
+    
+    const hasTable = await queryRunner.hasTable('movies_frame_assets')
+    if (!hasTable) {
+      await queryRunner.query(
+        `CREATE TABLE "movies_frame_assets" ("movieId" integer NOT NULL, "assetId" integer NOT NULL, CONSTRAINT "PK_e1e0302a6446c1ba508f82aae8b" PRIMARY KEY ("movieId", "assetId"))`,
+      )
+      
+      await queryRunner.query(
+        `CREATE INDEX "IDX_662900148a35259fdc5afa1c72" ON "movies_frame_assets" ("movieId") `,
+      )
+      await queryRunner.query(
+        `CREATE INDEX "IDX_14801dce254e9eb93945b62563" ON "movies_frame_assets" ("assetId") `,
+      )
+      
+      await queryRunner.query(
+        `ALTER TABLE "movies_frame_assets" ADD CONSTRAINT "FK_662900148a35259fdc5afa1c728" FOREIGN KEY ("movieId") REFERENCES "movies"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "movies_frame_assets" ADD CONSTRAINT "FK_14801dce254e9eb93945b625635" FOREIGN KEY ("assetId") REFERENCES "assets"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
+      )
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
