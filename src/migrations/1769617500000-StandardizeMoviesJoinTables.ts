@@ -7,28 +7,77 @@ export class StandardizeMoviesJoinTables1769617500000
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     // 1. movies_provinces: rename to camelCase (snake_case → camelCase)
-    await queryRunner.query(
-      `ALTER TABLE "movies_provinces" RENAME COLUMN "movie_id" TO "movieId"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "movies_provinces" RENAME COLUMN "province_id" TO "provinceId"`,
-    )
+    const hasMovieIdSnake_provinces = await queryRunner.hasColumn('movies_provinces', 'movie_id')
+    if (hasMovieIdSnake_provinces) {
+      await queryRunner.query(
+        `ALTER TABLE "movies_provinces" RENAME COLUMN "movie_id" TO "movieId"`,
+      )
+    }
 
-    // 2. movies_cities: standardize naming (plural → singular)
-    await queryRunner.query(
-      `ALTER TABLE "movies_cities" RENAME COLUMN "moviesId" TO "movieId"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "movies_cities" RENAME COLUMN "citiesId" TO "cityId"`,
-    )
+    const hasProvinceIdSnake = await queryRunner.hasColumn('movies_provinces', 'province_id')
+    if (hasProvinceIdSnake) {
+      await queryRunner.query(
+        `ALTER TABLE "movies_provinces" RENAME COLUMN "province_id" TO "provinceId"`,
+      )
+    }
 
-    // 3. movies_languages: standardize naming (plural → singular)
-    await queryRunner.query(
-      `ALTER TABLE "movies_languages" RENAME COLUMN "moviesId" TO "movieId"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "movies_languages" RENAME COLUMN "languagesId" TO "languageId"`,
-    )
+    // 2. movies_cities: standardize naming (plural → singular or snake_case)
+    const hasMoviesIdCities = await queryRunner.hasColumn('movies_cities', 'moviesId')
+    if (hasMoviesIdCities) {
+      await queryRunner.query(
+        `ALTER TABLE "movies_cities" RENAME COLUMN "moviesId" TO "movieId"`,
+      )
+    } else {
+      const hasMovieIdSnake_cities = await queryRunner.hasColumn('movies_cities', 'movie_id')
+      if (hasMovieIdSnake_cities) {
+        await queryRunner.query(
+          `ALTER TABLE "movies_cities" RENAME COLUMN "movie_id" TO "movieId"`,
+        )
+      }
+    }
+
+    const hasCitiesId = await queryRunner.hasColumn('movies_cities', 'citiesId')
+    if (hasCitiesId) {
+      await queryRunner.query(
+        `ALTER TABLE "movies_cities" RENAME COLUMN "citiesId" TO "cityId"`,
+      )
+    } else {
+      const hasCityIdSnake = await queryRunner.hasColumn('movies_cities', 'city_id')
+      if (hasCityIdSnake) {
+        await queryRunner.query(
+          `ALTER TABLE "movies_cities" RENAME COLUMN "city_id" TO "cityId"`,
+        )
+      }
+    }
+
+    // 3. movies_languages: standardize naming (plural → singular or snake_case)
+    const hasMoviesIdLangs = await queryRunner.hasColumn('movies_languages', 'moviesId')
+    if (hasMoviesIdLangs) {
+      await queryRunner.query(
+        `ALTER TABLE "movies_languages" RENAME COLUMN "moviesId" TO "movieId"`,
+      )
+    } else {
+      const hasMovieIdSnake_langs = await queryRunner.hasColumn('movies_languages', 'movie_id')
+      if (hasMovieIdSnake_langs) {
+        await queryRunner.query(
+          `ALTER TABLE "movies_languages" RENAME COLUMN "movie_id" TO "movieId"`,
+        )
+      }
+    }
+
+    const hasLanguagesId = await queryRunner.hasColumn('movies_languages', 'languagesId')
+    if (hasLanguagesId) {
+      await queryRunner.query(
+        `ALTER TABLE "movies_languages" RENAME COLUMN "languagesId" TO "languageId"`,
+      )
+    } else {
+      const hasLanguageIdSnake = await queryRunner.hasColumn('movies_languages', 'language_id')
+      if (hasLanguageIdSnake) {
+        await queryRunner.query(
+          `ALTER TABLE "movies_languages" RENAME COLUMN "language_id" TO "languageId"`,
+        )
+      }
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
