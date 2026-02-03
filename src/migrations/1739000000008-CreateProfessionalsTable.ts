@@ -50,9 +50,9 @@ export class CreateProfessionalsTable1739000000008
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP INDEX "idx_professionals_apellidos"`)
-    await queryRunner.query(`DROP INDEX "idx_professionals_email"`)
-    await queryRunner.query(`DROP INDEX "idx_professionals_cedula"`)
+    await queryRunner.query(`DROP INDEX IF EXISTS "idx_professionals_apellidos"`)
+    await queryRunner.query(`DROP INDEX IF EXISTS "idx_professionals_email"`)
+    await queryRunner.query(`DROP INDEX IF EXISTS "idx_professionals_cedula"`)
     await queryRunner.query(`DROP TABLE IF EXISTS "professionals"`)
     await queryRunner.query(`DROP TYPE "gender_enum"`)
   }

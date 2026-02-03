@@ -37,9 +37,9 @@ export class CreateCompaniesTable1739000000009 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP INDEX "idx_companies_nombre_comercial"`)
-    await queryRunner.query(`DROP INDEX "idx_companies_country"`)
-    await queryRunner.query(`DROP INDEX "idx_companies_ruc"`)
+    await queryRunner.query(`DROP INDEX IF EXISTS "idx_companies_nombre_comercial"`)
+    await queryRunner.query(`DROP INDEX IF EXISTS "idx_companies_country"`)
+    await queryRunner.query(`DROP INDEX IF EXISTS "idx_companies_ruc"`)
     await queryRunner.query(`DROP TABLE IF EXISTS "companies"`)
   }
 }

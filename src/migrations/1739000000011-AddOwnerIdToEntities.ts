@@ -47,15 +47,15 @@ export class AddOwnerIdToEntities1739000000011 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Remove from movies
-    await queryRunner.query(`DROP INDEX "idx_movies_owner"`)
+    await queryRunner.query(`DROP INDEX IF EXISTS "idx_movies_owner"`)
     await queryRunner.query(`ALTER TABLE "movies" DROP COLUMN "owner_id"`)
 
     // Remove from companies
-    await queryRunner.query(`DROP INDEX "idx_companies_owner"`)
+    await queryRunner.query(`DROP INDEX IF EXISTS "idx_companies_owner"`)
     await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN "owner_id"`)
 
     // Remove from professionals
-    await queryRunner.query(`DROP INDEX "idx_professionals_owner"`)
+    await queryRunner.query(`DROP INDEX IF EXISTS "idx_professionals_owner"`)
     await queryRunner.query(
       `ALTER TABLE "professionals" DROP COLUMN "owner_id"`,
     )

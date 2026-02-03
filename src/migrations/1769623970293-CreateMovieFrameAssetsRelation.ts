@@ -51,10 +51,10 @@ export class CreateMovieFrameAssetsRelation1769623970293
     )
     await queryRunner.query(`ALTER TABLE "movies" ADD "frameAssetId" integer`)
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_14801dce254e9eb93945b62563"`,
+      `DROP INDEX IF EXISTS "public"."IDX_14801dce254e9eb93945b62563"`,
     )
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_662900148a35259fdc5afa1c72"`,
+      `DROP INDEX IF EXISTS "public"."IDX_662900148a35259fdc5afa1c72"`,
     )
     await queryRunner.query(`DROP TABLE IF EXISTS "movies_frame_assets"`)
     await queryRunner.query(

@@ -25,22 +25,22 @@ export class CreateSubgenreAndMovieSubgenreRelation1769623098782
       `ALTER TABLE "movies_cities" DROP CONSTRAINT IF EXISTS "FK_955404a5353c436e397f3131d32"`,
     )
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_006d624c816ba35bd454e24242"`,
+      `DROP INDEX IF EXISTS "public"."IDX_006d624c816ba35bd454e24242"`,
     )
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_5a9997ed49cb1786c58a8a1c16"`,
+      `DROP INDEX IF EXISTS "public"."IDX_5a9997ed49cb1786c58a8a1c16"`,
     )
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_2b3aa1267e6a7fbde92b0c5d6f"`,
+      `DROP INDEX IF EXISTS "public"."IDX_2b3aa1267e6a7fbde92b0c5d6f"`,
     )
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_463bc547129a23f8ca3d3aae2d"`,
+      `DROP INDEX IF EXISTS "public"."IDX_463bc547129a23f8ca3d3aae2d"`,
     )
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_955404a5353c436e397f3131d3"`,
+      `DROP INDEX IF EXISTS "public"."IDX_955404a5353c436e397f3131d3"`,
     )
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_d89a5330076eff19a3cb6a1a3a"`,
+      `DROP INDEX IF EXISTS "public"."IDX_d89a5330076eff19a3cb6a1a3a"`,
     )
     await queryRunner.query(
       `CREATE TABLE "subgenres" ("id" SERIAL NOT NULL, "name" character varying(100) NOT NULL, CONSTRAINT "UQ_02590b4c5075f9a45dcbee95deb" UNIQUE ("name"), CONSTRAINT "PK_5532e81efee4754bdf3eaefcc2a" PRIMARY KEY ("id"))`,
@@ -126,22 +126,22 @@ export class CreateSubgenreAndMovieSubgenreRelation1769623098782
       `ALTER TABLE "movies_subgenres" DROP CONSTRAINT IF EXISTS "FK_a6bca6be1b1c64184b9aa419bf0"`,
     )
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_f2ac93cdeec95afae4b7a4713c"`,
+      `DROP INDEX IF EXISTS "public"."IDX_f2ac93cdeec95afae4b7a4713c"`,
     )
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_213a2c1dec9b314426a1750e0b"`,
+      `DROP INDEX IF EXISTS "public"."IDX_213a2c1dec9b314426a1750e0b"`,
     )
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_13ffc7aeaa64e35064e7015d82"`,
+      `DROP INDEX IF EXISTS "public"."IDX_13ffc7aeaa64e35064e7015d82"`,
     )
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_c35f1969374cdc0b4ad86be187"`,
+      `DROP INDEX IF EXISTS "public"."IDX_c35f1969374cdc0b4ad86be187"`,
     )
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_eb6e8b786285e7585501324756"`,
+      `DROP INDEX IF EXISTS "public"."IDX_eb6e8b786285e7585501324756"`,
     )
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_9bf4f1d3e78ce525a91b7b7edc"`,
+      `DROP INDEX IF EXISTS "public"."IDX_9bf4f1d3e78ce525a91b7b7edc"`,
     )
     
     // Crear tipo ENUM solo si no existe
@@ -167,10 +167,10 @@ export class CreateSubgenreAndMovieSubgenreRelation1769623098782
       )
     }
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_e0c3a62facdefc5914a962556c"`,
+      `DROP INDEX IF EXISTS "public"."IDX_e0c3a62facdefc5914a962556c"`,
     )
     await queryRunner.query(
-      `DROP INDEX "public"."IDX_a6bca6be1b1c64184b9aa419bf"`,
+      `DROP INDEX IF EXISTS "public"."IDX_a6bca6be1b1c64184b9aa419bf"`,
     )
     await queryRunner.query(`DROP TABLE IF EXISTS "movies_subgenres"`)
     await queryRunner.query(`DROP TABLE IF EXISTS "subgenres"`)
