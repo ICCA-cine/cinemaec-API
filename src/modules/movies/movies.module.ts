@@ -8,6 +8,7 @@ import { Language } from '../catalog/entities/language.entity'
 import { Country } from '../catalog/entities/country.entity'
 import { Province } from '../catalog/entities/province.entity'
 import { City } from '../catalog/entities/city.entity'
+import { CinematicRole } from '../catalog/entities/cinematic-role.entity'
 import { CatalogModule } from '../catalog/catalog.module'
 import { ProfessionalsModule } from '../professionals/professionals.module'
 
@@ -22,6 +23,7 @@ import { ProfessionalsModule } from '../professionals/professionals.module'
       Country,
       Province,
       City,
+      CinematicRole,
     ]),
   ],
   controllers: [MoviesController],

@@ -14,6 +14,9 @@ import { ExhibitionSpacesModule } from './modules/exhibition-spaces/exhibition-s
 import { PlatformsModule } from './modules/platforms/platforms.module'
 import { FundsModule } from './modules/funds/funds.module'
 import { FirebaseModule } from './common/firebase/firebase.module'
+import { MoviesModule } from './modules/movies/movies.module'
+import { ProfessionalsModule } from './modules/professionals/professionals.module'
+import { CompaniesModule } from './modules/companies/companies.module'
 import { getDatabaseConfig } from './config/database.config'
 
 import envConfig from './config/env.config'
@@ -42,6 +45,9 @@ import envConfig from './config/env.config'
     ExhibitionSpacesModule,
     PlatformsModule,
     FundsModule,
+    MoviesModule,
+    ProfessionalsModule,
+    CompaniesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
