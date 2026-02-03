@@ -35,9 +35,5 @@ ENV NODE_ENV=production
 # Exponer puerto 8080 (requerido por Cloud Run)
 EXPOSE 8080
 
-# Health check con timeout extendido para permitir migraciones
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:8080/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})" || exit 1
-
-# Comando de inicio
+# Comando de inicio - Cloud Run maneja health checks con startup probe
 CMD ["node", "dist/main"]

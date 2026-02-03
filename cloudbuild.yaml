@@ -2,51 +2,41 @@ steps:
   # Step 1: Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args:
-      [
-        'build',
-        '-t',
-        'us-east4-docker.pkg.dev/$PROJECT_ID/cinema-ec/backend:latest',
-        '.',
-      ]
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/docker-repo/api-cinemaec:$COMMIT_SHA'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/docker-repo/api-cinemaec:latest'
+      - '.'
     id: 'build'
 
-  # Step 2: Push to Container Registry
+  # Step 2: Push images to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
-      ['push', 'us-east4-docker.pkg.dev/$PROJECT_ID/cinema-ec/backend:latest']
+      - 'push'
+      - '--all-tags'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/docker-repo/api-cinemaec'
     id: 'push'
     waitFor: ['build']
 
-  # Step 3: Deploy to Cloud Run
-  - name: 'gcr.io/cloud-builders/gke-deploy'
+  # Step 3: Deploy to Cloud Run using cloud-run.yaml configuration
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
     args:
-      - run
-      - --filename=.
-      - --image=us-east4-docker.pkg.dev/$PROJECT_ID/cinema-ec/backend:latest
-      - --location=us-east4
-      - --cluster=cinema-ec
-    env:
-      - 'CLOUDSDK_COMPUTE_REGION=us-east4'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=cinema-ec'
-
-  # Step 4: Run migrations
-  - name: 'gcr.io/cloud-builders/kubectl'
-    args:
-      [
-        'exec',
-        '-it',
-        'cinema-ec-backend-pod',
-        '--',
-        'npm',
-        'run',
-        'migration:run',
-      ]
-    env:
-      - 'CLOUDSDK_COMPUTE_REGION=us-east4'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=cinema-ec'
+      - 'run'
+      - 'services'
+      - 'replace'
+      - 'cloud-run.yaml'
+      - '--region=us-central1'
+    id: 'deploy'
+    waitFor: ['push']
 
 images:
-  - 'us-east4-docker.pkg.dev/$PROJECT_ID/cinema-ec/backend:latest'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/docker-repo/api-cinemaec:$COMMIT_SHA'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/docker-repo/api-cinemaec:latest'
+
+options:
+  machineType: 'N1_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
 
 timeout: '1800s'
-machineType: 'N1_HIGHCPU_8'
