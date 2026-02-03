@@ -9,10 +9,14 @@ import { DataSource } from 'typeorm'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   const config = app.get(ConfigService)
-  // En Cloud Run, PORT es reservado. Usar 8080 en producción, 3000 en desarrollo
   const nodeEnv = config.get<string>('NODE_ENV') || 'development'
+  
+  // Respetar APP_PORT > PORT > default (8080 en prod, 3000 en dev)
   const port =
-    nodeEnv === 'production' ? 8080 : config.get<number>('PORT') || 3000
+    config.get<number>('APP_PORT') ||
+    config.get<number>('PORT') ||
+    (nodeEnv === 'production' ? 8080 : 3000)
+  
   const logger = new Logger('Bootstrap')
 
   logger.log(`Starting application in ${nodeEnv} mode on port ${port}...`)
@@ -89,19 +93,29 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig)
   SwaggerModule.setup('api', app, document)
 
-  await app.listen(port, '0.0.0.0')
-  logger.log(
-    `✅ Application is running in ${nodeEnv} mode on: http://0.0.0.0:${port}`,
-  )
-  logger.log(
-    `📚 Swagger documentation available at: http://0.0.0.0:${port}/api`,
-  )
-  logger.log('🎯 Application is ready to accept requests')
-
+  // En producción: iniciar servidor PRIMERO, luego ejecutar migraciones en background
+  // En desarrollo: ejecutar migraciones antes de iniciar servidor
   if (nodeEnv === 'production') {
+    await app.listen(port, '0.0.0.0')
+    logger.log(
+      `✅ Application is running in ${nodeEnv} mode on: http://0.0.0.0:${port}`,
+    )
+    logger.log(
+      `📚 Swagger documentation available at: http://0.0.0.0:${port}/api`,
+    )
+    logger.log('🎯 Application is ready to accept requests')
+    logger.log('🔄 Starting migrations in background...')
     void runMigrations()
   } else {
     await runMigrations()
+    await app.listen(port, '0.0.0.0')
+    logger.log(
+      `✅ Application is running in ${nodeEnv} mode on: http://0.0.0.0:${port}`,
+    )
+    logger.log(
+      `📚 Swagger documentation available at: http://0.0.0.0:${port}/api`,
+    )
+    logger.log('🎯 Application is ready to accept requests')
   }
 }
 

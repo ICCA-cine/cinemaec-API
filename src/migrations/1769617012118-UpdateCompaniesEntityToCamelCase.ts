@@ -6,17 +6,13 @@ export class UpdateCompaniesEntityToCamelCase1769617012118
   name = 'UpdateCompaniesEntityToCamelCase1769617012118'
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const oldFkExists = await queryRunner.query(`
-      SELECT EXISTS (
-        SELECT 1 FROM information_schema.table_constraints
-        WHERE constraint_name = 'FK_c0b822f1f2592917b52bd7368ba'
-        AND table_name = 'companies'
-      )
-    `)
-    if (oldFkExists[0].exists) {
+    // Drop old FK constraint if it exists (safe operation with try-catch)
+    try {
       await queryRunner.query(
-        `ALTER TABLE "companies" DROP CONSTRAINT "FK_c0b822f1f2592917b52bd7368ba"`,
+        `ALTER TABLE "companies" DROP CONSTRAINT IF EXISTS "FK_c0b822f1f2592917b52bd7368ba"`,
       )
+    } catch (error) {
+      // Constraint might not exist, continue
     }
 
     const hasCountryIdOld = await queryRunner.hasColumn('companies', 'country_id')
@@ -106,17 +102,13 @@ export class UpdateCompaniesEntityToCamelCase1769617012118
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    const newFkExists = await queryRunner.query(`
-      SELECT EXISTS (
-        SELECT 1 FROM information_schema.table_constraints
-        WHERE constraint_name = 'FK_e6a07e7c93441cb849803deb3d2'
-        AND table_name = 'companies'
-      )
-    `)
-    if (newFkExists[0].exists) {
+    // Drop new FK constraint if it exists
+    try {
       await queryRunner.query(
-        `ALTER TABLE "companies" DROP CONSTRAINT "FK_e6a07e7c93441cb849803deb3d2"`,
+        `ALTER TABLE "companies" DROP CONSTRAINT IF EXISTS "FK_e6a07e7c93441cb849803deb3d2"`,
       )
+    } catch (error) {
+      // Constraint might not exist, continue
     }
 
     const hasUpdatedAt = await queryRunner.hasColumn('companies', 'updatedAt')
@@ -199,9 +191,13 @@ export class UpdateCompaniesEntityToCamelCase1769617012118
       )
     `)
     if (!oldFkExists[0].exists) {
-      await queryRunner.query(
-        `ALTER TABLE "companies" ADD CONSTRAINT "FK_c0b822f1f2592917b52bd7368ba" FOREIGN KEY ("country_id") REFERENCES "countries"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-      )
+      try {
+        await queryRunner.query(
+          `ALTER TABLE "companies" ADD CONSTRAINT "FK_c0b822f1f2592917b52bd7368ba" FOREIGN KEY ("country_id") REFERENCES "countries"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+        )
+      } catch (error) {
+        // Constraint might already exist, continue
+      }
     }
   }
 }
