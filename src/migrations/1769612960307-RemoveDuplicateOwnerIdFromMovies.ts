@@ -8,7 +8,7 @@ export class RemoveDuplicateOwnerIdFromMovies1769612960307
   public async up(queryRunner: QueryRunner): Promise<void> {
     const hasOwnerIdColumn = await queryRunner.hasColumn('movies', 'owner_id')
     if (hasOwnerIdColumn) {
-      await queryRunner.query(`ALTER TABLE "movies" DROP COLUMN "owner_id"`)
+      await queryRunner.query(`ALTER TABLE "movies" DROP COLUMN IF EXISTS "owner_id"`)
     }
   }
 

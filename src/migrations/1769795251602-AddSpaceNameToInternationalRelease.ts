@@ -13,7 +13,7 @@ export class AddSpaceNameToInternationalRelease1769795251602
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movie_international_releases" DROP COLUMN "spaceName"`,
+      `ALTER TABLE "movie_international_releases" DROP COLUMN IF EXISTS "spaceName"`,
     )
   }
 }

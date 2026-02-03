@@ -30,7 +30,7 @@ export class UpdateContentBankCountryToArray1769794796470
     )
     if (hasNewColumn) {
       await queryRunner.query(
-        `ALTER TABLE "movie_content_bank" DROP COLUMN "geolocationRestrictionCountryIds"`,
+        `ALTER TABLE "movie_content_bank" DROP COLUMN IF EXISTS "geolocationRestrictionCountryIds"`,
       )
     }
 
@@ -47,7 +47,7 @@ export class UpdateContentBankCountryToArray1769794796470
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movie_content_bank" DROP COLUMN "geolocationRestrictionCountryIds"`,
+      `ALTER TABLE "movie_content_bank" DROP COLUMN IF EXISTS "geolocationRestrictionCountryIds"`,
     )
     await queryRunner.query(
       `ALTER TABLE "movie_content_bank" ADD "geolocationRestrictionCountryIds" integer`,

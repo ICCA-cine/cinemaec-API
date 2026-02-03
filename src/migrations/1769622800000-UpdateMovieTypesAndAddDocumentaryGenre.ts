@@ -59,7 +59,7 @@ export class UpdateMovieTypesAndAddDocumentaryGenre1769622800000
 
     // Eliminar columna documentaryGenre
     await queryRunner.query(
-      `ALTER TABLE "movies" DROP COLUMN "documentaryGenre"`,
+      `ALTER TABLE "movies" DROP COLUMN IF EXISTS "documentaryGenre"`,
     )
 
     // Eliminar enum documentaryGenre

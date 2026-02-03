@@ -54,7 +54,7 @@ export class CreateSubgenreAndMovieSubgenreRelation1769623098782
     await queryRunner.query(
       `CREATE INDEX "IDX_e0c3a62facdefc5914a962556c" ON "movies_subgenres" ("subgenreId") `,
     )
-    await queryRunner.query(`ALTER TABLE "movies" DROP COLUMN "genres"`)
+    await queryRunner.query(`ALTER TABLE "movies" DROP COLUMN IF EXISTS "genres"`)
     await queryRunner.query(`DROP TYPE IF EXISTS "public"."movies_genres_enum"`)
     await queryRunner.query(
       `CREATE INDEX "IDX_9bf4f1d3e78ce525a91b7b7edc" ON "movies_languages" ("movieId") `,

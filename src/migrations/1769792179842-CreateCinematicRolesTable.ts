@@ -41,7 +41,7 @@ export class CreateCinematicRolesTable1769792179842
         `)
 
     await queryRunner.query(
-      `ALTER TABLE "movie_professionals" DROP COLUMN "cinematicRoleId"`,
+      `ALTER TABLE "movie_professionals" DROP COLUMN IF EXISTS "cinematicRoleId"`,
     )
     await queryRunner.query(
       `ALTER TABLE "movie_professionals" ADD "cinematicRoleId" integer NOT NULL`,
@@ -56,7 +56,7 @@ export class CreateCinematicRolesTable1769792179842
       `ALTER TABLE "movie_professionals" DROP CONSTRAINT IF EXISTS "FK_3d0e0038796b1f7d751d74b42a3"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_professionals" DROP COLUMN "cinematicRoleId"`,
+      `ALTER TABLE "movie_professionals" DROP COLUMN IF EXISTS "cinematicRoleId"`,
     )
     await queryRunner.query(
       `ALTER TABLE "movie_professionals" ADD "cinematicRoleId" "public"."movie_professionals_cinematicroleid_enum" NOT NULL`,

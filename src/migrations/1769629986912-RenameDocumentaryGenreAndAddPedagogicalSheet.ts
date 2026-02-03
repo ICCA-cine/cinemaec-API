@@ -9,7 +9,7 @@ export class RenameDocumentaryGenreAndAddPedagogicalSheet1769629986912
     const hasDocumentaryGenreColumn = await queryRunner.hasColumn('movies', 'documentaryGenre')
     if (hasDocumentaryGenreColumn) {
       await queryRunner.query(
-        `ALTER TABLE "movies" DROP COLUMN "documentaryGenre"`,
+        `ALTER TABLE "movies" DROP COLUMN IF EXISTS "documentaryGenre"`,
       )
     }
     
@@ -60,9 +60,9 @@ export class RenameDocumentaryGenreAndAddPedagogicalSheet1769629986912
       `ALTER TABLE "movies" DROP CONSTRAINT IF EXISTS "FK_1a7c6b261d64b248c41174859fc"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies" DROP COLUMN "pedagogicalSheetAssetId"`,
+      `ALTER TABLE "movies" DROP COLUMN IF EXISTS "pedagogicalSheetAssetId"`,
     )
-    await queryRunner.query(`ALTER TABLE "movies" DROP COLUMN "genre"`)
+    await queryRunner.query(`ALTER TABLE "movies" DROP COLUMN IF EXISTS "genre"`)
     await queryRunner.query(`DROP TYPE IF EXISTS "public"."movies_genre_enum"`)
     await queryRunner.query(
       `CREATE TYPE "public"."movies_documentarygenre_enum" AS ENUM('Ficción', 'Documental', 'Docu-ficción', 'Falso Documental')`,

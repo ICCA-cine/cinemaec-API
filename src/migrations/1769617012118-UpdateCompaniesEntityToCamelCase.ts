@@ -17,33 +17,33 @@ export class UpdateCompaniesEntityToCamelCase1769617012118
 
     const hasCountryIdOld = await queryRunner.hasColumn('companies', 'country_id')
     if (hasCountryIdOld) {
-      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN "country_id"`)
+      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN IF EXISTS "country_id"`)
     }
     const hasCreatedAtOld = await queryRunner.hasColumn('companies', 'created_at')
     if (hasCreatedAtOld) {
-      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN "created_at"`)
+      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN IF EXISTS "created_at"`)
     }
     const hasUpdatedAtOld = await queryRunner.hasColumn('companies', 'updated_at')
     if (hasUpdatedAtOld) {
-      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN "updated_at"`)
+      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN IF EXISTS "updated_at"`)
     }
     const hasOwnerIdOld = await queryRunner.hasColumn('companies', 'owner_id')
     if (hasOwnerIdOld) {
-      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN "owner_id"`)
+      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN IF EXISTS "owner_id"`)
     }
     const hasNombreLegal = await queryRunner.hasColumn('companies', 'nombreLegal')
     if (hasNombreLegal) {
-      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN "nombreLegal"`)
+      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN IF EXISTS "nombreLegal"`)
     }
     const hasNombreComercial = await queryRunner.hasColumn('companies', 'nombreComercial')
     if (hasNombreComercial) {
       await queryRunner.query(
-        `ALTER TABLE "companies" DROP COLUMN "nombreComercial"`,
+        `ALTER TABLE "companies" DROP COLUMN IF EXISTS "nombreComercial"`,
       )
     }
     const hasTelefono = await queryRunner.hasColumn('companies', 'telefono')
     if (hasTelefono) {
-      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN "telefono"`)
+      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN IF EXISTS "telefono"`)
     }
 
     const hasLegalName = await queryRunner.hasColumn('companies', 'legalName')
@@ -113,33 +113,33 @@ export class UpdateCompaniesEntityToCamelCase1769617012118
 
     const hasUpdatedAt = await queryRunner.hasColumn('companies', 'updatedAt')
     if (hasUpdatedAt) {
-      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN "updatedAt"`)
+      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN IF EXISTS "updatedAt"`)
     }
     const hasCreatedAt = await queryRunner.hasColumn('companies', 'createdAt')
     if (hasCreatedAt) {
-      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN "createdAt"`)
+      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN IF EXISTS "createdAt"`)
     }
     const hasOwnerId = await queryRunner.hasColumn('companies', 'ownerId')
     if (hasOwnerId) {
-      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN "ownerId"`)
+      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN IF EXISTS "ownerId"`)
     }
     const hasPhone = await queryRunner.hasColumn('companies', 'phone')
     if (hasPhone) {
-      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN "phone"`)
+      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN IF EXISTS "phone"`)
     }
     const hasCountryId = await queryRunner.hasColumn('companies', 'countryId')
     if (hasCountryId) {
-      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN "countryId"`)
+      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN IF EXISTS "countryId"`)
     }
     const hasCommercialName = await queryRunner.hasColumn('companies', 'commercialName')
     if (hasCommercialName) {
       await queryRunner.query(
-        `ALTER TABLE "companies" DROP COLUMN "commercialName"`,
+        `ALTER TABLE "companies" DROP COLUMN IF EXISTS "commercialName"`,
       )
     }
     const hasLegalName = await queryRunner.hasColumn('companies', 'legalName')
     if (hasLegalName) {
-      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN "legalName"`)
+      await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN IF EXISTS "legalName"`)
     }
 
     const hasTelefono = await queryRunner.hasColumn('companies', 'telefono')

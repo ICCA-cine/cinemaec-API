@@ -7,7 +7,7 @@ export class RemoveCharacterNameFromMovieProfessional1769795943903
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movie_professionals" DROP COLUMN "characterName"`,
+      `ALTER TABLE "movie_professionals" DROP COLUMN IF EXISTS "characterName"`,
     )
   }
 

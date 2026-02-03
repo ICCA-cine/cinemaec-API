@@ -7,13 +7,13 @@ export class RenameProfessionalsColumnsToCamelCase1769613323761
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN "created_at"`,
+      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "created_at"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN "updated_at"`,
+      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "updated_at"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN "owner_id"`,
+      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "owner_id"`,
     )
     await queryRunner.query(`ALTER TABLE "professionals" ADD "ownerId" integer`)
     await queryRunner.query(
@@ -26,12 +26,12 @@ export class RenameProfessionalsColumnsToCamelCase1769613323761
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN "updatedAt"`,
+      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "updatedAt"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN "createdAt"`,
+      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "createdAt"`,
     )
-    await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN "ownerId"`)
+    await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN IF EXISTS "ownerId"`)
     await queryRunner.query(
       `ALTER TABLE "professionals" ADD "owner_id" integer`,
     )

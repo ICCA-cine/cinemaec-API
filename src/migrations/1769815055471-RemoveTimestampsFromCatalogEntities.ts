@@ -7,18 +7,18 @@ export class RemoveTimestampsFromCatalogEntities1769815055471
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "cinematic_roles" DROP COLUMN "createdAt"`,
+      `ALTER TABLE "cinematic_roles" DROP COLUMN IF EXISTS "createdAt"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "cinematic_roles" DROP COLUMN "updatedAt"`,
+      `ALTER TABLE "cinematic_roles" DROP COLUMN IF EXISTS "updatedAt"`,
     )
-    await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN "createdAt"`)
-    await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN "updatedAt"`)
+    await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN IF EXISTS "createdAt"`)
+    await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN IF EXISTS "updatedAt"`)
     await queryRunner.query(
-      `ALTER TABLE "exhibition_spaces" DROP COLUMN "createdAt"`,
+      `ALTER TABLE "exhibition_spaces" DROP COLUMN IF EXISTS "createdAt"`,
     )
-    await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "createdAt"`)
-    await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "updatedAt"`)
+    await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN IF EXISTS "createdAt"`)
+    await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN IF EXISTS "updatedAt"`)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

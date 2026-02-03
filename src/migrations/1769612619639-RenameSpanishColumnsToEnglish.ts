@@ -13,7 +13,7 @@ export class RenameSpanishColumnsToEnglish1769612619639
     // Verificar si existe la columna sexo antes de eliminarla
     const hasSexoColumn = await queryRunner.hasColumn('professionals', 'sexo')
     if (hasSexoColumn) {
-      await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN "sexo"`)
+      await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN IF EXISTS "sexo"`)
     }
     
     // Verificar si existe el tipo antes de eliminarlo
@@ -30,32 +30,32 @@ export class RenameSpanishColumnsToEnglish1769612619639
     
     const hasNombresColumn = await queryRunner.hasColumn('professionals', 'nombres')
     if (hasNombresColumn) {
-      await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN "nombres"`)
+      await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN IF EXISTS "nombres"`)
     }
     
     const hasApellidosColumn = await queryRunner.hasColumn('professionals', 'apellidos')
     if (hasApellidosColumn) {
       await queryRunner.query(
-        `ALTER TABLE "professionals" DROP COLUMN "apellidos"`,
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "apellidos"`,
       )
     }
     
     const hasCedulaColumn = await queryRunner.hasColumn('professionals', 'cedula')
     if (hasCedulaColumn) {
-      await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN "cedula"`)
+      await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN IF EXISTS "cedula"`)
     }
     
     const hasTelefonoColumn = await queryRunner.hasColumn('professionals', 'telefono')
     if (hasTelefonoColumn) {
       await queryRunner.query(
-        `ALTER TABLE "professionals" DROP COLUMN "telefono"`,
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "telefono"`,
       )
     }
     
     // Platforms
     const hasPlatformTipoColumn = await queryRunner.hasColumn('platforms', 'tipo')
     if (hasPlatformTipoColumn) {
-      await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "tipo"`)
+      await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN IF EXISTS "tipo"`)
     }
     
     const platformsTipoEnumExists = await queryRunner.query(`
@@ -71,13 +71,13 @@ export class RenameSpanishColumnsToEnglish1769612619639
     
     const hasPlatformNombreColumn = await queryRunner.hasColumn('platforms', 'nombre')
     if (hasPlatformNombreColumn) {
-      await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "nombre"`)
+      await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN IF EXISTS "nombre"`)
     }
     
     // Funds
     const hasFundTipoColumn = await queryRunner.hasColumn('funds', 'tipo')
     if (hasFundTipoColumn) {
-      await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN "tipo"`)
+      await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN IF EXISTS "tipo"`)
     }
     
     const fundsTipoEnumExists = await queryRunner.query(`
@@ -94,7 +94,7 @@ export class RenameSpanishColumnsToEnglish1769612619639
     const hasFundOrigenColumn = await queryRunner.hasColumn('funds', 'origenFinanciero')
     if (hasFundOrigenColumn) {
       await queryRunner.query(
-        `ALTER TABLE "funds" DROP COLUMN "origenFinanciero"`,
+        `ALTER TABLE "funds" DROP COLUMN IF EXISTS "origenFinanciero"`,
       )
     }
     
@@ -111,7 +111,7 @@ export class RenameSpanishColumnsToEnglish1769612619639
     
     const hasFundNombreColumn = await queryRunner.hasColumn('funds', 'nombre')
     if (hasFundNombreColumn) {
-      await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN "nombre"`)
+      await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN IF EXISTS "nombre"`)
     }
     
     // Agregar nuevas columnas solo si no existen
@@ -282,24 +282,24 @@ export class RenameSpanishColumnsToEnglish1769612619639
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN "financialOrigin"`)
+    await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN IF EXISTS "financialOrigin"`)
     await queryRunner.query(`DROP TYPE IF EXISTS "public"."funds_financialorigin_enum"`)
-    await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN "type"`)
+    await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN IF EXISTS "type"`)
     await queryRunner.query(`DROP TYPE IF EXISTS "public"."funds_type_enum"`)
-    await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN "name"`)
-    await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "type"`)
-    await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "name"`)
-    await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN "phone"`)
-    await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN "gender"`)
+    await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN IF EXISTS "name"`)
+    await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN IF EXISTS "type"`)
+    await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN IF EXISTS "name"`)
+    await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN IF EXISTS "phone"`)
+    await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN IF EXISTS "gender"`)
     await queryRunner.query(`DROP TYPE IF EXISTS "public"."professionals_gender_enum"`)
     await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN "idNumber"`,
+      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "idNumber"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN "lastName"`,
+      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "lastName"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN "firstName"`,
+      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "firstName"`,
     )
     await queryRunner.query(
       `ALTER TABLE "funds" ADD "nombre" character varying(255) NOT NULL`,

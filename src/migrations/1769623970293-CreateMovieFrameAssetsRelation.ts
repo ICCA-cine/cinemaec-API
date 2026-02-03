@@ -17,7 +17,7 @@ export class CreateMovieFrameAssetsRelation1769623970293
         // La constraint puede no existir
       }
       
-      await queryRunner.query(`ALTER TABLE "movies" DROP COLUMN "frameAssetId"`)
+      await queryRunner.query(`ALTER TABLE "movies" DROP COLUMN IF EXISTS "frameAssetId"`)
     }
     
     const hasTable = await queryRunner.hasTable('movies_frame_assets')

@@ -13,13 +13,13 @@ export class StandardizeMovieProfessionalCamelCase1769795839499
       `ALTER TABLE "movie_professionals" DROP CONSTRAINT IF EXISTS "FK_fd57e025c4014a370625270bea3"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_professionals" DROP COLUMN "movie_id"`,
+      `ALTER TABLE "movie_professionals" DROP COLUMN IF EXISTS "movie_id"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_professionals" DROP COLUMN "created_at"`,
+      `ALTER TABLE "movie_professionals" DROP COLUMN IF EXISTS "created_at"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_professionals" DROP COLUMN "professional_id"`,
+      `ALTER TABLE "movie_professionals" DROP COLUMN IF EXISTS "professional_id"`,
     )
     await queryRunner.query(
       `ALTER TABLE "movie_professionals" ADD "movieId" integer NOT NULL`,
@@ -46,13 +46,13 @@ export class StandardizeMovieProfessionalCamelCase1769795839499
       `ALTER TABLE "movie_professionals" DROP CONSTRAINT IF EXISTS "FK_1a658a9e10ab19a016d1b2ef996"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_professionals" DROP COLUMN "createdAt"`,
+      `ALTER TABLE "movie_professionals" DROP COLUMN IF EXISTS "createdAt"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_professionals" DROP COLUMN "professionalId"`,
+      `ALTER TABLE "movie_professionals" DROP COLUMN IF EXISTS "professionalId"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_professionals" DROP COLUMN "movieId"`,
+      `ALTER TABLE "movie_professionals" DROP COLUMN IF EXISTS "movieId"`,
     )
     await queryRunner.query(
       `ALTER TABLE "movie_professionals" ADD "professional_id" integer NOT NULL`,

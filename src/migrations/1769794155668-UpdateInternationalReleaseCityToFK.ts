@@ -10,7 +10,7 @@ export class UpdateInternationalReleaseCityToFK1769794155668
       `ALTER TABLE "movie_international_releases" RENAME COLUMN "city" TO "cityId"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_international_releases" DROP COLUMN "cityId"`,
+      `ALTER TABLE "movie_international_releases" DROP COLUMN IF EXISTS "cityId"`,
     )
     await queryRunner.query(
       `ALTER TABLE "movie_international_releases" ADD "cityId" integer NOT NULL`,
@@ -25,7 +25,7 @@ export class UpdateInternationalReleaseCityToFK1769794155668
       `ALTER TABLE "movie_international_releases" DROP CONSTRAINT IF EXISTS "FK_7cea3bc763abda6f174ef424e47"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_international_releases" DROP COLUMN "cityId"`,
+      `ALTER TABLE "movie_international_releases" DROP COLUMN IF EXISTS "cityId"`,
     )
     await queryRunner.query(
       `ALTER TABLE "movie_international_releases" ADD "cityId" character varying(255) NOT NULL`,

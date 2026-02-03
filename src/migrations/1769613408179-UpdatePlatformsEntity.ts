@@ -6,12 +6,12 @@ export class UpdatePlatformsEntity1769613408179 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const hasOwnerIdColumn = await queryRunner.hasColumn('platforms', 'ownerId')
     if (hasOwnerIdColumn) {
-      await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "ownerId"`)
+      await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN IF EXISTS "ownerId"`)
     }
     
     const hasNameColumn = await queryRunner.hasColumn('platforms', 'name')
     if (hasNameColumn) {
-      await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "name"`)
+      await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN IF EXISTS "name"`)
     }
     
     const hasNameColumnAfter = await queryRunner.hasColumn('platforms', 'name')
@@ -21,7 +21,7 @@ export class UpdatePlatformsEntity1769613408179 implements MigrationInterface {
     
     const hasTypeColumn = await queryRunner.hasColumn('platforms', 'type')
     if (hasTypeColumn) {
-      await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "type"`)
+      await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN IF EXISTS "type"`)
     }
     
     // Eliminar el tipo que exista (puede ser platform_type_enum o platforms_type_enum)
@@ -55,14 +55,14 @@ export class UpdatePlatformsEntity1769613408179 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "type"`)
+    await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN IF EXISTS "type"`)
     await queryRunner.query(
       `CREATE TYPE "public"."platforms_type_enum" AS ENUM('nacional', 'internacional')`,
     )
     await queryRunner.query(
       `ALTER TABLE "platforms" ADD "type" "public"."platforms_type_enum" NOT NULL`,
     )
-    await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "name"`)
+    await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN IF EXISTS "name"`)
     await queryRunner.query(
       `ALTER TABLE "platforms" ADD "name" character varying(255) NOT NULL`,
     )
