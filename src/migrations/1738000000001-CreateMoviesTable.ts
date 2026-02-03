@@ -190,9 +190,9 @@ export class CreateMoviesTable1738000000001 implements MigrationInterface {
     await queryRunner.dropTable('movies_cities')
     await queryRunner.dropTable('movies_languages')
     await queryRunner.dropTable('movies')
-    await queryRunner.query('DROP TYPE "project_status"')
-    await queryRunner.query('DROP TYPE "movie_classification"')
-    await queryRunner.query('DROP TYPE "movie_genre"')
-    await queryRunner.query('DROP TYPE "movie_type"')
+    await queryRunner.query('DROP TYPE IF EXISTS "project_status"')
+    await queryRunner.query('DROP TYPE IF EXISTS "movie_classification"')
+    await queryRunner.query('DROP TYPE IF EXISTS "movie_genre"')
+    await queryRunner.query('DROP TYPE IF EXISTS "movie_type"')
   }
 }

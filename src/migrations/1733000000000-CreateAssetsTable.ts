@@ -138,7 +138,7 @@ export class CreateAssetsTable1733000000000 implements MigrationInterface {
     await queryRunner.dropTable('assets')
 
     // Eliminar enums
-    await queryRunner.query(`DROP TYPE "asset_owner_enum"`)
-    await queryRunner.query(`DROP TYPE "asset_type_enum"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "asset_owner_enum"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "asset_type_enum"`)
   }
 }

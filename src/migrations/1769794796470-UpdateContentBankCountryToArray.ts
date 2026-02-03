@@ -6,18 +6,43 @@ export class UpdateContentBankCountryToArray1769794796470
   name = 'UpdateContentBankCountryToArray1769794796470'
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "movie_content_bank" DROP CONSTRAINT "FK_576ad62103ed6dafc17b0029c1c"`,
+    try {
+      await queryRunner.query(
+        `ALTER TABLE "movie_content_bank" DROP CONSTRAINT IF EXISTS "FK_576ad62103ed6dafc17b0029c1c"`,
+      )
+    } catch (error) {
+      // Constraint might not exist
+    }
+
+    const hasOldColumn = await queryRunner.hasColumn(
+      'movie_content_bank',
+      'geolocationRestrictionCountryId',
     )
-    await queryRunner.query(
-      `ALTER TABLE "movie_content_bank" RENAME COLUMN "geolocationRestrictionCountryId" TO "geolocationRestrictionCountryIds"`,
+    if (hasOldColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "movie_content_bank" RENAME COLUMN "geolocationRestrictionCountryId" TO "geolocationRestrictionCountryIds"`,
+      )
+    }
+
+    const hasNewColumn = await queryRunner.hasColumn(
+      'movie_content_bank',
+      'geolocationRestrictionCountryIds',
     )
-    await queryRunner.query(
-      `ALTER TABLE "movie_content_bank" DROP COLUMN "geolocationRestrictionCountryIds"`,
+    if (hasNewColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "movie_content_bank" DROP COLUMN "geolocationRestrictionCountryIds"`,
+      )
+    }
+
+    const hasArrayColumn = await queryRunner.hasColumn(
+      'movie_content_bank',
+      'geolocationRestrictionCountryIds',
     )
-    await queryRunner.query(
-      `ALTER TABLE "movie_content_bank" ADD "geolocationRestrictionCountryIds" integer array`,
-    )
+    if (!hasArrayColumn) {
+      await queryRunner.query(
+        `ALTER TABLE "movie_content_bank" ADD "geolocationRestrictionCountryIds" integer[]`,
+      )
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

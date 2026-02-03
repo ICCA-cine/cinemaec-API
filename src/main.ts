@@ -11,10 +11,11 @@ async function bootstrap() {
   const config = app.get(ConfigService)
   const nodeEnv = config.get<string>('NODE_ENV') || 'development'
   
-  // Respetar APP_PORT > PORT > default (8080 en prod, 3000 en dev)
+  // Cloud Run provides PORT env var (default 8080). Always use that if provided.
+  // Fallback to PORT or APP_PORT if not in Cloud Run
   const port =
-    config.get<number>('APP_PORT') ||
     config.get<number>('PORT') ||
+    config.get<number>('APP_PORT') ||
     (nodeEnv === 'production' ? 8080 : 3000)
   
   const logger = new Logger('Bootstrap')
