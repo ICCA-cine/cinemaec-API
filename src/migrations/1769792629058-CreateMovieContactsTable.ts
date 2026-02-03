@@ -27,7 +27,7 @@ export class CreateMovieContactsTable1769792629058
     await queryRunner.query(
       `ALTER TABLE "movie_contacts" DROP CONSTRAINT IF EXISTS "FK_f5a9136ee4faeccd67518e0514c"`,
     )
-    await queryRunner.query(`DROP TABLE "movie_contacts"`)
+    await queryRunner.query(`DROP TABLE IF EXISTS "movie_contacts"`)
     await queryRunner.query(`DROP TYPE "public"."movie_contacts_cargo_enum"`)
   }
 }

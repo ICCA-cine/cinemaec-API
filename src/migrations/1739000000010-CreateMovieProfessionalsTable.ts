@@ -77,7 +77,7 @@ export class CreateMovieProfessionalsTable1739000000010
     await queryRunner.query(`DROP INDEX "idx_movie_professionals_role"`)
     await queryRunner.query(`DROP INDEX "idx_movie_professionals_professional"`)
     await queryRunner.query(`DROP INDEX "idx_movie_professionals_movie"`)
-    await queryRunner.query(`DROP TABLE "movie_professionals"`)
+    await queryRunner.query(`DROP TABLE IF EXISTS "movie_professionals"`)
     await queryRunner.query(`DROP TYPE "professional_role_enum"`)
   }
 }

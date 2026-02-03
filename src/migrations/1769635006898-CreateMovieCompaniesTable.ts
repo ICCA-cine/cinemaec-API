@@ -27,7 +27,7 @@ export class CreateMovieCompaniesTable1769635006898
     await queryRunner.query(
       `ALTER TABLE "movie_companies" DROP CONSTRAINT IF EXISTS "FK_0efb85c101817b5edd8830233cd"`,
     )
-    await queryRunner.query(`DROP TABLE "movie_companies"`)
+    await queryRunner.query(`DROP TABLE IF EXISTS "movie_companies"`)
     await queryRunner.query(
       `DROP TYPE "public"."movie_companies_participation_enum"`,
     )

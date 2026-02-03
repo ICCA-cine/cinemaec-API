@@ -39,7 +39,7 @@ export class CreateMovieReleasesTables1769634209756
     await queryRunner.query(
       `ALTER TABLE "movie_national_releases" DROP CONSTRAINT IF EXISTS "FK_200a6f4dceb1310680f7d16578c"`,
     )
-    await queryRunner.query(`DROP TABLE "movie_international_releases"`)
-    await queryRunner.query(`DROP TABLE "movie_national_releases"`)
+    await queryRunner.query(`DROP TABLE IF EXISTS "movie_international_releases"`)
+    await queryRunner.query(`DROP TABLE IF EXISTS "movie_national_releases"`)
   }
 }

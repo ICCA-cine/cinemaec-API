@@ -61,7 +61,7 @@ export class CreateCinematicRolesTable1769792179842
     await queryRunner.query(
       `ALTER TABLE "movie_professionals" ADD "cinematicRoleId" "public"."movie_professionals_cinematicroleid_enum" NOT NULL`,
     )
-    await queryRunner.query(`DROP TABLE "cinematic_roles"`)
+    await queryRunner.query(`DROP TABLE IF EXISTS "cinematic_roles"`)
     await queryRunner.query(
       `ALTER TYPE "public"."movie_professionals_cinematicroleid_enum" RENAME TO "movie_professionals_role_enum"`,
     )

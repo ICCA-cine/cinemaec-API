@@ -56,7 +56,7 @@ export class CreateMovieFrameAssetsRelation1769623970293
     await queryRunner.query(
       `DROP INDEX "public"."IDX_662900148a35259fdc5afa1c72"`,
     )
-    await queryRunner.query(`DROP TABLE "movies_frame_assets"`)
+    await queryRunner.query(`DROP TABLE IF EXISTS "movies_frame_assets"`)
     await queryRunner.query(
       `ALTER TABLE "movies" ADD CONSTRAINT "FK_e5fd602bd941753e6f8fa89d9ee" FOREIGN KEY ("frameAssetId") REFERENCES "assets"("id") ON DELETE SET NULL ON UPDATE NO ACTION`,
     )

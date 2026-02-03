@@ -172,8 +172,8 @@ export class CreateSubgenreAndMovieSubgenreRelation1769623098782
     await queryRunner.query(
       `DROP INDEX "public"."IDX_a6bca6be1b1c64184b9aa419bf"`,
     )
-    await queryRunner.query(`DROP TABLE "movies_subgenres"`)
-    await queryRunner.query(`DROP TABLE "subgenres"`)
+    await queryRunner.query(`DROP TABLE IF EXISTS "movies_subgenres"`)
+    await queryRunner.query(`DROP TABLE IF EXISTS "subgenres"`)
     await queryRunner.query(
       `CREATE INDEX "IDX_d89a5330076eff19a3cb6a1a3a" ON "movies_cities" ("cityId") `,
     )

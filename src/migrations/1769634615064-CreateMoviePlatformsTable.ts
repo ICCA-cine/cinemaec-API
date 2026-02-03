@@ -24,6 +24,6 @@ export class CreateMoviePlatformsTable1769634615064
     await queryRunner.query(
       `ALTER TABLE "movie_platforms" DROP CONSTRAINT IF EXISTS "FK_49723d0f9d9ca16be6c6e8e1902"`,
     )
-    await queryRunner.query(`DROP TABLE "movie_platforms"`)
+    await queryRunner.query(`DROP TABLE IF EXISTS "movie_platforms"`)
   }
 }

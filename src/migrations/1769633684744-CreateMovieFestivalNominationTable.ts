@@ -24,6 +24,6 @@ export class CreateMovieFestivalNominationTable1769633684744
     await queryRunner.query(
       `ALTER TABLE "movie_festival_nominations" DROP CONSTRAINT IF EXISTS "FK_6cb5293deafe159f2eac8573113"`,
     )
-    await queryRunner.query(`DROP TABLE "movie_festival_nominations"`)
+    await queryRunner.query(`DROP TABLE IF EXISTS "movie_festival_nominations"`)
   }
 }

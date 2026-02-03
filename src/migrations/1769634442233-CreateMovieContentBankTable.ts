@@ -24,6 +24,6 @@ export class CreateMovieContentBankTable1769634442233
     await queryRunner.query(
       `ALTER TABLE "movie_content_bank" DROP CONSTRAINT IF EXISTS "FK_a464ed02fbe56d962cabd685b9c"`,
     )
-    await queryRunner.query(`DROP TABLE "movie_content_bank"`)
+    await queryRunner.query(`DROP TABLE IF EXISTS "movie_content_bank"`)
   }
 }

@@ -24,6 +24,6 @@ export class CreateMovieFundingTable1769633355198
     await queryRunner.query(
       `ALTER TABLE "movie_funding" DROP CONSTRAINT IF EXISTS "FK_154eb4db666b132a8fa3b2284ff"`,
     )
-    await queryRunner.query(`DROP TABLE "movie_funding"`)
+    await queryRunner.query(`DROP TABLE IF EXISTS "movie_funding"`)
   }
 }
