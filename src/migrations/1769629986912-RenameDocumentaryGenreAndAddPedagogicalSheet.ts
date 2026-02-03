@@ -21,7 +21,7 @@ export class RenameDocumentaryGenreAndAddPedagogicalSheet1769629986912
       )
     `)
     if (docGenreEnumExists[0].exists) {
-      await queryRunner.query(`DROP TYPE "public"."movies_documentarygenre_enum"`)
+      await queryRunner.query(`DROP TYPE IF EXISTS "public"."movies_documentarygenre_enum"`)
     }
     
     const genreEnumExists = await queryRunner.query(`
@@ -63,7 +63,7 @@ export class RenameDocumentaryGenreAndAddPedagogicalSheet1769629986912
       `ALTER TABLE "movies" DROP COLUMN "pedagogicalSheetAssetId"`,
     )
     await queryRunner.query(`ALTER TABLE "movies" DROP COLUMN "genre"`)
-    await queryRunner.query(`DROP TYPE "public"."movies_genre_enum"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."movies_genre_enum"`)
     await queryRunner.query(
       `CREATE TYPE "public"."movies_documentarygenre_enum" AS ENUM('Ficción', 'Documental', 'Docu-ficción', 'Falso Documental')`,
     )

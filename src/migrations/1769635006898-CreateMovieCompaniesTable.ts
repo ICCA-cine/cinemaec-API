@@ -29,7 +29,7 @@ export class CreateMovieCompaniesTable1769635006898
     )
     await queryRunner.query(`DROP TABLE IF EXISTS "movie_companies"`)
     await queryRunner.query(
-      `DROP TYPE "public"."movie_companies_participation_enum"`,
+      `DROP TYPE IF EXISTS "public"."movie_companies_participation_enum"`,
     )
   }
 }

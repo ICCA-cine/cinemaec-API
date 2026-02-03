@@ -89,6 +89,6 @@ export class CreateUsersTable1732071600000 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('users')
-    await queryRunner.query(`DROP TYPE IF EXISTS "user_role"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS IF EXISTS "user_role"`)
   }
 }

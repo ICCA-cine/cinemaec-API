@@ -33,7 +33,7 @@ export class UpdatePlatformsEntity1769613408179 implements MigrationInterface {
       )
     `)
     if (platformsTypeEnumExists[0].exists) {
-      await queryRunner.query(`DROP TYPE "public"."platforms_type_enum"`)
+      await queryRunner.query(`DROP TYPE IF EXISTS "public"."platforms_type_enum"`)
     }
     
     const platformTypeEnumExists = await queryRunner.query(`
@@ -43,7 +43,7 @@ export class UpdatePlatformsEntity1769613408179 implements MigrationInterface {
       )
     `)
     if (platformTypeEnumExists[0].exists) {
-      await queryRunner.query(`DROP TYPE platform_type_enum`)
+      await queryRunner.query(`DROP TYPE IF EXISTS platform_type_enum`)
     }
     
     const hasTypeColumnFinal = await queryRunner.hasColumn('platforms', 'type')

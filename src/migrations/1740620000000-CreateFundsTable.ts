@@ -79,7 +79,7 @@ export class CreateFundsTable1740620000000 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('funds')
-    await queryRunner.query(`DROP TYPE financial_origin_enum;`)
-    await queryRunner.query(`DROP TYPE fund_type_enum;`)
+    await queryRunner.query(`DROP TYPE IF EXISTS financial_origin_enum;`)
+    await queryRunner.query(`DROP TYPE IF EXISTS fund_type_enum;`)
   }
 }

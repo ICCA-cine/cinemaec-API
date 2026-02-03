@@ -54,6 +54,6 @@ export class CreateProfessionalsTable1739000000008
     await queryRunner.query(`DROP INDEX IF EXISTS "idx_professionals_email"`)
     await queryRunner.query(`DROP INDEX IF EXISTS "idx_professionals_cedula"`)
     await queryRunner.query(`DROP TABLE IF EXISTS "professionals"`)
-    await queryRunner.query(`DROP TYPE "gender_enum"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "gender_enum"`)
   }
 }

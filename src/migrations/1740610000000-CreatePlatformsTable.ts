@@ -69,6 +69,6 @@ export class CreatePlatformsTable1740610000000 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('platforms')
-    await queryRunner.query(`DROP TYPE platform_type_enum;`)
+    await queryRunner.query(`DROP TYPE IF EXISTS platform_type_enum;`)
   }
 }

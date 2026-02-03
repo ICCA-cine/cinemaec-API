@@ -38,7 +38,7 @@ export class UpdateMovieTypesAndAddDocumentaryGenre1769622800000
     `)
 
     // 5. Eliminar el enum antiguo
-    await queryRunner.query(`DROP TYPE "public"."movies_type_enum_old"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."movies_type_enum_old"`)
 
     // 6. Si hay datos existentes, asignar un valor por defecto a documentaryGenre
     await queryRunner.query(
@@ -63,7 +63,7 @@ export class UpdateMovieTypesAndAddDocumentaryGenre1769622800000
     )
 
     // Eliminar enum documentaryGenre
-    await queryRunner.query(`DROP TYPE "public"."movies_documentarygenre_enum"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."movies_documentarygenre_enum"`)
 
     // Revertir enum type a minúsculas
     await queryRunner.query(
@@ -83,6 +83,6 @@ export class UpdateMovieTypesAndAddDocumentaryGenre1769622800000
         END
       )::"public"."movies_type_enum"
     `)
-    await queryRunner.query(`DROP TYPE "public"."movies_type_enum_old"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."movies_type_enum_old"`)
   }
 }

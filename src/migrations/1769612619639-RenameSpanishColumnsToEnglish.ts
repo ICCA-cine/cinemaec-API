@@ -25,7 +25,7 @@ export class RenameSpanishColumnsToEnglish1769612619639
       )
     `)
     if (sexoEnumExists[0].exists) {
-      await queryRunner.query(`DROP TYPE "public"."professionals_sexo_enum"`)
+      await queryRunner.query(`DROP TYPE IF EXISTS "public"."professionals_sexo_enum"`)
     }
     
     const hasNombresColumn = await queryRunner.hasColumn('professionals', 'nombres')
@@ -66,7 +66,7 @@ export class RenameSpanishColumnsToEnglish1769612619639
       )
     `)
     if (platformsTipoEnumExists[0].exists) {
-      await queryRunner.query(`DROP TYPE "public"."platforms_tipo_enum"`)
+      await queryRunner.query(`DROP TYPE IF EXISTS "public"."platforms_tipo_enum"`)
     }
     
     const hasPlatformNombreColumn = await queryRunner.hasColumn('platforms', 'nombre')
@@ -88,7 +88,7 @@ export class RenameSpanishColumnsToEnglish1769612619639
       )
     `)
     if (fundsTipoEnumExists[0].exists) {
-      await queryRunner.query(`DROP TYPE "public"."funds_tipo_enum"`)
+      await queryRunner.query(`DROP TYPE IF EXISTS "public"."funds_tipo_enum"`)
     }
     
     const hasFundOrigenColumn = await queryRunner.hasColumn('funds', 'origenFinanciero')
@@ -106,7 +106,7 @@ export class RenameSpanishColumnsToEnglish1769612619639
       )
     `)
     if (fundsOrigenEnumExists[0].exists) {
-      await queryRunner.query(`DROP TYPE "public"."funds_origenfinanciero_enum"`)
+      await queryRunner.query(`DROP TYPE IF EXISTS "public"."funds_origenfinanciero_enum"`)
     }
     
     const hasFundNombreColumn = await queryRunner.hasColumn('funds', 'nombre')
@@ -283,15 +283,15 @@ export class RenameSpanishColumnsToEnglish1769612619639
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN "financialOrigin"`)
-    await queryRunner.query(`DROP TYPE "public"."funds_financialorigin_enum"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."funds_financialorigin_enum"`)
     await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN "type"`)
-    await queryRunner.query(`DROP TYPE "public"."funds_type_enum"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."funds_type_enum"`)
     await queryRunner.query(`ALTER TABLE "funds" DROP COLUMN "name"`)
     await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "type"`)
     await queryRunner.query(`ALTER TABLE "platforms" DROP COLUMN "name"`)
     await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN "phone"`)
     await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN "gender"`)
-    await queryRunner.query(`DROP TYPE "public"."professionals_gender_enum"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."professionals_gender_enum"`)
     await queryRunner.query(
       `ALTER TABLE "professionals" DROP COLUMN "idNumber"`,
     )

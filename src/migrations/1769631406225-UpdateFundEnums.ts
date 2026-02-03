@@ -13,7 +13,7 @@ export class UpdateFundEnums1769631406225 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "funds" ALTER COLUMN "type" TYPE "public"."funds_type_enum"[] USING "type"::"text"::"public"."funds_type_enum"[]`,
     )
-    await queryRunner.query(`DROP TYPE "public"."funds_type_enum_old"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."funds_type_enum_old"`)
     await queryRunner.query(
       `ALTER TYPE "public"."funds_financialorigin_enum" RENAME TO "funds_financialorigin_enum_old"`,
     )
@@ -24,7 +24,7 @@ export class UpdateFundEnums1769631406225 implements MigrationInterface {
       `ALTER TABLE "funds" ALTER COLUMN "financialOrigin" TYPE "public"."funds_financialorigin_enum" USING "financialOrigin"::"text"::"public"."funds_financialorigin_enum"`,
     )
     await queryRunner.query(
-      `DROP TYPE "public"."funds_financialorigin_enum_old"`,
+      `DROP TYPE IF EXISTS "public"."funds_financialorigin_enum_old"`,
     )
   }
 
@@ -35,7 +35,7 @@ export class UpdateFundEnums1769631406225 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "funds" ALTER COLUMN "financialOrigin" TYPE "public"."funds_financialorigin_enum_old" USING "financialOrigin"::"text"::"public"."funds_financialorigin_enum_old"`,
     )
-    await queryRunner.query(`DROP TYPE "public"."funds_financialorigin_enum"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."funds_financialorigin_enum"`)
     await queryRunner.query(
       `ALTER TYPE "public"."funds_financialorigin_enum_old" RENAME TO "funds_financialorigin_enum"`,
     )
@@ -45,7 +45,7 @@ export class UpdateFundEnums1769631406225 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "funds" ALTER COLUMN "type" TYPE "public"."funds_type_enum_old"[] USING "type"::"text"::"public"."funds_type_enum_old"[]`,
     )
-    await queryRunner.query(`DROP TYPE "public"."funds_type_enum"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."funds_type_enum"`)
     await queryRunner.query(
       `ALTER TYPE "public"."funds_type_enum_old" RENAME TO "funds_type_enum"`,
     )

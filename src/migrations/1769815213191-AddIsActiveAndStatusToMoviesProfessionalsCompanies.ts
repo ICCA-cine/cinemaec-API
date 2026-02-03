@@ -43,7 +43,7 @@ export class AddIsActiveAndStatusToMoviesProfessionalsCompanies1769815213191
       `ALTER TABLE "movies" ALTER COLUMN "projectStatus" TYPE "public"."movies_projectstatus_enum" USING "projectStatus"::"text"::"public"."movies_projectstatus_enum"`,
     )
     await queryRunner.query(
-      `DROP TYPE "public"."movies_projectstatus_enum_old"`,
+      `DROP TYPE IF EXISTS "public"."movies_projectstatus_enum_old"`,
     )
   }
 
@@ -54,18 +54,18 @@ export class AddIsActiveAndStatusToMoviesProfessionalsCompanies1769815213191
     await queryRunner.query(
       `ALTER TABLE "movies" ALTER COLUMN "projectStatus" TYPE "public"."movies_projectstatus_enum_old" USING "projectStatus"::"text"::"public"."movies_projectstatus_enum_old"`,
     )
-    await queryRunner.query(`DROP TYPE "public"."movies_projectstatus_enum"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."movies_projectstatus_enum"`)
     await queryRunner.query(
       `ALTER TYPE "public"."movies_projectstatus_enum_old" RENAME TO "movies_projectstatus_enum"`,
     )
     await queryRunner.query(`ALTER TABLE "movies" DROP COLUMN "status"`)
-    await queryRunner.query(`DROP TYPE "public"."movies_status_enum"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."movies_status_enum"`)
     await queryRunner.query(`ALTER TABLE "movies" DROP COLUMN "isActive"`)
     await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN "status"`)
-    await queryRunner.query(`DROP TYPE "public"."companies_status_enum"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."companies_status_enum"`)
     await queryRunner.query(`ALTER TABLE "companies" DROP COLUMN "isActive"`)
     await queryRunner.query(`ALTER TABLE "professionals" DROP COLUMN "status"`)
-    await queryRunner.query(`DROP TYPE "public"."professionals_status_enum"`)
+    await queryRunner.query(`DROP TYPE IF EXISTS "public"."professionals_status_enum"`)
     await queryRunner.query(
       `ALTER TABLE "professionals" DROP COLUMN "isActive"`,
     )
