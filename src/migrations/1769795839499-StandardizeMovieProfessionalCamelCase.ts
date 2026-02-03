@@ -7,10 +7,10 @@ export class StandardizeMovieProfessionalCamelCase1769795839499
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movie_professionals" DROP CONSTRAINT "FK_718083ac75c9b833ab38e32847d"`,
+      `ALTER TABLE "movie_professionals" DROP CONSTRAINT IF EXISTS "FK_718083ac75c9b833ab38e32847d"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_professionals" DROP CONSTRAINT "FK_fd57e025c4014a370625270bea3"`,
+      `ALTER TABLE "movie_professionals" DROP CONSTRAINT IF EXISTS "FK_fd57e025c4014a370625270bea3"`,
     )
     await queryRunner.query(
       `ALTER TABLE "movie_professionals" DROP COLUMN "movie_id"`,
@@ -40,10 +40,10 @@ export class StandardizeMovieProfessionalCamelCase1769795839499
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movie_professionals" DROP CONSTRAINT "FK_1749d9671686042de360035351b"`,
+      `ALTER TABLE "movie_professionals" DROP CONSTRAINT IF EXISTS "FK_1749d9671686042de360035351b"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_professionals" DROP CONSTRAINT "FK_1a658a9e10ab19a016d1b2ef996"`,
+      `ALTER TABLE "movie_professionals" DROP CONSTRAINT IF EXISTS "FK_1a658a9e10ab19a016d1b2ef996"`,
     )
     await queryRunner.query(
       `ALTER TABLE "movie_professionals" DROP COLUMN "createdAt"`,

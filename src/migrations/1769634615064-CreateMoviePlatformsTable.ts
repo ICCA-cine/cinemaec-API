@@ -19,10 +19,10 @@ export class CreateMoviePlatformsTable1769634615064
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movie_platforms" DROP CONSTRAINT "FK_ef3b701dfb274050e5465a066d4"`,
+      `ALTER TABLE "movie_platforms" DROP CONSTRAINT IF EXISTS "FK_ef3b701dfb274050e5465a066d4"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_platforms" DROP CONSTRAINT "FK_49723d0f9d9ca16be6c6e8e1902"`,
+      `ALTER TABLE "movie_platforms" DROP CONSTRAINT IF EXISTS "FK_49723d0f9d9ca16be6c6e8e1902"`,
     )
     await queryRunner.query(`DROP TABLE "movie_platforms"`)
   }

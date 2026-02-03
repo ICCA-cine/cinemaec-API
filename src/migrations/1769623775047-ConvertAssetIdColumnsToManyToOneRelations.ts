@@ -19,13 +19,13 @@ export class ConvertAssetIdColumnsToManyToOneRelations1769623775047
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movies" DROP CONSTRAINT "FK_f07560a4ae003146d985742dd87"`,
+      `ALTER TABLE "movies" DROP CONSTRAINT IF EXISTS "FK_f07560a4ae003146d985742dd87"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies" DROP CONSTRAINT "FK_e5fd602bd941753e6f8fa89d9ee"`,
+      `ALTER TABLE "movies" DROP CONSTRAINT IF EXISTS "FK_e5fd602bd941753e6f8fa89d9ee"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies" DROP CONSTRAINT "FK_bf76e4761bd36563bcc482c6857"`,
+      `ALTER TABLE "movies" DROP CONSTRAINT IF EXISTS "FK_bf76e4761bd36563bcc482c6857"`,
     )
   }
 }

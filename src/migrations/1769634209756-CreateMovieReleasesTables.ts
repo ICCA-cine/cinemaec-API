@@ -28,16 +28,16 @@ export class CreateMovieReleasesTables1769634209756
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movie_international_releases" DROP CONSTRAINT "FK_24a4e2fe4daa9b79d2f6a32765c"`,
+      `ALTER TABLE "movie_international_releases" DROP CONSTRAINT IF EXISTS "FK_24a4e2fe4daa9b79d2f6a32765c"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_national_releases" DROP CONSTRAINT "FK_ce2db3f284f4aa1cb9d0b189631"`,
+      `ALTER TABLE "movie_national_releases" DROP CONSTRAINT IF EXISTS "FK_ce2db3f284f4aa1cb9d0b189631"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_national_releases" DROP CONSTRAINT "FK_c1ec993b95ec07cec9e5e8545c5"`,
+      `ALTER TABLE "movie_national_releases" DROP CONSTRAINT IF EXISTS "FK_c1ec993b95ec07cec9e5e8545c5"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_national_releases" DROP CONSTRAINT "FK_200a6f4dceb1310680f7d16578c"`,
+      `ALTER TABLE "movie_national_releases" DROP CONSTRAINT IF EXISTS "FK_200a6f4dceb1310680f7d16578c"`,
     )
     await queryRunner.query(`DROP TABLE "movie_international_releases"`)
     await queryRunner.query(`DROP TABLE "movie_national_releases"`)

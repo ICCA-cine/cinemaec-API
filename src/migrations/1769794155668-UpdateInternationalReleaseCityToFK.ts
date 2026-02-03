@@ -22,7 +22,7 @@ export class UpdateInternationalReleaseCityToFK1769794155668
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movie_international_releases" DROP CONSTRAINT "FK_7cea3bc763abda6f174ef424e47"`,
+      `ALTER TABLE "movie_international_releases" DROP CONSTRAINT IF EXISTS "FK_7cea3bc763abda6f174ef424e47"`,
     )
     await queryRunner.query(
       `ALTER TABLE "movie_international_releases" DROP COLUMN "cityId"`,

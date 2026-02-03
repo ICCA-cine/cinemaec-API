@@ -7,22 +7,22 @@ export class CreateSubgenreAndMovieSubgenreRelation1769623098782
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movies_languages" DROP CONSTRAINT "FK_006d624c816ba35bd454e24242d"`,
+      `ALTER TABLE "movies_languages" DROP CONSTRAINT IF EXISTS "FK_006d624c816ba35bd454e24242d"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies_languages" DROP CONSTRAINT "FK_5a9997ed49cb1786c58a8a1c166"`,
+      `ALTER TABLE "movies_languages" DROP CONSTRAINT IF EXISTS "FK_5a9997ed49cb1786c58a8a1c166"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies_provinces" DROP CONSTRAINT "FK_463bc547129a23f8ca3d3aae2d5"`,
+      `ALTER TABLE "movies_provinces" DROP CONSTRAINT IF EXISTS "FK_463bc547129a23f8ca3d3aae2d5"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies_provinces" DROP CONSTRAINT "FK_2b3aa1267e6a7fbde92b0c5d6fc"`,
+      `ALTER TABLE "movies_provinces" DROP CONSTRAINT IF EXISTS "FK_2b3aa1267e6a7fbde92b0c5d6fc"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies_cities" DROP CONSTRAINT "FK_d89a5330076eff19a3cb6a1a3ae"`,
+      `ALTER TABLE "movies_cities" DROP CONSTRAINT IF EXISTS "FK_d89a5330076eff19a3cb6a1a3ae"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies_cities" DROP CONSTRAINT "FK_955404a5353c436e397f3131d32"`,
+      `ALTER TABLE "movies_cities" DROP CONSTRAINT IF EXISTS "FK_955404a5353c436e397f3131d32"`,
     )
     await queryRunner.query(
       `DROP INDEX "public"."IDX_006d624c816ba35bd454e24242"`,
@@ -102,28 +102,28 @@ export class CreateSubgenreAndMovieSubgenreRelation1769623098782
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movies_cities" DROP CONSTRAINT "FK_f2ac93cdeec95afae4b7a4713cd"`,
+      `ALTER TABLE "movies_cities" DROP CONSTRAINT IF EXISTS "FK_f2ac93cdeec95afae4b7a4713cd"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies_cities" DROP CONSTRAINT "FK_213a2c1dec9b314426a1750e0b1"`,
+      `ALTER TABLE "movies_cities" DROP CONSTRAINT IF EXISTS "FK_213a2c1dec9b314426a1750e0b1"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies_provinces" DROP CONSTRAINT "FK_13ffc7aeaa64e35064e7015d82c"`,
+      `ALTER TABLE "movies_provinces" DROP CONSTRAINT IF EXISTS "FK_13ffc7aeaa64e35064e7015d82c"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies_provinces" DROP CONSTRAINT "FK_c35f1969374cdc0b4ad86be1875"`,
+      `ALTER TABLE "movies_provinces" DROP CONSTRAINT IF EXISTS "FK_c35f1969374cdc0b4ad86be1875"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies_languages" DROP CONSTRAINT "FK_eb6e8b786285e75855013247569"`,
+      `ALTER TABLE "movies_languages" DROP CONSTRAINT IF EXISTS "FK_eb6e8b786285e75855013247569"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies_languages" DROP CONSTRAINT "FK_9bf4f1d3e78ce525a91b7b7edc5"`,
+      `ALTER TABLE "movies_languages" DROP CONSTRAINT IF EXISTS "FK_9bf4f1d3e78ce525a91b7b7edc5"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies_subgenres" DROP CONSTRAINT "FK_e0c3a62facdefc5914a962556c5"`,
+      `ALTER TABLE "movies_subgenres" DROP CONSTRAINT IF EXISTS "FK_e0c3a62facdefc5914a962556c5"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies_subgenres" DROP CONSTRAINT "FK_a6bca6be1b1c64184b9aa419bf0"`,
+      `ALTER TABLE "movies_subgenres" DROP CONSTRAINT IF EXISTS "FK_a6bca6be1b1c64184b9aa419bf0"`,
     )
     await queryRunner.query(
       `DROP INDEX "public"."IDX_f2ac93cdeec95afae4b7a4713c"`,

@@ -22,10 +22,10 @@ export class CreateMovieCompaniesTable1769635006898
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movie_companies" DROP CONSTRAINT "FK_6bb332dcf5b8582ff9401b384fa"`,
+      `ALTER TABLE "movie_companies" DROP CONSTRAINT IF EXISTS "FK_6bb332dcf5b8582ff9401b384fa"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_companies" DROP CONSTRAINT "FK_0efb85c101817b5edd8830233cd"`,
+      `ALTER TABLE "movie_companies" DROP CONSTRAINT IF EXISTS "FK_0efb85c101817b5edd8830233cd"`,
     )
     await queryRunner.query(`DROP TABLE "movie_companies"`)
     await queryRunner.query(

@@ -53,7 +53,7 @@ export class CreateCinematicRolesTable1769792179842
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movie_professionals" DROP CONSTRAINT "FK_3d0e0038796b1f7d751d74b42a3"`,
+      `ALTER TABLE "movie_professionals" DROP CONSTRAINT IF EXISTS "FK_3d0e0038796b1f7d751d74b42a3"`,
     )
     await queryRunner.query(
       `ALTER TABLE "movie_professionals" DROP COLUMN "cinematicRoleId"`,

@@ -10,7 +10,7 @@ export class RemoveRucAndUpdatedAtFromExhibitionSpaces1769632448725
       `ALTER TABLE "exhibition_spaces" DROP COLUMN "updatedAt"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "exhibition_spaces" DROP CONSTRAINT "UQ_9d2d978a08ab74328be5536f01d"`,
+      `ALTER TABLE "exhibition_spaces" DROP CONSTRAINT IF EXISTS "UQ_9d2d978a08ab74328be5536f01d"`,
     )
     await queryRunner.query(`ALTER TABLE "exhibition_spaces" DROP COLUMN "ruc"`)
   }

@@ -19,10 +19,10 @@ export class CreateMovieFestivalNominationTable1769633684744
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movie_festival_nominations" DROP CONSTRAINT "FK_fdbb7bde9978a747c2638426ebb"`,
+      `ALTER TABLE "movie_festival_nominations" DROP CONSTRAINT IF EXISTS "FK_fdbb7bde9978a747c2638426ebb"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_festival_nominations" DROP CONSTRAINT "FK_6cb5293deafe159f2eac8573113"`,
+      `ALTER TABLE "movie_festival_nominations" DROP CONSTRAINT IF EXISTS "FK_6cb5293deafe159f2eac8573113"`,
     )
     await queryRunner.query(`DROP TABLE "movie_festival_nominations"`)
   }

@@ -11,7 +11,7 @@ export class CreateMovieFrameAssetsRelation1769623970293
       // Primero eliminar la constraint
       try {
         await queryRunner.query(
-          `ALTER TABLE "movies" DROP CONSTRAINT "FK_e5fd602bd941753e6f8fa89d9ee"`,
+          `ALTER TABLE "movies" DROP CONSTRAINT IF EXISTS "FK_e5fd602bd941753e6f8fa89d9ee"`,
         )
       } catch (e) {
         // La constraint puede no existir
@@ -44,10 +44,10 @@ export class CreateMovieFrameAssetsRelation1769623970293
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movies_frame_assets" DROP CONSTRAINT "FK_14801dce254e9eb93945b625635"`,
+      `ALTER TABLE "movies_frame_assets" DROP CONSTRAINT IF EXISTS "FK_14801dce254e9eb93945b625635"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movies_frame_assets" DROP CONSTRAINT "FK_662900148a35259fdc5afa1c728"`,
+      `ALTER TABLE "movies_frame_assets" DROP CONSTRAINT IF EXISTS "FK_662900148a35259fdc5afa1c728"`,
     )
     await queryRunner.query(`ALTER TABLE "movies" ADD "frameAssetId" integer`)
     await queryRunner.query(

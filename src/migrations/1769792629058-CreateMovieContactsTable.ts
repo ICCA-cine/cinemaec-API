@@ -22,10 +22,10 @@ export class CreateMovieContactsTable1769792629058
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movie_contacts" DROP CONSTRAINT "FK_3c3cc6ab29aee76e86dddc4aa7f"`,
+      `ALTER TABLE "movie_contacts" DROP CONSTRAINT IF EXISTS "FK_3c3cc6ab29aee76e86dddc4aa7f"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_contacts" DROP CONSTRAINT "FK_f5a9136ee4faeccd67518e0514c"`,
+      `ALTER TABLE "movie_contacts" DROP CONSTRAINT IF EXISTS "FK_f5a9136ee4faeccd67518e0514c"`,
     )
     await queryRunner.query(`DROP TABLE "movie_contacts"`)
     await queryRunner.query(`DROP TYPE "public"."movie_contacts_cargo_enum"`)

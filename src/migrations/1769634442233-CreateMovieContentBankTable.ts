@@ -19,10 +19,10 @@ export class CreateMovieContentBankTable1769634442233
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "movie_content_bank" DROP CONSTRAINT "FK_576ad62103ed6dafc17b0029c1c"`,
+      `ALTER TABLE "movie_content_bank" DROP CONSTRAINT IF EXISTS "FK_576ad62103ed6dafc17b0029c1c"`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_content_bank" DROP CONSTRAINT "FK_a464ed02fbe56d962cabd685b9c"`,
+      `ALTER TABLE "movie_content_bank" DROP CONSTRAINT IF EXISTS "FK_a464ed02fbe56d962cabd685b9c"`,
     )
     await queryRunner.query(`DROP TABLE "movie_content_bank"`)
   }
