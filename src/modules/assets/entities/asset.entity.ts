@@ -28,6 +28,9 @@ export enum AssetOwnerEnum {
   LOCATION_PHOTOS = 'location_photos',
   MOVIE_STILLS = 'movie_stills',
   MOVIE_POSTER = 'movie_poster',
+  MOVIE_DOSSIER = 'movie_dossier',
+  MOVIE_DOSSIER_EN = 'movie_dossier_en',
+  MOVIE_PEDAGOGICAL_GUIDE = 'movie_pedagogical_guide',
 }
 
 @Entity('assets')

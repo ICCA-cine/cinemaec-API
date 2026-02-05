@@ -242,16 +242,6 @@ export class Movie {
   @OneToMany(() => MovieContact, (movieContact) => movieContact.movie)
   contacts: MovieContact[]
 
-  @Column({ type: 'boolean', default: true })
-  isActive: boolean
-
-  @Column({
-    type: 'enum',
-    enum: MovieStatusEnum,
-    default: MovieStatusEnum.DRAFT,
-  })
-  status: MovieStatusEnum
-
   @CreateDateColumn()
   createdAt: Date
 
