@@ -4,16 +4,14 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  CreateDateColumn,
 } from 'typeorm'
 import { Movie } from './movie.entity'
-import { Professional } from '../../professionals/entities/professional.entity'
 
-export enum ContactPosition {
-  PRODUCER_COMPANY = 'Productora',
-  DIRECTOR = 'Director',
+export enum ContactRole {
+  DIRECTOR = 'Director/a',
+  PRODUCER = 'Productor/a',
   SALES_AGENT = 'Agente de ventas',
-  DISTRIBUTOR = 'Distribuidor',
+  DISTRIBUTOR = 'Distribuidor/a',
 }
 
 @Entity('movie_contacts')
@@ -28,20 +26,19 @@ export class MovieContact {
   @JoinColumn({ name: 'movieId' })
   movie: Movie
 
-  @Column({ type: 'integer', nullable: false })
-  professionalId: number
-
-  @ManyToOne(() => Professional)
-  @JoinColumn({ name: 'professionalId' })
-  professional: Professional
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  name: string | null
 
   @Column({
     type: 'enum',
-    enum: ContactPosition,
+    enum: ContactRole,
     nullable: false,
   })
-  cargo: ContactPosition
+  role: ContactRole
 
-  @CreateDateColumn()
-  createdAt: Date
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  phone: string | null
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  email: string | null
 }

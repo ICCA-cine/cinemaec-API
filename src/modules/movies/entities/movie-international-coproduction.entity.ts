@@ -7,10 +7,9 @@ import {
 } from 'typeorm'
 import { Movie } from './movie.entity'
 import { Country } from '../../catalog/entities/country.entity'
-import { MovieReleaseType } from '../enums/movie-release-type.enum'
 
-@Entity('movie_international_releases')
-export class MovieInternationalRelease {
+@Entity('movies_international_coproductions')
+export class MovieInternationalCoproduction {
   @PrimaryGeneratedColumn()
   id: number
 
@@ -21,19 +20,13 @@ export class MovieInternationalRelease {
   @JoinColumn({ name: 'movieId' })
   movie: Movie
 
+  @Column({ type: 'varchar', length: 255, nullable: false })
+  companyName: string
+
   @Column({ type: 'integer', nullable: false })
   countryId: number
 
   @ManyToOne(() => Country)
   @JoinColumn({ name: 'countryId' })
   country: Country
-
-  @Column({ type: 'integer', nullable: false })
-  year: number
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  spaceName: string
-
-  @Column({ type: 'varchar', enum: MovieReleaseType, nullable: false })
-  type: MovieReleaseType
 }

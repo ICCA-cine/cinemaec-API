@@ -2,10 +2,13 @@ import {
   Controller,
   Get,
   Put,
+  Post,
   Param,
   Body,
   UseGuards,
   ParseIntPipe,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common'
 import {
   ApiTags,
@@ -15,6 +18,7 @@ import {
 } from '@nestjs/swagger'
 import { MoviesService } from './movies.service'
 import { UpdateMovieCastCrewDto } from './dto/update-cast-crew.dto'
+import { CreateMovieDto } from './dto/create-movie.dto'
 import { JwtAuthGuard } from '../users/guards/jwt-auth.guard'
 import { ProfessionalsService } from '../professionals/professionals.service'
 
@@ -36,6 +40,14 @@ export class MoviesController {
   })
   findAll() {
     return this.moviesService.findAll()
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Crear una película' })
+  @ApiResponse({ status: 201, description: 'Película creada exitosamente' })
+  create(@Body() createMovieDto: CreateMovieDto) {
+    return this.moviesService.create(createMovieDto)
   }
 
   @Get(':id')

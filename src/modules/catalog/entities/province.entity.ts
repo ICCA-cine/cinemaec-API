@@ -4,11 +4,9 @@ import {
   Column,
   ManyToOne,
   OneToMany,
-  ManyToMany,
 } from 'typeorm'
 import { Country } from './country.entity'
 import { City } from './city.entity'
-import { Movie } from '../../movies/entities/movie.entity'
 
 @Entity('provinces')
 export class Province {
@@ -27,6 +25,4 @@ export class Province {
   @OneToMany(() => City, (city) => city.province)
   cities: City[]
 
-  @ManyToMany(() => Movie, (movie) => movie.provinces)
-  movies: Movie[]
 }

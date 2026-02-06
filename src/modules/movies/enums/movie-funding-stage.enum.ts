@@ -1,6 +1,7 @@
 export enum MovieFundingStage {
-  DEVELOPMENT = 'Desarrollo',
-  PRODUCTION = 'Producción',
-  POST_PRODUCTION = 'Postproducción',
-  DISTRIBUTION = 'Distribución',
+  DEVELOPMENT = 'desarrollo',
+  PRODUCTION = 'produccion',
+  POST_PRODUCTION = 'postproduccion',
+  DISTRIBUTION = 'distribucion',
+  FINALIZED = 'finalizado',
 }

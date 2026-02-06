@@ -33,9 +33,9 @@ export class MovieFunding {
   year: number
 
   @Column({ type: 'numeric', precision: 12, scale: 2, nullable: true })
-  amountGranted: number
+  amountGranted: number | null
 
-  @Column({ type: 'varchar', enum: MovieFundingStage, nullable: false })
+  @Column({ type: 'enum', enum: MovieFundingStage, nullable: false })
   fundingStage: MovieFundingStage
 
   @CreateDateColumn()

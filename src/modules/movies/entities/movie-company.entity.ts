@@ -1,17 +1,10 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-  CreateDateColumn,
-} from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm'
 import { Movie } from './movie.entity'
 import { Company } from '../../companies/entities/company.entity'
 
 export enum CompanyParticipationType {
-  PRODUCER = 'Productor',
-  CO_PRODUCER = 'Coproductor',
+  PRODUCER = 'Producción',
+  CO_PRODUCER = 'Coproducción',
 }
 
 @Entity('movie_companies')
@@ -39,7 +32,4 @@ export class MovieCompany {
     nullable: false,
   })
   participation: CompanyParticipationType
-
-  @CreateDateColumn()
-  createdAt: Date
 }

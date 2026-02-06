@@ -29,12 +29,11 @@ export class MovieContentBank {
   licensingEndDate: Date
 
   @Column({
-    type: 'varchar',
-    array: true,
+    type: 'enum',
     enum: ExhibitionWindow,
     nullable: false,
   })
-  exhibitionWindow: ExhibitionWindow[]
+  exhibitionWindow: ExhibitionWindow
 
   @Column({ type: 'integer', array: true, nullable: true })
   geolocationRestrictionCountryIds: number[] | null

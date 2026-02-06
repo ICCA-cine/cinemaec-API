@@ -7,33 +7,23 @@ import {
 } from 'typeorm'
 import { Movie } from './movie.entity'
 import { Country } from '../../catalog/entities/country.entity'
-import { MovieReleaseType } from '../enums/movie-release-type.enum'
 
-@Entity('movie_international_releases')
-export class MovieInternationalRelease {
+@Entity('movie_filming_countries')
+export class MovieFilmingCountry {
   @PrimaryGeneratedColumn()
   id: number
 
   @Column({ type: 'integer', nullable: false })
   movieId: number
 
-  @ManyToOne(() => Movie)
+  @ManyToOne(() => Movie, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'movieId' })
   movie: Movie
 
   @Column({ type: 'integer', nullable: false })
   countryId: number
 
-  @ManyToOne(() => Country)
+  @ManyToOne(() => Country, { onDelete: 'NO ACTION' })
   @JoinColumn({ name: 'countryId' })
   country: Country
-
-  @Column({ type: 'integer', nullable: false })
-  year: number
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  spaceName: string
-
-  @Column({ type: 'varchar', enum: MovieReleaseType, nullable: false })
-  type: MovieReleaseType
 }

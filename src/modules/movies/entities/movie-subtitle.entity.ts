@@ -6,27 +6,24 @@ import {
   JoinColumn,
 } from 'typeorm'
 import { Movie } from './movie.entity'
-import { Platform } from '../../platforms/entities/platform.entity'
+import { Language } from '../../catalog/entities/language.entity'
 
-@Entity('movie_platforms')
-export class MoviePlatform {
+@Entity('movies_subtitles')
+export class MovieSubtitle {
   @PrimaryGeneratedColumn()
   id: number
 
   @Column({ type: 'integer', nullable: false })
   movieId: number
 
-  @ManyToOne(() => Movie)
+  @ManyToOne(() => Movie, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'movieId' })
   movie: Movie
 
   @Column({ type: 'integer', nullable: false })
-  platformId: number
+  languageId: number
 
-  @ManyToOne(() => Platform)
-  @JoinColumn({ name: 'platformId' })
-  platform: Platform
-
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  link: string | null
+  @ManyToOne(() => Language, { onDelete: 'NO ACTION' })
+  @JoinColumn({ name: 'languageId' })
+  language: Language
 }

@@ -4,7 +4,6 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  CreateDateColumn,
 } from 'typeorm'
 import { Movie } from './movie.entity'
 import { Professional } from '../../professionals/entities/professional.entity'
@@ -36,6 +35,4 @@ export class MovieProfessional {
   @JoinColumn({ name: 'cinematicRoleId' })
   cinematicRole: CinematicRole
 
-  @CreateDateColumn()
-  createdAt: Date
 }

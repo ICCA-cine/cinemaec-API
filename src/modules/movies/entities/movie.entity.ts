@@ -12,7 +12,6 @@ import {
 } from 'typeorm'
 import { Language } from '../../catalog/entities/language.entity'
 import { Country } from '../../catalog/entities/country.entity'
-import { Province } from '../../catalog/entities/province.entity'
 import { City } from '../../catalog/entities/city.entity'
 import { SubGenre } from '../../catalog/entities/subgenre.entity'
 import { User } from '../../users/entities/user.entity'
@@ -26,6 +25,8 @@ import { MovieContentBank } from './movie-content-bank.entity'
 import { MoviePlatform } from './movie-platform.entity'
 import { MovieCompany } from './movie-company.entity'
 import { MovieContact } from './movie-contact.entity'
+import { MovieInternationalCoproduction } from './movie-international-coproduction.entity'
+import { MovieFilmingCountry } from './movie-filming-country.entity'
 
 export enum MovieType {
   SHORT_FILM = 'Cortometraje',
@@ -111,16 +112,6 @@ export class Movie {
     nullable: false,
   })
   country: Country
-
-  @ManyToMany(() => Province, (province) => province.movies, {
-    cascade: false,
-  })
-  @JoinTable({
-    name: 'movies_provinces',
-    joinColumn: { name: 'movieId', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'provinceId', referencedColumnName: 'id' },
-  })
-  provinces: Province[]
 
   @ManyToMany(() => City, (city) => city.movies, {
     cascade: false,
@@ -238,6 +229,18 @@ export class Movie {
 
   @OneToMany(() => MovieCompany, (movieCompany) => movieCompany.movie)
   companies: MovieCompany[]
+
+  @OneToMany(
+    () => MovieInternationalCoproduction,
+    (coproduction) => coproduction.movie,
+  )
+  internationalCoproductions: MovieInternationalCoproduction[]
+
+  @OneToMany(
+    () => MovieFilmingCountry,
+    (filmingCountry) => filmingCountry.movie,
+  )
+  filmingCountries: MovieFilmingCountry[]
 
   @OneToMany(() => MovieContact, (movieContact) => movieContact.movie)
   contacts: MovieContact[]

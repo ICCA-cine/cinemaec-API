@@ -4,7 +4,6 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  CreateDateColumn,
 } from 'typeorm'
 import { Movie } from './movie.entity'
 import { ExhibitionSpace } from '../../exhibition-spaces/entities/exhibition-space.entity'
@@ -42,7 +41,4 @@ export class MovieNationalRelease {
 
   @Column({ type: 'varchar', enum: MovieReleaseType, nullable: false })
   type: MovieReleaseType
-
-  @CreateDateColumn()
-  createdAt: Date
 }
