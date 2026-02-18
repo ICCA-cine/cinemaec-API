@@ -17,12 +17,14 @@ export class CompaniesService {
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto): Promise<Company> {
-    const existingCompany = await this.companiesRepository.findOne({
-      where: { ruc: createCompanyDto.ruc },
-    })
+    if (createCompanyDto.ruc) {
+      const existingCompany = await this.companiesRepository.findOne({
+        where: { ruc: createCompanyDto.ruc },
+      })
 
-    if (existingCompany) {
-      throw new ConflictException('El RUC ya está registrado')
+      if (existingCompany) {
+        throw new ConflictException('El RUC ya está registrado')
+      }
     }
 
     const company = this.companiesRepository.create(createCompanyDto)
@@ -33,8 +35,7 @@ export class CompaniesService {
     return await this.companiesRepository.find({
       relations: ['country'],
       order: {
-        commercialName: 'ASC',
-        legalName: 'ASC',
+        nombre: 'ASC',
       },
     })
   }

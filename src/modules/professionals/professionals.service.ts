@@ -24,8 +24,7 @@ export class ProfessionalsService {
   async findAll(): Promise<Professional[]> {
     return await this.professionalsRepository.find({
       order: {
-        lastName: 'ASC',
-        firstName: 'ASC',
+        name: 'ASC',
       },
     })
   }

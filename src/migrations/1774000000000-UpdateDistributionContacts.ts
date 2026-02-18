@@ -22,6 +22,15 @@ export class UpdateDistributionContacts1774000000000
     await queryRunner.query(`DROP TABLE IF EXISTS "movies_provinces"`)
 
     await queryRunner.query(
+      `DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'movie_content_bank_exhibitionwindow_enum') THEN
+          CREATE TYPE "public"."movie_content_bank_exhibitionWindow_enum" AS ENUM ('Nacional', 'Internacional', 'VOD');
+        END IF;
+      END $$;`,
+    )
+
+    await queryRunner.query(
       `CREATE TABLE IF NOT EXISTS "movies_subtitles" (
         "id" SERIAL NOT NULL,
         "movieId" integer NOT NULL,

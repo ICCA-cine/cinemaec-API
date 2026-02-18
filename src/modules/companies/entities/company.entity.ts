@@ -25,14 +25,23 @@ export class Company {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({ type: 'varchar', length: 20, unique: true })
-  ruc: string
+  @Column({ type: 'varchar', length: 255 })
+  nombre: string
+
+  @Column({ type: 'varchar', length: 13, nullable: true })
+  ruc: string | null
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   legalName: string | null
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   commercialName: string | null
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  representante: string | null
+
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  cedulaRepresentante: string | null
 
   @ManyToOne(() => Country)
   @JoinColumn({ name: 'countryId' })
@@ -47,8 +56,23 @@ export class Company {
   @Column({ type: 'varchar', length: 20, nullable: true })
   phone: string | null
 
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  telefono: string | null
+
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  celular: string | null
+
   @Column({ type: 'varchar', length: 255, nullable: true })
   website: string | null
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  sitioWeb: string | null
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  instagram: string | null
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  linkedin: string | null
 
   @Column({ type: 'integer', nullable: true })
   ownerId: number | null

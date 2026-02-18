@@ -32,7 +32,7 @@ export class MovieInternationalRelease {
   year: number
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  spaceName: string
+  spaceName: string | null
 
   @Column({ type: 'varchar', enum: MovieReleaseType, nullable: false })
   type: MovieReleaseType
