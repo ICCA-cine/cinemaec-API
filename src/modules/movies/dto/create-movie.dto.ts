@@ -38,8 +38,9 @@ export class CreateMovieDto {
   @IsEnum(GenreType)
   genre: GenreType
 
+  @IsOptional()
   @IsInt()
-  releaseYear: number
+  releaseYear?: number
 
   @IsInt()
   countryId: number

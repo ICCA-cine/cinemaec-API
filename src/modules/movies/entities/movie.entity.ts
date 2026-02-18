@@ -50,6 +50,7 @@ export enum MovieClassification {
   MAYORES_12 = 'mayores_12',
   MAYORES_15 = 'mayores_15',
   SOLO_MAYORES_18 = 'solo_mayores_18',
+  NO_ESPECIFICADA = 'no_especificada',
 }
 
 export enum ProjectStatus {
