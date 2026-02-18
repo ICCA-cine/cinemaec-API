@@ -27,6 +27,7 @@ import { MovieCompany } from './movie-company.entity'
 import { MovieContact } from './movie-contact.entity'
 import { MovieInternationalCoproduction } from './movie-international-coproduction.entity'
 import { MovieFilmingCountry } from './movie-filming-country.entity'
+import { MovieSubtitle } from './movie-subtitle.entity'
 
 export enum MovieType {
   SHORT_FILM = 'Cortometraje',
@@ -144,6 +145,16 @@ export class Movie {
   @Column({ type: 'enum', enum: ProjectStatus })
   projectStatus: ProjectStatus
 
+  @Column({
+    type: 'enum',
+    enum: MovieStatusEnum,
+    default: MovieStatusEnum.DRAFT,
+  })
+  status: MovieStatusEnum
+
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean
+
   @Column({ type: 'numeric', precision: 14, scale: 2, nullable: true })
   totalBudget: string | null
 
@@ -244,6 +255,9 @@ export class Movie {
 
   @OneToMany(() => MovieContact, (movieContact) => movieContact.movie)
   contacts: MovieContact[]
+
+  @OneToMany(() => MovieSubtitle, (subtitle) => subtitle.movie)
+  subtitles: MovieSubtitle[]
 
   @CreateDateColumn()
   createdAt: Date
