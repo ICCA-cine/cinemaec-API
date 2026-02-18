@@ -3,24 +3,10 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   JoinColumn,
 } from 'typeorm'
 import { User } from '../../users/entities/user.entity'
-
-export enum Gender {
-  MASCULINO = 'masculino',
-  FEMENINO = 'femenino',
-}
-
-export enum ProfessionalStatusEnum {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  VERIFIED = 'verified',
-  PENDING_VERIFICATION = 'pending_verification',
-  SUSPENDED = 'suspended',
-}
 
 @Entity('professionals')
 export class Professional {
@@ -30,30 +16,8 @@ export class Professional {
   @Column({ type: 'varchar', length: 255 })
   name: string
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  firstName: string | null
-
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  lastName: string | null
-
   @Column({ type: 'varchar', length: 20, nullable: true })
   cedula: string | null
-
-  @Column({ type: 'varchar', length: 20, nullable: true })
-  idNumber: string | null
-
-  @Column({
-    type: 'enum',
-    enum: Gender,
-    nullable: true,
-  })
-  gender: Gender | null
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  email: string | null
-
-  @Column({ type: 'varchar', length: 20, nullable: true })
-  phone: string | null
 
   @Column({ type: 'varchar', length: 20, nullable: true })
   telefono: string | null
@@ -74,19 +38,9 @@ export class Professional {
   @JoinColumn({ name: 'ownerId' })
   owner: User | null
 
-  @Column({ type: 'boolean', default: true })
+  @Column({ type: 'boolean', default: false })
   isActive: boolean
-
-  @Column({
-    type: 'enum',
-    enum: ProfessionalStatusEnum,
-    default: ProfessionalStatusEnum.ACTIVE,
-  })
-  status: ProfessionalStatusEnum
 
   @CreateDateColumn()
   createdAt: Date
-
-  @UpdateDateColumn()
-  updatedAt: Date
 }

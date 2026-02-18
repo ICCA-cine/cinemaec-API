@@ -1,5 +1,4 @@
-import { IsString, IsEnum, IsEmail, IsOptional, Length } from 'class-validator'
-import { Gender } from '../entities/professional.entity'
+import { IsString, IsOptional, Length } from 'class-validator'
 
 export class CreateProfessionalDto {
   @IsString()
@@ -8,28 +7,8 @@ export class CreateProfessionalDto {
 
   @IsOptional()
   @IsString()
-  @Length(1, 100)
-  firstName?: string
-
-  @IsOptional()
-  @IsString()
-  @Length(1, 100)
-  lastName?: string
-
-  @IsOptional()
-  @IsString()
   @Length(1, 20)
   cedula?: string
-
-  @IsOptional()
-  @IsEmail()
-  @Length(1, 255)
-  email?: string
-
-  @IsOptional()
-  @IsString()
-  @Length(1, 20)
-  phone?: string
 
   @IsOptional()
   @IsString()
@@ -50,8 +29,4 @@ export class CreateProfessionalDto {
   @IsString()
   @Length(1, 255)
   linkedin?: string
-
-  @IsOptional()
-  @IsEnum(Gender)
-  gender?: Gender
 }
