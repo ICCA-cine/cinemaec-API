@@ -1,4 +1,4 @@
-import { IsString, IsOptional, Length } from 'class-validator'
+import { IsOptional, IsString, Length, MaxLength } from 'class-validator'
 
 export class CreateProfessionalDto {
   @IsString()
@@ -7,26 +7,26 @@ export class CreateProfessionalDto {
 
   @IsOptional()
   @IsString()
-  @Length(1, 20)
-  cedula?: string
+  @MaxLength(20)
+  dniNumber?: string
 
   @IsOptional()
   @IsString()
-  @Length(1, 20)
-  telefono?: string
+  @MaxLength(20)
+  phone?: string
 
   @IsOptional()
   @IsString()
-  @Length(1, 20)
-  celular?: string
+  @Length(10, 10)
+  mobile?: string
 
   @IsOptional()
   @IsString()
-  @Length(1, 255)
-  sitioWeb?: string
+  @MaxLength(255)
+  website?: string
 
   @IsOptional()
   @IsString()
-  @Length(1, 255)
+  @MaxLength(255)
   linkedin?: string
 }

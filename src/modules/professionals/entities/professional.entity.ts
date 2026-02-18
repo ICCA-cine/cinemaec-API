@@ -17,16 +17,16 @@ export class Professional {
   name: string
 
   @Column({ type: 'varchar', length: 20, nullable: true })
-  cedula: string | null
+  dniNumber: string | null
 
   @Column({ type: 'varchar', length: 20, nullable: true })
-  telefono: string | null
+  phone: string | null
 
-  @Column({ type: 'varchar', length: 20, nullable: true })
-  celular: string | null
+  @Column({ type: 'varchar', length: 10, nullable: true })
+  mobile: string | null
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  sitioWeb: string | null
+  website: string | null
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   linkedin: string | null
@@ -41,6 +41,12 @@ export class Professional {
   @Column({ type: 'boolean', default: false })
   isActive: boolean
 
+  @Column({ type: 'varchar', length: 20, default: 'inactive' })
+  status: string
+
   @CreateDateColumn()
   createdAt: Date
+
+  @Column({ type: 'timestamp', nullable: true, default: null })
+  updatedAt: Date | null
 }

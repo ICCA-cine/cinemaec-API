@@ -1,55 +1,52 @@
 import {
-  IsString,
   IsOptional,
-  IsInt,
+  IsString,
   Length,
+  MaxLength,
 } from 'class-validator'
 
 export class CreateCompanyDto {
   @IsString()
   @Length(1, 255)
-  nombre: string
+  name: string
 
   @IsOptional()
   @IsString()
-  @Length(1, 13)
+  @MaxLength(13)
   ruc?: string
 
   @IsOptional()
   @IsString()
-  @Length(1, 255)
-  representante?: string
+  @MaxLength(255)
+  representative?: string
 
   @IsOptional()
   @IsString()
-  @Length(1, 20)
-  cedulaRepresentante?: string
+  @MaxLength(20)
+  representativeDniNumber?: string
 
   @IsOptional()
   @IsString()
-  @Length(1, 20)
-  telefono?: string
+  @MaxLength(20)
+  phone?: string
 
   @IsOptional()
   @IsString()
-  @Length(1, 20)
-  celular?: string
+  @Length(10, 10)
+  mobile?: string
 
   @IsOptional()
   @IsString()
-  @Length(1, 255)
-  sitioWeb?: string
+  @MaxLength(255)
+  website?: string
 
   @IsOptional()
   @IsString()
-  @Length(1, 255)
+  @MaxLength(255)
   instagram?: string
 
   @IsOptional()
   @IsString()
-  @Length(1, 255)
+  @MaxLength(255)
   linkedin?: string
-
-  @IsInt()
-  countryId: number
 }

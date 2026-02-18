@@ -3,11 +3,12 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  OneToMany,
   JoinColumn,
   CreateDateColumn,
 } from 'typeorm'
-import { Country } from '../../catalog/entities/country.entity'
 import { User } from '../../users/entities/user.entity'
+import { MovieCompany } from '../../movies/entities/movie-company.entity'
 
 @Entity('companies')
 export class Company {
@@ -15,38 +16,31 @@ export class Company {
   id: number
 
   @Column({ type: 'varchar', length: 255 })
-  nombre: string
+  name: string
 
-  @Column({ type: 'varchar', length: 13, nullable: true })
+  @Column({ type: 'varchar', length: 13, nullable: true, unique: true })
   ruc: string | null
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  representante: string | null
+  representative: string | null
 
   @Column({ type: 'varchar', length: 20, nullable: true })
-  cedulaRepresentante: string | null
+  representativeDniNumber: string | null
 
   @Column({ type: 'varchar', length: 20, nullable: true })
-  telefono: string | null
+  phone: string | null
 
-  @Column({ type: 'varchar', length: 20, nullable: true })
-  celular: string | null
+  @Column({ type: 'varchar', length: 10, nullable: true })
+  mobile: string | null
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  sitioWeb: string | null
+  website: string | null
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   instagram: string | null
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   linkedin: string | null
-
-  @ManyToOne(() => Country)
-  @JoinColumn({ name: 'countryId' })
-  country: Country
-
-  @Column({ type: 'integer' })
-  countryId: number
 
   @Column({ type: 'integer', nullable: true })
   ownerId: number | null
@@ -55,9 +49,18 @@ export class Company {
   @JoinColumn({ name: 'ownerId' })
   owner: User | null
 
+  @OneToMany(() => MovieCompany, (movieCompany) => movieCompany.company)
+  movies: MovieCompany[]
+
   @Column({ type: 'boolean', default: false })
   isActive: boolean
 
+  @Column({ type: 'varchar', length: 20, default: 'inactive' })
+  status: string
+
   @CreateDateColumn()
   createdAt: Date
+
+  @Column({ type: 'timestamp', nullable: true, default: null })
+  updatedAt: Date | null
 }
