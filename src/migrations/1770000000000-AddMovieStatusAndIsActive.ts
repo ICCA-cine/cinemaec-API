@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
-export class AddMovieStatusAndIsActive1739900000000
+export class AddMovieStatusAndIsActive1770000000000
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -20,7 +20,7 @@ export class AddMovieStatusAndIsActive1739900000000
       new TableColumn({
         name: 'isActive',
         type: 'boolean',
-        default: true,
+        default: false,
         isNullable: false,
       }),
     )
