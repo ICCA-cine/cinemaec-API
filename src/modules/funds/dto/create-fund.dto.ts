@@ -15,12 +15,12 @@ export class CreateFundDto {
   @IsString()
   @IsNotEmpty()
   @Length(1, 255)
-  nombre: string
+  name: string
 
   @IsArray()
   @ArrayNotEmpty()
   @IsEnum(FundType, { each: true })
-  tipo: FundType[]
+  type: FundType[]
 
   @IsInt()
   @IsNotEmpty()
@@ -29,5 +29,5 @@ export class CreateFundDto {
 
   @IsEnum(FinancialOrigin)
   @IsNotEmpty()
-  origenFinanciero: FinancialOrigin
+  financialOrigin: FinancialOrigin
 }

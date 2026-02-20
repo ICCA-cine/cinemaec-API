@@ -13,7 +13,12 @@ export class FundsService {
   ) {}
 
   async create(createFundDto: CreateFundDto): Promise<Fund> {
-    const fund = this.fundRepository.create(createFundDto)
+    const fund = this.fundRepository.create({
+      name: createFundDto.name,
+      type: createFundDto.type,
+      countryId: createFundDto.countryId,
+      financialOrigin: createFundDto.financialOrigin,
+    })
     return await this.fundRepository.save(fund)
   }
 

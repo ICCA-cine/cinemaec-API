@@ -69,7 +69,7 @@ async function bootstrap() {
   logger.log(`🔐 CORS Origins configurados: ${allowedOrigins.join(', ')}`)
 
   app.enableCors({
-    origin: true, // Temporal: permitir todos los orígenes para diagnosticar
+    origin: true, // Permitir todos los orígenes - producción debe usar allowedOrigins específicos
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
     allowedHeaders: [

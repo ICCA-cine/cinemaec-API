@@ -13,11 +13,11 @@ export class CreatePlatformDto {
   @IsString()
   @IsNotEmpty()
   @Length(1, 255)
-  nombre: string
+  name: string
 
   @IsEnum(PlatformType)
   @IsNotEmpty()
-  tipo: PlatformType
+  type: PlatformType
 
   @IsInt()
   @IsOptional()
