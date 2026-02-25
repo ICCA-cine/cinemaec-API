@@ -5,7 +5,7 @@ export class AddUniqueOwnerIdToProfessionals1770100000000
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-      CREATE UNIQUE INDEX "IDX_professionals_owner_unique"
+      CREATE UNIQUE INDEX IF NOT EXISTS "IDX_professionals_owner_unique"
       ON "professionals" ("ownerId")
       WHERE "ownerId" IS NOT NULL
     `)

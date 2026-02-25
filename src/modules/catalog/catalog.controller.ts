@@ -5,6 +5,7 @@ import { Country } from './entities/country.entity'
 import { Language } from './entities/language.entity'
 import { SubGenre } from './entities/subgenre.entity'
 import { CinematicRole } from './entities/cinematic-role.entity'
+import { RoleCategory } from './entities/role-category.entity'
 import { City } from './entities/city.entity'
 
 @ApiTags('Catalog')
@@ -54,6 +55,17 @@ export class CatalogController {
   })
   async getCinematicRoles(): Promise<CinematicRole[]> {
     return this.catalogService.getCinematicRoles()
+  }
+
+  @Get('role-categories')
+  @ApiOperation({ summary: 'Obtener lista de categorías de roles' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de categorías de roles',
+    type: [RoleCategory],
+  })
+  async getRoleCategories(): Promise<RoleCategory[]> {
+    return this.catalogService.getRoleCategories()
   }
 
   @Get('cities')

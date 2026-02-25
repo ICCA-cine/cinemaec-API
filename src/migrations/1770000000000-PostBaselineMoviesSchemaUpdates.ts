@@ -165,13 +165,25 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
 
     await queryRunner.query(`DROP TABLE IF EXISTS "movies_provinces"`)
 
+    // Fix exhibition window column - convert from array to single value
+    // Drop the column first (no data in production yet)
+    await queryRunner.query(
+      `ALTER TABLE "movie_content_bank" DROP COLUMN IF EXISTS "exhibitionWindow"`,
+    )
+
+    // Ensure the enum exists (already created in baseline migration)
     await queryRunner.query(
       `DO $$
       BEGIN
-        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'movie_content_bank_exhibitionwindow_enum') THEN
+        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'movie_content_bank_exhibitionWindow_enum') THEN
           CREATE TYPE "public"."movie_content_bank_exhibitionWindow_enum" AS ENUM ('Nacional', 'Internacional', 'VOD');
         END IF;
       END $$;`,
+    )
+
+    // Add the column back as non-array
+    await queryRunner.query(
+      `ALTER TABLE "movie_content_bank" ADD COLUMN IF NOT EXISTS "exhibitionWindow" "public"."movie_content_bank_exhibitionWindow_enum" NOT NULL DEFAULT 'Nacional'`,
     )
 
     await queryRunner.query(
@@ -187,15 +199,6 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
     )
     await queryRunner.query(
       `ALTER TABLE "movies_subtitles" ADD CONSTRAINT "FK_movies_subtitles_language" FOREIGN KEY ("languageId") REFERENCES "languages"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    )
-
-    await queryRunner.query(
-      `ALTER TABLE "movie_content_bank" ALTER COLUMN "exhibitionWindow" TYPE "public"."movie_content_bank_exhibitionWindow_enum" USING (
-        CASE
-          WHEN "exhibitionWindow" IS NULL THEN 'Nacional'
-          ELSE "exhibitionWindow"[1]
-        END
-      )::"public"."movie_content_bank_exhibitionWindow_enum"`,
     )
 
     // Drop foreign key constraint from movie_contacts.professionalId
@@ -255,14 +258,17 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
       `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "name" character varying(255)`,
     )
 
-    // Migrate firstName + lastName to name
+    // Migrate firstName + lastName to name (only if those columns exist)
     await queryRunner.query(`
-      UPDATE "professionals"
-      SET "name" = TRIM(COALESCE("firstName", '') || ' ' || COALESCE("lastName", ''))
-      WHERE "name" IS NULL AND EXISTS (
-        SELECT 1 FROM information_schema.columns
-        WHERE table_name = 'professionals' AND column_name = 'firstName'
-      );
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'professionals' AND column_name = 'firstName'
+        ) THEN
+          EXECUTE 'UPDATE "professionals" SET "name" = TRIM(COALESCE("firstName", '''') || '' '' || COALESCE("lastName", '''')) WHERE "name" IS NULL';
+        END IF;
+      END $$;
     `)
 
     // Rename idNumber to dniNumber if exists
@@ -313,14 +319,17 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
       `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "linkedin" character varying(255)`,
     )
 
-    // Migrate old Spanish column names
+    // Migrate old Spanish column names (only if they exist)
     await queryRunner.query(`
-      UPDATE "professionals"
-      SET "name" = COALESCE(NULLIF("name", ''), "nombre")
-      WHERE "name" IS NULL OR TRIM("name") = '' AND EXISTS (
-        SELECT 1 FROM information_schema.columns
-        WHERE table_name = 'professionals' AND column_name = 'nombre'
-      );
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'professionals' AND column_name = 'nombre'
+        ) THEN
+          EXECUTE 'UPDATE "professionals" SET "name" = COALESCE(NULLIF("name", ''''), "nombre") WHERE "name" IS NULL OR TRIM("name") = ''''';
+        END IF;
+      END $$;
     `)
 
     // Drop old columns
@@ -378,14 +387,17 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
       `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "name" character varying(255)`,
     )
 
-    // Migrate commercialName or legalName to name
+    // Migrate commercialName or legalName to name (only if those columns exist)
     await queryRunner.query(`
-      UPDATE "companies"
-      SET "name" = COALESCE(NULLIF("commercialName", ''), NULLIF("legalName", ''))
-      WHERE "name" IS NULL AND EXISTS (
-        SELECT 1 FROM information_schema.columns
-        WHERE table_name = 'companies' AND column_name = 'commercialName'
-      );
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'companies' AND column_name = 'commercialName'
+        ) THEN
+          EXECUTE 'UPDATE "companies" SET "name" = COALESCE(NULLIF("commercialName", ''''), NULLIF("legalName", '''')) WHERE "name" IS NULL';
+        END IF;
+      END $$;
     `)
 
     // Rename representativeIdNumber to representativeDniNumber if exists
