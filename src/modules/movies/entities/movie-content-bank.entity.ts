@@ -31,6 +31,7 @@ export class MovieContentBank {
   @Column({
     type: 'enum',
     enum: ExhibitionWindow,
+    enumName: 'movie_content_bank_exhibitionWindow_enum',
     nullable: false,
   })
   exhibitionWindow: ExhibitionWindow
