@@ -182,6 +182,68 @@ export class EmailsService {
   }
 
   /**
+   * Envía un email al usuario cuando reclama su perfil profesional
+   */
+  async sendProfessionalClaimedEmail(
+    email: string,
+    professionalName: string,
+  ): Promise<void> {
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Perfil profesional reclamado - CinemaEC',
+        html: `
+          <!DOCTYPE html>
+          <html>
+            <body>
+              <p>Hola,</p>
+              <p>Tu perfil profesional "${professionalName}" ha sido reclamado exitosamente.</p>
+              <p>Ya puedes ingresar a CinemaEC para revisar y completar tu informacion.</p>
+            </body>
+          </html>
+        `,
+      })
+
+      this.logger.log(
+        `✅ Email de perfil reclamado enviado a: ${email}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `❌ Error SMTP al enviar email de perfil reclamado a ${email}: ${error.message}`,
+      )
+
+      const apiKey = this.configService.get<string>('env.RESEND_API_KEY')
+      const from =
+        this.configService.get<string>('env.RESEND_FROM') ||
+        this.configService.get<string>('env.MAIL_FROM')
+      if (apiKey && from) {
+        try {
+          const resend = new Resend(apiKey)
+          await resend.emails.send({
+            from,
+            to: email,
+            subject: 'Perfil profesional reclamado - CinemaEC',
+            html: `
+              <html>
+                <body>
+                  <p>Tu perfil profesional "${professionalName}" ha sido reclamado exitosamente.</p>
+                </body>
+              </html>
+            `,
+          })
+          this.logger.log(
+            `✅ Resend: email de perfil reclamado enviado a: ${email}`,
+          )
+        } catch (err: any) {
+          this.logger.error(
+            `❌ Resend tambien fallo al enviar email de perfil reclamado a ${email}: ${err?.message}`,
+          )
+        }
+      }
+    }
+  }
+
+  /**
    * Envía un email para recuperación de contraseña
    */
   async sendPasswordResetEmail(email: string, token: string): Promise<void> {

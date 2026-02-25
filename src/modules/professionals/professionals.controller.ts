@@ -10,6 +10,7 @@ import {
   HttpCode,
   HttpStatus,
   ParseIntPipe,
+  Req,
 } from '@nestjs/common'
 import {
   ApiTags,
@@ -20,7 +21,13 @@ import {
 import { ProfessionalsService } from './professionals.service'
 import { CreateProfessionalDto } from './dto/create-professional.dto'
 import { UpdateProfessionalDto } from './dto/update-professional.dto'
+import {
+  ProfessionalClaimCheckResponse,
+  ProfessionalClaimResponse,
+} from './dto/professional-claim-check.response'
+import { ClaimProfessionalDto } from './dto/claim-professional.dto'
 import { JwtAuthGuard } from '../users/guards/jwt-auth.guard'
+import { CurrentUser, JwtPayload } from '../users/decorators/current-user.decorator'
 
 @ApiTags('Professionals')
 @Controller('professionals')
@@ -28,6 +35,44 @@ import { JwtAuthGuard } from '../users/guards/jwt-auth.guard'
 @ApiBearerAuth()
 export class ProfessionalsController {
   constructor(private readonly professionalsService: ProfessionalsService) {}
+
+  @Get('claim/check')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary:
+      'Verificar si existe un perfil profesional con la cédula del usuario autenticado',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Resultado de verificación de perfil reclamable',
+    type: ProfessionalClaimCheckResponse,
+  })
+  async checkClaim(
+    @CurrentUser() user: JwtPayload,
+  ): Promise<ProfessionalClaimCheckResponse> {
+    return await this.professionalsService.checkClaimByCurrentUser(user.sub)
+  }
+
+  @Post('claim')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary:
+      'Reclamar el perfil profesional que coincide con la cédula del usuario autenticado',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Perfil profesional reclamado exitosamente',
+    type: ProfessionalClaimResponse,
+  })
+  async claimProfile(
+    @CurrentUser() user: JwtPayload,
+    @Body() body: ClaimProfessionalDto,
+  ): Promise<ProfessionalClaimResponse> {
+    return await this.professionalsService.claimByCurrentUser(
+      user.sub,
+      body?.professionalId,
+    )
+  }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -38,6 +83,25 @@ export class ProfessionalsController {
   })
   async create(@Body() createProfessionalDto: CreateProfessionalDto) {
     return await this.professionalsService.create(createProfessionalDto)
+  }
+
+  @Post('claim/register')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Registrar un nuevo perfil profesional para el usuario autenticado',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Perfil profesional registrado y asociado al usuario',
+  })
+  async registerProfile(
+    @Body() createProfessionalDto: CreateProfessionalDto,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    return await this.professionalsService.registerForCurrentUser(
+      createProfessionalDto,
+      user.sub,
+    )
   }
 
   @Get()

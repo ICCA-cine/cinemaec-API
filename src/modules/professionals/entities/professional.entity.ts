@@ -5,10 +5,15 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  Index,
 } from 'typeorm'
 import { User } from '../../users/entities/user.entity'
 
 @Entity('professionals')
+@Index('IDX_professionals_owner_unique', ['ownerId'], {
+  unique: true,
+  where: '"ownerId" IS NOT NULL',
+})
 export class Professional {
   @PrimaryGeneratedColumn()
   id: number
