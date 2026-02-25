@@ -35,4 +35,7 @@ export class MovieProfessional {
   @JoinColumn({ name: 'cinematicRoleId' })
   cinematicRole: CinematicRole
 
+  @Column({ type: 'boolean', default: false, nullable: false })
+  accredited: boolean
+
 }

@@ -1,12 +1,15 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Professional } from './entities/professional.entity'
+import { ProfessionalPortfolioImage } from './entities/professional-portfolio-image.entity'
+import { MovieProfessional } from '../movies/entities/movie-professional.entity'
 import { CreateProfessionalDto } from './dto/create-professional.dto'
 import { UpdateProfessionalDto } from './dto/update-professional.dto'
 import {
@@ -24,6 +27,10 @@ export class ProfessionalsService {
   constructor(
     @InjectRepository(Professional)
     private readonly professionalsRepository: Repository<Professional>,
+    @InjectRepository(ProfessionalPortfolioImage)
+    private readonly portfolioImagesRepository: Repository<ProfessionalPortfolioImage>,
+    @InjectRepository(MovieProfessional)
+    private readonly movieProfessionalsRepository: Repository<MovieProfessional>,
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     @InjectRepository(Profile)
@@ -35,10 +42,28 @@ export class ProfessionalsService {
   async create(
     createProfessionalDto: CreateProfessionalDto,
   ): Promise<Professional> {
+    const {
+      portfolioImageAssetIds,
+      movieParticipations,
+      ...professionalPayload
+    } = createProfessionalDto
     const professional = this.professionalsRepository.create(
-      createProfessionalDto,
+      professionalPayload,
     )
-    return await this.professionalsRepository.save(professional)
+    const savedProfessional =
+      await this.professionalsRepository.save(professional)
+
+    await this.attachPortfolioImages(
+      savedProfessional.id,
+      portfolioImageAssetIds,
+    )
+
+    await this.replaceMovieParticipations(
+      savedProfessional.id,
+      movieParticipations,
+    )
+
+    return savedProfessional
   }
 
   async registerForCurrentUser(
@@ -56,11 +81,143 @@ export class ProfessionalsService {
       )
     }
 
+    const {
+      portfolioImageAssetIds,
+      movieParticipations,
+      ...professionalPayload
+    } = createProfessionalDto
     const professional = this.professionalsRepository.create({
-      ...createProfessionalDto,
+      ...professionalPayload,
       ownerId: userId,
     })
-    return await this.professionalsRepository.save(professional)
+    const savedProfessional =
+      await this.professionalsRepository.save(professional)
+
+    await this.attachPortfolioImages(
+      savedProfessional.id,
+      portfolioImageAssetIds,
+    )
+
+    await this.replaceMovieParticipations(
+      savedProfessional.id,
+      movieParticipations,
+    )
+
+    return savedProfessional
+  }
+
+  private async attachPortfolioImages(
+    professionalId: number,
+    assetIds?: number[],
+  ): Promise<void> {
+    if (!assetIds?.length) {
+      return
+    }
+
+    const records = assetIds.map((assetId) =>
+      this.portfolioImagesRepository.create({
+        professionalId,
+        assetId,
+      }),
+    )
+
+    await this.portfolioImagesRepository.save(records)
+  }
+
+  async getMovieParticipations(
+    professionalId: number,
+    userId: number,
+  ): Promise<
+    Array<{
+      id: number
+      movieId: number
+      movieTitle: string
+      cinematicRoleId: number
+      cinematicRoleName: string
+    }>
+  > {
+    await this.assertCanManageProfessional(professionalId, userId)
+
+    const entries = await this.movieProfessionalsRepository.find({
+      where: { professionalId },
+      relations: ['movie', 'cinematicRole'],
+      order: { id: 'ASC' },
+    })
+
+    return entries.map((entry) => ({
+      id: entry.id,
+      movieId: entry.movieId,
+      movieTitle: entry.movie?.title ?? '',
+      cinematicRoleId: entry.cinematicRoleId,
+      cinematicRoleName: entry.cinematicRole?.name ?? '',
+    }))
+  }
+
+  async updateMovieParticipations(
+    professionalId: number,
+    userId: number,
+    participations: Array<{ movieId: number; cinematicRoleId: number }>,
+  ): Promise<void> {
+    await this.assertCanManageProfessional(professionalId, userId)
+    await this.replaceMovieParticipations(professionalId, participations)
+  }
+
+  private async replaceMovieParticipations(
+    professionalId: number,
+    participations?: Array<{ movieId: number; cinematicRoleId: number }>,
+    accredited: boolean = false,
+  ): Promise<void> {
+    if (!participations) {
+      return
+    }
+
+    await this.movieProfessionalsRepository.delete({ professionalId })
+
+    if (!participations.length) {
+      return
+    }
+
+    const records = participations.map((entry) =>
+      this.movieProfessionalsRepository.create({
+        professionalId,
+        movieId: entry.movieId,
+        cinematicRoleId: entry.cinematicRoleId,
+        accredited,
+      }),
+    )
+
+    await this.movieProfessionalsRepository.save(records)
+  }
+
+  private async assertCanManageProfessional(
+    professionalId: number,
+    userId: number,
+  ): Promise<void> {
+    const professional = await this.professionalsRepository.findOne({
+      where: { id: professionalId },
+      select: ['id', 'ownerId'],
+    })
+
+    if (!professional) {
+      throw new NotFoundException(
+        `Professional with ID ${professionalId} not found`,
+      )
+    }
+
+    if (professional.ownerId === userId) {
+      return
+    }
+
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      select: ['id', 'role'],
+    })
+
+    if (user?.role === UserRole.ADMIN) {
+      return
+    }
+
+    throw new ForbiddenException('No tienes permisos para modificar este perfil')
   }
 
   async findAll(): Promise<Professional[]> {

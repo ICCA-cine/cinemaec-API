@@ -388,6 +388,7 @@ export class MoviesService {
           movieId: savedMovie.id,
           professionalId,
           cinematicRoleId: roleId,
+          accredited: true,
         }),
       )
     }
@@ -702,6 +703,7 @@ export class MoviesService {
           movieId: id,
           professionalId,
           cinematicRoleId: roleId,
+          accredited: true,
         }),
       )
     }
@@ -828,6 +830,7 @@ export class MoviesService {
               movieId,
               professionalId,
               cinematicRoleId: directorRoleId,
+              accredited: true,
             })
           },
         )
@@ -851,6 +854,7 @@ export class MoviesService {
               movieId,
               professionalId,
               cinematicRoleId: producerRoleId,
+              accredited: true,
             })
           },
         )

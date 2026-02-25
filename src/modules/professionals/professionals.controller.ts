@@ -21,6 +21,7 @@ import {
 import { ProfessionalsService } from './professionals.service'
 import { CreateProfessionalDto } from './dto/create-professional.dto'
 import { UpdateProfessionalDto } from './dto/update-professional.dto'
+import { UpdateProfessionalMovieParticipationsDto } from './dto/update-professional-movie-participations.dto'
 import {
   ProfessionalClaimCheckResponse,
   ProfessionalClaimResponse,
@@ -126,6 +127,42 @@ export class ProfessionalsController {
   })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.professionalsService.findOne(id)
+  }
+
+  @Get(':id/movie-participations')
+  @ApiOperation({
+    summary: 'Listar participaciones en peliculas del profesional',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de participaciones en peliculas',
+  })
+  async getMovieParticipations(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: JwtPayload,
+  ) {
+    return await this.professionalsService.getMovieParticipations(id, user.sub)
+  }
+
+  @Put(':id/movie-participations')
+  @ApiOperation({
+    summary: 'Actualizar participaciones en peliculas del profesional',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Participaciones en peliculas actualizadas',
+  })
+  async updateMovieParticipations(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: JwtPayload,
+    @Body() body: UpdateProfessionalMovieParticipationsDto,
+  ) {
+    await this.professionalsService.updateMovieParticipations(
+      id,
+      user.sub,
+      body.movieParticipations,
+    )
+    return { message: 'Participaciones actualizadas' }
   }
 
   @Put(':id')
