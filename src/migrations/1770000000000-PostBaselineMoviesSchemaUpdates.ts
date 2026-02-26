@@ -262,9 +262,11 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
     // ========================================
     // 4. RESTRUCTURE PROFESSIONALS
     // ========================================
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "name" character varying(255)`,
-    )
+    const hasProfessionalsTable = await queryRunner.hasTable('professionals')
+    if (hasProfessionalsTable) {
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "name" character varying(255)`,
+      )
 
     // Migrate firstName + lastName to name (only if those columns exist)
     await queryRunner.query(`
@@ -384,16 +386,19 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
     )
 
     // Drop old enum types
-    await queryRunner.query(
-      `DROP TYPE IF EXISTS "public"."professionals_status_enum"`,
-    )
+      await queryRunner.query(
+        `DROP TYPE IF EXISTS "public"."professionals_status_enum"`,
+      )
+    }
 
     // ========================================
     // 5. RESTRUCTURE COMPANIES
     // ========================================
-    await queryRunner.query(
-      `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "name" character varying(255)`,
-    )
+    const hasCompaniesTable = await queryRunner.hasTable('companies')
+    if (hasCompaniesTable) {
+      await queryRunner.query(
+        `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "name" character varying(255)`,
+      )
 
     // Migrate commercialName or legalName to name (only if those columns exist)
     await queryRunner.query(`
@@ -522,9 +527,10 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
     )
 
     // Drop old enum types
-    await queryRunner.query(
-      `DROP TYPE IF EXISTS "public"."companies_status_enum"`,
-    )
+      await queryRunner.query(
+        `DROP TYPE IF EXISTS "public"."companies_status_enum"`,
+      )
+    }
 
     // ========================================
     // 6. ADD NO_ESPECIFICADA CLASSIFICATION

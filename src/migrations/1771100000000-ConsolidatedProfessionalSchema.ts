@@ -6,68 +6,72 @@ export class ConsolidatedProfessionalSchema1771100000000
   name = 'ConsolidatedProfessionalSchema1771100000000'
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Add professional profile fields
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "nickName" character varying(255)`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "rrss" character varying(255)`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "bio" text`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "bioEn" text`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "profilePhotoAssetId" integer`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "reelLink" character varying(500)`,
-    )
+    const hasProfessionalsTable = await queryRunner.hasTable('professionals')
 
-    // Add professional activity roles
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "primaryActivityRoleId1" integer`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "primaryActivityRoleId2" integer`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "secondaryActivityRoleId1" integer`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "secondaryActivityRoleId2" integer`,
-    )
-
-    // Add company name and CEO field
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "companyNameCEO" character varying(255)`,
-    )
-
-    // Create professional portfolio images table
-    await queryRunner.query(`
-      CREATE TABLE IF NOT EXISTS "professional_portfolio_images" (
-        "id" SERIAL PRIMARY KEY,
-        "professionalId" integer NOT NULL,
-        "assetId" integer NOT NULL,
-        "createdAt" TIMESTAMP NOT NULL DEFAULT now()
+    if (hasProfessionalsTable) {
+      // Add professional profile fields
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "nickName" character varying(255)`,
       )
-    `)
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "rrss" character varying(255)`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "bio" text`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "bioEn" text`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "profilePhotoAssetId" integer`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "reelLink" character varying(500)`,
+      )
 
-    await queryRunner.query(`
-      ALTER TABLE "professional_portfolio_images"
-      ADD CONSTRAINT "FK_professional_portfolio_images_professional"
-      FOREIGN KEY ("professionalId") REFERENCES "professionals"("id")
-      ON DELETE CASCADE ON UPDATE NO ACTION
-    `)
+      // Add professional activity roles
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "primaryActivityRoleId1" integer`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "primaryActivityRoleId2" integer`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "secondaryActivityRoleId1" integer`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "secondaryActivityRoleId2" integer`,
+      )
 
-    await queryRunner.query(`
-      ALTER TABLE "professional_portfolio_images"
-      ADD CONSTRAINT "FK_professional_portfolio_images_asset"
-      FOREIGN KEY ("assetId") REFERENCES "assets"("id")
-      ON DELETE CASCADE ON UPDATE NO ACTION
-    `)
+      // Add company name and CEO field
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "companyNameCEO" character varying(255)`,
+      )
+
+      // Create professional portfolio images table
+      await queryRunner.query(`
+        CREATE TABLE IF NOT EXISTS "professional_portfolio_images" (
+          "id" SERIAL PRIMARY KEY,
+          "professionalId" integer NOT NULL,
+          "assetId" integer NOT NULL,
+          "createdAt" TIMESTAMP NOT NULL DEFAULT now()
+        )
+      `)
+
+      await queryRunner.query(`
+        ALTER TABLE "professional_portfolio_images"
+        ADD CONSTRAINT "FK_professional_portfolio_images_professional"
+        FOREIGN KEY ("professionalId") REFERENCES "professionals"("id")
+        ON DELETE CASCADE ON UPDATE NO ACTION
+      `)
+
+      await queryRunner.query(`
+        ALTER TABLE "professional_portfolio_images"
+        ADD CONSTRAINT "FK_professional_portfolio_images_asset"
+        FOREIGN KEY ("assetId") REFERENCES "assets"("id")
+        ON DELETE CASCADE ON UPDATE NO ACTION
+      `)
+    }
 
     // Add accredited column to movie professionals
     try {
@@ -111,43 +115,46 @@ export class ConsolidatedProfessionalSchema1771100000000
       `DROP TABLE IF EXISTS "professional_portfolio_images"`,
     )
 
-    // Remove professional profile columns
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "reelLink"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "profilePhotoAssetId"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "bioEn"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "bio"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "rrss"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "nickName"`,
-    )
+    const hasProfessionalsTable = await queryRunner.hasTable('professionals')
+    if (hasProfessionalsTable) {
+      // Remove professional profile columns
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "reelLink"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "profilePhotoAssetId"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "bioEn"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "bio"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "rrss"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "nickName"`,
+      )
 
-    // Remove activity role columns
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "secondaryActivityRoleId2"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "secondaryActivityRoleId1"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "primaryActivityRoleId2"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "primaryActivityRoleId1"`,
-    )
+      // Remove activity role columns
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "secondaryActivityRoleId2"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "secondaryActivityRoleId1"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "primaryActivityRoleId2"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "primaryActivityRoleId1"`,
+      )
 
-    // Remove company name and CEO field
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "companyNameCEO"`,
-    )
+      // Remove company name and CEO field
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "companyNameCEO"`,
+      )
+    }
   }
 }

@@ -4,6 +4,9 @@ export class AddUniqueOwnerIdToProfessionals1770100000000
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    const hasProfessionalsTable = await queryRunner.hasTable('professionals')
+    if (!hasProfessionalsTable) return
+
     await queryRunner.query(`
       CREATE UNIQUE INDEX IF NOT EXISTS "IDX_professionals_owner_unique"
       ON "professionals" ("ownerId")
