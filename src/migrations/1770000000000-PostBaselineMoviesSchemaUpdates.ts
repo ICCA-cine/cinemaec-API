@@ -269,6 +269,23 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
     // ========================================
     // 4. RESTRUCTURE PROFESSIONALS
     // ========================================
+    await queryRunner.query(
+      `CREATE TABLE IF NOT EXISTS "professionals" (
+        "id" SERIAL PRIMARY KEY,
+        "name" character varying(255) NOT NULL DEFAULT 'N/A',
+        "dniNumber" character varying(20),
+        "phone" character varying(20),
+        "mobile" character varying(10),
+        "website" character varying(255),
+        "linkedin" character varying(255),
+        "ownerId" integer,
+        "isActive" boolean NOT NULL DEFAULT false,
+        "status" character varying(20) NOT NULL DEFAULT 'inactive',
+        "createdAt" timestamp NOT NULL DEFAULT now(),
+        "updatedAt" timestamp NULL DEFAULT NULL
+      )`,
+    )
+
     const hasProfessionalsTable = await queryRunner.hasTable('professionals')
     if (hasProfessionalsTable) {
       await queryRunner.query(
@@ -401,6 +418,26 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
     // ========================================
     // 5. RESTRUCTURE COMPANIES
     // ========================================
+    await queryRunner.query(
+      `CREATE TABLE IF NOT EXISTS "companies" (
+        "id" SERIAL PRIMARY KEY,
+        "name" character varying(255) NOT NULL DEFAULT 'N/A',
+        "ruc" character varying(13),
+        "representative" character varying(255),
+        "representativeDniNumber" character varying(20),
+        "phone" character varying(20),
+        "mobile" character varying(10),
+        "website" character varying(255),
+        "instagram" character varying(255),
+        "linkedin" character varying(255),
+        "ownerId" integer,
+        "isActive" boolean NOT NULL DEFAULT false,
+        "status" character varying(20) NOT NULL DEFAULT 'inactive',
+        "createdAt" timestamp NOT NULL DEFAULT now(),
+        "updatedAt" timestamp NULL DEFAULT NULL
+      )`,
+    )
+
     const hasCompaniesTable = await queryRunner.hasTable('companies')
     if (hasCompaniesTable) {
       await queryRunner.query(
