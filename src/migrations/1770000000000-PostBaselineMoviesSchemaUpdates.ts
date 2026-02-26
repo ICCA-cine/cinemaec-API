@@ -102,31 +102,39 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
     )
 
     // Update company participation enum
+    // NOTE: PostgreSQL does not allow using a newly-added enum value in the same transaction.
+    // Convert to text first, remap values, then recreate enum and cast back.
     await queryRunner.query(
-      `ALTER TYPE "public"."movie_companies_participation_enum" ADD VALUE IF NOT EXISTS 'Producción'`,
+      `ALTER TABLE "movie_companies" ALTER COLUMN "participation" TYPE text USING "participation"::text`,
     )
     await queryRunner.query(
-      `ALTER TYPE "public"."movie_companies_participation_enum" ADD VALUE IF NOT EXISTS 'Coproducción'`,
+      `UPDATE "movie_companies"
+       SET "participation" = CASE "participation"
+         WHEN 'Productor' THEN 'Producción'
+         WHEN 'Coproductor' THEN 'Coproducción'
+         ELSE "participation"
+       END`,
     )
 
     await queryRunner.query(
-      `UPDATE "movie_companies" SET "participation" = 'Producción' WHERE "participation"::text = 'Productor'`,
+      `DROP TYPE IF EXISTS "public"."movie_companies_participation_enum_old"`,
     )
     await queryRunner.query(
-      `UPDATE "movie_companies" SET "participation" = 'Coproducción' WHERE "participation"::text = 'Coproductor'`,
-    )
-
-    await queryRunner.query(
-      `ALTER TYPE "public"."movie_companies_participation_enum" RENAME TO "movie_companies_participation_enum_old"`,
+      `DROP TYPE IF EXISTS "public"."movie_companies_participation_enum"`,
     )
     await queryRunner.query(
       `CREATE TYPE "public"."movie_companies_participation_enum" AS ENUM ('Producción', 'Coproducción')`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_companies" ALTER COLUMN "participation" TYPE "public"."movie_companies_participation_enum" USING "participation"::text::"public"."movie_companies_participation_enum"`,
-    )
-    await queryRunner.query(
-      `DROP TYPE "public"."movie_companies_participation_enum_old"`,
+      `ALTER TABLE "movie_companies"
+       ALTER COLUMN "participation" TYPE "public"."movie_companies_participation_enum"
+       USING (
+         CASE "participation"
+           WHEN 'Producción' THEN 'Producción'
+           WHEN 'Coproducción' THEN 'Coproducción'
+           ELSE 'Producción'
+         END
+       )::"public"."movie_companies_participation_enum"`,
     )
 
     // Create international coproductions table
