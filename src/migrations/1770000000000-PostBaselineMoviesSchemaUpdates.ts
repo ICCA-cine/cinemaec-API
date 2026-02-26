@@ -43,7 +43,8 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
     )
 
     await queryRunner.query(
-      `INSERT INTO "cinematic_roles" ("id", "name") VALUES (20, 'Actor/Actriz') ON CONFLICT ("name") DO NOTHING`,
+      `INSERT INTO "cinematic_roles" ("id", "name") VALUES (20, 'Actor/Actriz')
+       ON CONFLICT ("id") DO UPDATE SET "name" = EXCLUDED."name"`,
     )
 
     await queryRunner.query(
@@ -250,7 +251,13 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
       END $$;`,
     )
     await queryRunner.query(
-      `ALTER TABLE "movie_contacts" ADD COLUMN IF NOT EXISTS "role" "public"."movie_contacts_role_enum" NOT NULL`,
+      `ALTER TABLE "movie_contacts" ADD COLUMN IF NOT EXISTS "role" "public"."movie_contacts_role_enum"`,
+    )
+    await queryRunner.query(
+      `UPDATE "movie_contacts" SET "role" = 'Director/a' WHERE "role" IS NULL`,
+    )
+    await queryRunner.query(
+      `ALTER TABLE "movie_contacts" ALTER COLUMN "role" SET NOT NULL`,
     )
     await queryRunner.query(
       `ALTER TABLE "movie_contacts" ADD COLUMN IF NOT EXISTS "phone" character varying(50)`,

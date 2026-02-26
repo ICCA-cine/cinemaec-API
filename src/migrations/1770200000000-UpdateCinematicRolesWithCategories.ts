@@ -68,6 +68,14 @@ export class UpdateCinematicRolesWithCategories1770200000000
       (20, 8, 'Actuación (Actor / Actriz / Actore)', 'Actor / Actress / Performer')
     `)
 
+    await queryRunner.query(`
+      SELECT setval(
+        pg_get_serial_sequence('cinematic_roles', 'id'),
+        COALESCE((SELECT MAX(id) FROM "cinematic_roles"), 1),
+        true
+      )
+    `)
+
     // Then insert all other roles
     await queryRunner.query(`
       INSERT INTO "cinematic_roles" ("idRoleCategory", "name", "nameEn") VALUES
