@@ -5,6 +5,7 @@ import { Country } from './entities/country.entity'
 import { Language } from './entities/language.entity'
 import { SubGenre } from './entities/subgenre.entity'
 import { CinematicRole } from './entities/cinematic-role.entity'
+import { RoleCategory } from './entities/role-category.entity'
 import { City } from './entities/city.entity'
 
 @Injectable()
@@ -18,6 +19,8 @@ export class CatalogService {
     private readonly subGenreRepository: Repository<SubGenre>,
     @InjectRepository(CinematicRole)
     private readonly cinematicRoleRepository: Repository<CinematicRole>,
+    @InjectRepository(RoleCategory)
+    private readonly roleCategoryRepository: Repository<RoleCategory>,
     @InjectRepository(City)
     private readonly cityRepository: Repository<City>,
   ) {}
@@ -49,7 +52,17 @@ export class CatalogService {
   async getCinematicRoles(): Promise<CinematicRole[]> {
     return this.cinematicRoleRepository.find({
       order: {
+        idRoleCategory: 'ASC',
         name: 'ASC',
+      },
+      relations: ['roleCategory'],
+    })
+  }
+
+  async getRoleCategories(): Promise<RoleCategory[]> {
+    return this.roleCategoryRepository.find({
+      order: {
+        id: 'ASC',
       },
     })
   }

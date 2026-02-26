@@ -5,16 +5,24 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  Index,
 } from 'typeorm'
 import { User } from '../../users/entities/user.entity'
 
 @Entity('professionals')
+@Index('IDX_professionals_owner_unique', ['ownerId'], {
+  unique: true,
+  where: '"ownerId" IS NOT NULL',
+})
 export class Professional {
   @PrimaryGeneratedColumn()
   id: number
 
   @Column({ type: 'varchar', length: 255 })
   name: string
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  nickName: string | null
 
   @Column({ type: 'varchar', length: 20, nullable: true })
   dniNumber: string | null
@@ -30,6 +38,36 @@ export class Professional {
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   linkedin: string | null
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  rrss: string | null
+
+  @Column({ type: 'text', nullable: true })
+  bio: string | null
+
+  @Column({ type: 'text', nullable: true })
+  bioEn: string | null
+
+  @Column({ type: 'integer', nullable: true })
+  profilePhotoAssetId: number | null
+
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  reelLink: string | null
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  companyNameCEO: string | null
+
+  @Column({ type: 'integer', nullable: true })
+  primaryActivityRoleId1: number | null
+
+  @Column({ type: 'integer', nullable: true })
+  primaryActivityRoleId2: number | null
+
+  @Column({ type: 'integer', nullable: true })
+  secondaryActivityRoleId1: number | null
+
+  @Column({ type: 'integer', nullable: true })
+  secondaryActivityRoleId2: number | null
 
   @Column({ type: 'integer', nullable: true })
   ownerId: number | null

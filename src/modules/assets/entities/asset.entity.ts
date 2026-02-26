@@ -23,6 +23,8 @@ export enum AssetOwnerEnum {
   SPACE_DOCUMENT = 'space_document',
   USER_BC_PHOTO = 'user_bc_photo',
   USER_AGREEMENT = 'user_agreement',
+  PROFESSIONAL_PROFILE_PHOTO = 'professional_profile_photo',
+  PROFESSIONAL_PORTFOLIO_IMAGE = 'professional_portfolio_image',
   COMPANY_LOGO = 'company_logo',
   COMPANY_PHOTOS = 'company_photos',
   LOCATION_PHOTOS = 'location_photos',

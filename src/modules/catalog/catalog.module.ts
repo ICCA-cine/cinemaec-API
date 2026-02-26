@@ -5,6 +5,7 @@ import { Country } from './entities/country.entity'
 import { Province } from './entities/province.entity'
 import { City } from './entities/city.entity'
 import { CinematicRole } from './entities/cinematic-role.entity'
+import { RoleCategory } from './entities/role-category.entity'
 import { SubGenre } from './entities/subgenre.entity'
 import { CatalogController } from './catalog.controller'
 import { CatalogService } from './catalog.service'
@@ -17,6 +18,7 @@ import { CatalogService } from './catalog.service'
       Province,
       City,
       CinematicRole,
+      RoleCategory,
       SubGenre,
     ]),
   ],

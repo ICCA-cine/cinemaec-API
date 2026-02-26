@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Patch,
   Put,
   Post,
   Param,
@@ -19,6 +20,9 @@ import {
 import { MoviesService } from './movies.service'
 import { UpdateMovieCastCrewDto } from './dto/update-cast-crew.dto'
 import { CreateMovieDto } from './dto/create-movie.dto'
+import { CreateMovieClaimRequestDto } from './dto/create-movie-claim-request.dto'
+import { UpdateMovieClaimRequestStatusDto } from './dto/update-movie-claim-request-status.dto'
+import { UpdateMovieStatusDto } from './dto/update-movie-status.dto'
 import { JwtAuthGuard } from '../users/guards/jwt-auth.guard'
 import { ProfessionalsService } from '../professionals/professionals.service'
 import { CurrentUser } from '../users/decorators/current-user.decorator'
@@ -53,6 +57,109 @@ export class MoviesController {
   ) {
     const createdById = user.userId ?? user.sub
     return this.moviesService.create(createMovieDto, createdById)
+  }
+
+  @Post('claim-requests')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Crear solicitud de reclamo de película' })
+  @ApiResponse({
+    status: 201,
+    description: 'Solicitud de reclamo creada exitosamente',
+  })
+  createClaimRequest(
+    @CurrentUser() user: { userId?: number; sub?: number },
+    @Body() createMovieClaimRequestDto: CreateMovieClaimRequestDto,
+  ) {
+    const claimantUserId = user.userId ?? user.sub
+    return this.moviesService.createClaimRequest(
+      createMovieClaimRequestDto.movieId,
+      claimantUserId,
+      createMovieClaimRequestDto.supportDocumentAssetId,
+    )
+  }
+
+  @Get('claim-requests/mine')
+  @ApiOperation({ summary: 'Listar mis solicitudes de reclamo de película' })
+  @ApiResponse({
+    status: 200,
+    description: 'Solicitudes de reclamo del usuario listadas exitosamente',
+  })
+  findMyClaimRequests(
+    @CurrentUser() user: { userId?: number; sub?: number },
+  ) {
+    const userId = user.userId ?? user.sub
+    return this.moviesService.findClaimRequestsForUser(userId)
+  }
+
+  @Get('claim-requests/admin')
+  @ApiOperation({
+    summary:
+      'Listar solicitudes de reclamo para administradores con permiso admin_movies',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Solicitudes de reclamo listadas exitosamente',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'No autorizado para consultar solicitudes de reclamo',
+  })
+  findClaimRequestsForAdmin(
+    @CurrentUser() user: { userId?: number; sub?: number },
+  ) {
+    const adminUserId = user.userId ?? user.sub
+    return this.moviesService.findClaimRequestsForAdmin(adminUserId)
+  }
+
+  @Patch('claim-requests/:id/review')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary:
+      'Aprobar o rechazar una solicitud de reclamo de película con observación',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Solicitud revisada exitosamente',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'No autorizado para revisar solicitudes de reclamo',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'La solicitud no está en estado pendiente o datos inválidos',
+  })
+  reviewClaimRequest(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: { userId?: number; sub?: number },
+    @Body() updateMovieClaimRequestStatusDto: UpdateMovieClaimRequestStatusDto,
+  ) {
+    const adminUserId = user.userId ?? user.sub
+    return this.moviesService.reviewClaimRequest(
+      id,
+      updateMovieClaimRequestStatusDto.status,
+      adminUserId,
+      updateMovieClaimRequestStatusDto.observation,
+    )
+  }
+
+  @Patch(':id/status')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Actualizar estado enum de una película' })
+  @ApiResponse({ status: 200, description: 'Estado actualizado exitosamente' })
+  @ApiResponse({ status: 403, description: 'No autorizado para actualizar estado' })
+  @ApiResponse({ status: 404, description: 'Película no encontrada' })
+  updateStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: { userId?: number; sub?: number },
+    @Body() updateMovieStatusDto: UpdateMovieStatusDto,
+  ) {
+    const requesterId = user.userId ?? user.sub
+    return this.moviesService.updateStatus(
+      id,
+      updateMovieStatusDto.status,
+      requesterId,
+    )
   }
 
   @Get(':id')

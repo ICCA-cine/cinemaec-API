@@ -14,6 +14,7 @@ export enum UserRole {
 export enum PermissionEnum {
   ADMIN_SPACES = 'admin_spaces',
   ADMIN_MOVIES = 'admin_movies',
+  ADMIN_PROFESSIONALS = 'admin_professionals',
   APPROVE_MOVIES_REQUEST = 'approve_movies_request',
   ADMIN_USERS = 'admin_users',
   ASSIGN_ROLES = 'assign_roles',
