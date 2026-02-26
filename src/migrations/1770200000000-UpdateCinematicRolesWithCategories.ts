@@ -35,6 +35,10 @@ export class UpdateCinematicRolesWithCategories1770200000000
       (15, 'Servicios Complementarios', 'Complementary Services'),
       (16, 'Videojuegos', 'Video Games'),
       (17, 'Otros Servicios', 'Other Services')
+      ON CONFLICT ("id") DO UPDATE
+      SET
+        "name" = EXCLUDED."name",
+        "nameEn" = EXCLUDED."nameEn"
     `)
 
     // 3. Add new columns to cinematic_roles
@@ -233,12 +237,21 @@ export class UpdateCinematicRolesWithCategories1770200000000
 
     // 8. Add foreign key constraint
     await queryRunner.query(`
-      ALTER TABLE "cinematic_roles" 
-      ADD CONSTRAINT "FK_cinematic_roles_category" 
-      FOREIGN KEY ("idRoleCategory") 
-      REFERENCES "role_categories"("id") 
-      ON DELETE NO ACTION 
-      ON UPDATE NO ACTION
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1
+          FROM pg_constraint
+          WHERE conname = 'FK_cinematic_roles_category'
+        ) THEN
+          ALTER TABLE "cinematic_roles" 
+          ADD CONSTRAINT "FK_cinematic_roles_category" 
+          FOREIGN KEY ("idRoleCategory") 
+          REFERENCES "role_categories"("id") 
+          ON DELETE NO ACTION 
+          ON UPDATE NO ACTION;
+        END IF;
+      END $$;
     `)
 
     // 9. Make idRoleCategory NOT NULL now that data is populated

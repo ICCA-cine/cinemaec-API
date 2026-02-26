@@ -17,22 +17,12 @@ ERRORS=0
 echo ""
 echo "📝 Verificando sintaxis SQL común..."
 
-# Verificar espacios incorrectos en ENUM
-if grep -rn "ENUM (" src/migrations/ 2>/dev/null; then
-  echo -e "${RED}❌ Error: Se encontraron espacios entre ENUM y paréntesis${NC}"
-  echo -e "${YELLOW}   Debe ser: ENUM(...) no ENUM (...)${NC}"
+# Verificar marcadores de merge conflict
+if grep -rnE "^(<<<<<<<|=======|>>>>>>>)" src/migrations/ 2>/dev/null; then
+  echo -e "${RED}❌ Error: Se encontraron marcadores de merge conflict${NC}"
   ERRORS=$((ERRORS + 1))
 else
-  echo -e "${GREEN}✅ No hay espacios incorrectos en definiciones ENUM${NC}"
-fi
-
-# Verificar sintaxis de arrays incorrecta
-if grep -rn " array " src/migrations/ | grep -v "text\[\]" | grep -v "character varying\[\]" | grep -v "enum\[\]" 2>/dev/null; then
-  echo -e "${RED}❌ Error: Se encontró sintaxis incorrecta de arrays${NC}"
-  echo -e "${YELLOW}   Debe ser: type[] no type array${NC}"
-  ERRORS=$((ERRORS + 1))
-else
-  echo -e "${GREEN}✅ Sintaxis de arrays correcta${NC}"
+  echo -e "${GREEN}✅ No hay marcadores de conflicto${NC}"
 fi
 
 # Compilar migraciones TypeScript

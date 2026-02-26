@@ -7,11 +7,20 @@ export class CreateMovieClaimRequestsTable1771200000000
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-      CREATE TYPE IF NOT EXISTS "movie_claim_request_status_enum" AS ENUM(
-        'pending',
-        'approved',
-        'rejected'
-      )
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1
+          FROM pg_type
+          WHERE typname = 'movie_claim_request_status_enum'
+        ) THEN
+          CREATE TYPE "movie_claim_request_status_enum" AS ENUM(
+            'pending',
+            'approved',
+            'rejected'
+          );
+        END IF;
+      END $$;
     `)
 
     await queryRunner.query(`
@@ -27,24 +36,51 @@ export class CreateMovieClaimRequestsTable1771200000000
     `)
 
     await queryRunner.query(`
-      ALTER TABLE "movie_claim_requests"
-      ADD CONSTRAINT "FK_movie_claim_requests_movie"
-      FOREIGN KEY ("movieId") REFERENCES "movies"("id")
-      ON DELETE CASCADE ON UPDATE NO ACTION
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1
+          FROM pg_constraint
+          WHERE conname = 'FK_movie_claim_requests_movie'
+        ) THEN
+          ALTER TABLE "movie_claim_requests"
+          ADD CONSTRAINT "FK_movie_claim_requests_movie"
+          FOREIGN KEY ("movieId") REFERENCES "movies"("id")
+          ON DELETE CASCADE ON UPDATE NO ACTION;
+        END IF;
+      END $$;
     `)
 
     await queryRunner.query(`
-      ALTER TABLE "movie_claim_requests"
-      ADD CONSTRAINT "FK_movie_claim_requests_user"
-      FOREIGN KEY ("claimantUserId") REFERENCES "users"("id")
-      ON DELETE CASCADE ON UPDATE NO ACTION
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1
+          FROM pg_constraint
+          WHERE conname = 'FK_movie_claim_requests_user'
+        ) THEN
+          ALTER TABLE "movie_claim_requests"
+          ADD CONSTRAINT "FK_movie_claim_requests_user"
+          FOREIGN KEY ("claimantUserId") REFERENCES "users"("id")
+          ON DELETE CASCADE ON UPDATE NO ACTION;
+        END IF;
+      END $$;
     `)
 
     await queryRunner.query(`
-      ALTER TABLE "movie_claim_requests"
-      ADD CONSTRAINT "FK_movie_claim_requests_asset"
-      FOREIGN KEY ("supportDocumentAssetId") REFERENCES "assets"("id")
-      ON DELETE RESTRICT ON UPDATE NO ACTION
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1
+          FROM pg_constraint
+          WHERE conname = 'FK_movie_claim_requests_asset'
+        ) THEN
+          ALTER TABLE "movie_claim_requests"
+          ADD CONSTRAINT "FK_movie_claim_requests_asset"
+          FOREIGN KEY ("supportDocumentAssetId") REFERENCES "assets"("id")
+          ON DELETE RESTRICT ON UPDATE NO ACTION;
+        END IF;
+      END $$;
     `)
 
     await queryRunner.query(`

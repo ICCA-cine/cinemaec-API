@@ -14,10 +14,19 @@ export class AddReviewFieldsToMovieClaimRequests1771300000000
     `)
 
     await queryRunner.query(`
-      ALTER TABLE "movie_claim_requests"
-      ADD CONSTRAINT "FK_movie_claim_requests_reviewed_by_user"
-      FOREIGN KEY ("reviewedByUserId") REFERENCES "users"("id")
-      ON DELETE SET NULL ON UPDATE NO ACTION
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1
+          FROM pg_constraint
+          WHERE conname = 'FK_movie_claim_requests_reviewed_by_user'
+        ) THEN
+          ALTER TABLE "movie_claim_requests"
+          ADD CONSTRAINT "FK_movie_claim_requests_reviewed_by_user"
+          FOREIGN KEY ("reviewedByUserId") REFERENCES "users"("id")
+          ON DELETE SET NULL ON UPDATE NO ACTION;
+        END IF;
+      END $$;
     `)
 
     await queryRunner.query(`
