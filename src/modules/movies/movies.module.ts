@@ -15,6 +15,7 @@ import { MoviePlatform } from './entities/movie-platform.entity'
 import { MovieContact } from './entities/movie-contact.entity'
 import { MovieContentBank } from './entities/movie-content-bank.entity'
 import { MovieSubtitle } from './entities/movie-subtitle.entity'
+import { MovieClaimRequest } from './entities/movie-claim-request.entity'
 import { Language } from '../catalog/entities/language.entity'
 import { Country } from '../catalog/entities/country.entity'
 import { City } from '../catalog/entities/city.entity'
@@ -23,11 +24,14 @@ import { SubGenre } from '../catalog/entities/subgenre.entity'
 import { Asset } from '../assets/entities/asset.entity'
 import { CatalogModule } from '../catalog/catalog.module'
 import { ProfessionalsModule } from '../professionals/professionals.module'
+import { NotificationsModule } from '../notifications/notifications.module'
+import { User } from '../users/entities/user.entity'
 
 @Module({
   imports: [
     CatalogModule,
     ProfessionalsModule,
+    NotificationsModule,
     TypeOrmModule.forFeature([
       Movie,
       MovieProfessional,
@@ -42,12 +46,14 @@ import { ProfessionalsModule } from '../professionals/professionals.module'
       MovieContact,
       MovieContentBank,
       MovieSubtitle,
+      MovieClaimRequest,
       Language,
       Country,
       City,
       CinematicRole,
       SubGenre,
       Asset,
+      User,
     ]),
   ],
   controllers: [MoviesController],

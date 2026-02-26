@@ -1,7 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { In, Repository } from 'typeorm'
 import { Movie } from './entities/movie.entity'
+import { MovieStatusEnum } from './entities/movie.entity'
 import { MovieProfessional } from './entities/movie-professional.entity'
 import { UpdateMovieCastCrewDto } from './dto/update-cast-crew.dto'
 import { CinematicRole } from '../catalog/entities/cinematic-role.entity'
@@ -16,18 +23,28 @@ import { MoviePlatform } from './entities/movie-platform.entity'
 import { MovieContact } from './entities/movie-contact.entity'
 import { MovieContentBank } from './entities/movie-content-bank.entity'
 import { MovieSubtitle } from './entities/movie-subtitle.entity'
+import {
+  MovieClaimRequest,
+  MovieClaimRequestStatus,
+} from './entities/movie-claim-request.entity'
 import { CreateMovieDto } from './dto/create-movie.dto'
 import { SubGenre } from '../catalog/entities/subgenre.entity'
 import { Language } from '../catalog/entities/language.entity'
 import { Asset } from '../assets/entities/asset.entity'
 import { City } from '../catalog/entities/city.entity'
 import { Country } from '../catalog/entities/country.entity'
+import {
+  NotificationTypeEnum,
+} from '../notifications/entities/notification.entity'
+import { NotificationsService } from '../notifications/notifications.service'
+import { PermissionEnum, User, UserRole } from '../users/entities/user.entity'
 
 @Injectable()
 export class MoviesService {
   private static readonly DIRECTOR_ROLE_ID = 1
   private static readonly PRODUCER_ROLE_ID = 2
   private static readonly ACTOR_ROLE_ID = 20
+  private readonly logger = new Logger(MoviesService.name)
 
   constructor(
     @InjectRepository(Movie)
@@ -58,6 +75,8 @@ export class MoviesService {
     private readonly movieContentBankRepository: Repository<MovieContentBank>,
     @InjectRepository(MovieSubtitle)
     private readonly movieSubtitleRepository: Repository<MovieSubtitle>,
+    @InjectRepository(MovieClaimRequest)
+    private readonly movieClaimRequestRepository: Repository<MovieClaimRequest>,
     @InjectRepository(SubGenre)
     private readonly subGenreRepository: Repository<SubGenre>,
     @InjectRepository(Language)
@@ -68,13 +87,321 @@ export class MoviesService {
     private readonly countryRepository: Repository<Country>,
     @InjectRepository(Asset)
     private readonly assetRepository: Repository<Asset>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    private readonly notificationsService: NotificationsService,
   ) {}
+
+  async findClaimRequestsForAdmin(adminUserId?: number) {
+    if (!adminUserId) {
+      throw new ForbiddenException('Usuario administrador inválido')
+    }
+
+    const adminUser = await this.userRepository.findOne({
+      where: { id: adminUserId },
+      select: ['id', 'role', 'permissions'],
+    })
+
+    const hasAdminMoviesPermission =
+      adminUser?.permissions?.includes(PermissionEnum.ADMIN_MOVIES) ?? false
+
+    if (!adminUser || adminUser.role !== UserRole.ADMIN || !hasAdminMoviesPermission) {
+      throw new ForbiddenException(
+        'No tienes permisos para consultar solicitudes de películas',
+      )
+    }
+
+    const claimRequests = await this.movieClaimRequestRepository.find({
+      relations: [
+        'movie',
+        'claimantUser',
+        'supportDocumentAsset',
+        'reviewedByUser',
+      ],
+      order: { createdAt: 'DESC' },
+    })
+
+    return claimRequests.map((claimRequest) => ({
+      id: claimRequest.id,
+      status: claimRequest.status,
+      observation: claimRequest.observation,
+      createdAt: claimRequest.createdAt,
+      updatedAt: claimRequest.updatedAt,
+      reviewedAt: claimRequest.reviewedAt,
+      reviewedByUserId: claimRequest.reviewedByUserId,
+      reviewedByUser: claimRequest.reviewedByUser
+        ? {
+            id: claimRequest.reviewedByUser.id,
+            email: claimRequest.reviewedByUser.email,
+          }
+        : null,
+      movie: {
+        id: claimRequest.movie.id,
+        title: claimRequest.movie.title,
+        titleEn: claimRequest.movie.titleEn,
+        releaseYear: claimRequest.movie.releaseYear,
+        type: claimRequest.movie.type,
+        genre: claimRequest.movie.genre,
+        status: claimRequest.movie.status,
+        ownerId: claimRequest.movie.ownerId,
+      },
+      claimant: {
+        id: claimRequest.claimantUser.id,
+        email: claimRequest.claimantUser.email,
+        cedula: claimRequest.claimantUser.cedula,
+      },
+      supportDocument: {
+        id: claimRequest.supportDocumentAsset.id,
+        url: claimRequest.supportDocumentAsset.url,
+        documentType: claimRequest.supportDocumentAsset.documentType,
+        ownerType: claimRequest.supportDocumentAsset.ownerType,
+        createdAt: claimRequest.supportDocumentAsset.createdAt,
+      },
+    }))
+  }
+
+  async findClaimRequestsForUser(userId?: number) {
+    if (!userId) {
+      throw new ForbiddenException('Usuario inválido')
+    }
+
+    const claimRequests = await this.movieClaimRequestRepository.find({
+      where: { claimantUserId: userId },
+      relations: ['movie', 'supportDocumentAsset', 'reviewedByUser'],
+      order: { createdAt: 'DESC' },
+    })
+
+    return claimRequests.map((claimRequest) => ({
+      id: claimRequest.id,
+      status: claimRequest.status,
+      observation: claimRequest.observation,
+      createdAt: claimRequest.createdAt,
+      updatedAt: claimRequest.updatedAt,
+      reviewedAt: claimRequest.reviewedAt,
+      reviewedByUserId: claimRequest.reviewedByUserId,
+      reviewedByUser: claimRequest.reviewedByUser
+        ? {
+            id: claimRequest.reviewedByUser.id,
+            email: claimRequest.reviewedByUser.email,
+          }
+        : null,
+      movie: {
+        id: claimRequest.movie.id,
+        title: claimRequest.movie.title,
+        titleEn: claimRequest.movie.titleEn,
+        releaseYear: claimRequest.movie.releaseYear,
+        type: claimRequest.movie.type,
+        genre: claimRequest.movie.genre,
+        status: claimRequest.movie.status,
+        ownerId: claimRequest.movie.ownerId,
+      },
+      supportDocument: {
+        id: claimRequest.supportDocumentAsset.id,
+        url: claimRequest.supportDocumentAsset.url,
+        documentType: claimRequest.supportDocumentAsset.documentType,
+        ownerType: claimRequest.supportDocumentAsset.ownerType,
+        createdAt: claimRequest.supportDocumentAsset.createdAt,
+      },
+    }))
+  }
+
+  async reviewClaimRequest(
+    claimRequestId: number,
+    status: MovieClaimRequestStatus,
+    adminUserId?: number,
+    observation?: string,
+  ) {
+    if (
+      status !== MovieClaimRequestStatus.APPROVED &&
+      status !== MovieClaimRequestStatus.REJECTED
+    ) {
+      throw new BadRequestException('El estado debe ser approved o rejected')
+    }
+
+    const normalizedObservation = observation?.trim() || ''
+
+    if (status === MovieClaimRequestStatus.REJECTED && !normalizedObservation) {
+      throw new BadRequestException(
+        'Debes ingresar una observación para rechazar la solicitud',
+      )
+    }
+
+    if (!adminUserId) {
+      throw new ForbiddenException('Usuario administrador inválido')
+    }
+
+    const adminUser = await this.userRepository.findOne({
+      where: { id: adminUserId },
+      select: ['id', 'role', 'permissions'],
+    })
+
+    const hasAdminMoviesPermission =
+      adminUser?.permissions?.includes(PermissionEnum.ADMIN_MOVIES) ?? false
+
+    if (!adminUser || adminUser.role !== UserRole.ADMIN || !hasAdminMoviesPermission) {
+      throw new ForbiddenException(
+        'No tienes permisos para revisar solicitudes de películas',
+      )
+    }
+
+    const claimRequest = await this.movieClaimRequestRepository.findOne({
+      where: { id: claimRequestId },
+      relations: ['movie', 'claimantUser'],
+    })
+
+    if (!claimRequest) {
+      throw new NotFoundException(
+        `Solicitud de reclamo con ID ${claimRequestId} no encontrada`,
+      )
+    }
+
+    if (claimRequest.status !== MovieClaimRequestStatus.PENDING) {
+      throw new BadRequestException(
+        'Solo se pueden revisar solicitudes en estado pending',
+      )
+    }
+
+    claimRequest.status = status
+    claimRequest.observation = normalizedObservation || null
+    claimRequest.reviewedByUserId = adminUserId
+    claimRequest.reviewedAt = new Date()
+
+    if (status === MovieClaimRequestStatus.APPROVED) {
+      claimRequest.movie.ownerId = claimRequest.claimantUserId
+      claimRequest.movie.status = MovieStatusEnum.APPROVED
+      await this.movieRepository.save(claimRequest.movie)
+    }
+
+    const updatedClaimRequest = await this.movieClaimRequestRepository.save(
+      claimRequest,
+    )
+
+    const decisionLabel =
+      status === MovieClaimRequestStatus.APPROVED ? 'aprobada' : 'rechazada'
+    const movieTitle = claimRequest.movie.title?.trim() || `ID ${claimRequest.movieId}`
+
+    await this.notificationsService.create({
+      userId: claimRequest.claimantUserId,
+      title: `Solicitud ${decisionLabel}`,
+      message:
+        status === MovieClaimRequestStatus.REJECTED
+          ? `Tu solicitud para gestionar la película "${movieTitle}" fue rechazada. Comentario del administrador: ${normalizedObservation}`
+          : `Tu solicitud para gestionar la película "${movieTitle}" fue aprobada.${
+              claimRequest.observation
+                ? ` Observación: ${claimRequest.observation}`
+                : ''
+            }`,
+      type:
+        status === MovieClaimRequestStatus.APPROVED
+          ? NotificationTypeEnum.SUCCESS
+          : NotificationTypeEnum.WARNING,
+      link: '/movies-management',
+      referenceType: 'movie_claim_request',
+      referenceId: updatedClaimRequest.id,
+    })
+
+    return {
+      id: updatedClaimRequest.id,
+      status: updatedClaimRequest.status,
+      observation: updatedClaimRequest.observation,
+      reviewedByUserId: updatedClaimRequest.reviewedByUserId,
+      reviewedAt: updatedClaimRequest.reviewedAt,
+      updatedAt: updatedClaimRequest.updatedAt,
+    }
+  }
 
   // Placeholder for future movie creation logic
   async findAll(): Promise<Movie[]> {
     return this.movieRepository.find({
       relations: ['languages', 'country', 'cities'],
     })
+  }
+
+  async createClaimRequest(
+    movieId: number,
+    claimantUserId?: number,
+    supportDocumentAssetId?: number,
+  ): Promise<MovieClaimRequest> {
+    if (!claimantUserId) {
+      throw new BadRequestException('Usuario solicitante inválido')
+    }
+
+    if (!supportDocumentAssetId) {
+      throw new BadRequestException('Documento de respaldo requerido')
+    }
+
+    const movie = await this.movieRepository.findOne({
+      where: { id: movieId },
+      select: ['id', 'title'],
+    })
+
+    if (!movie) {
+      throw new NotFoundException(`Movie with ID ${movieId} not found`)
+    }
+
+    const assetExists = await this.assetRepository.exists({
+      where: { id: supportDocumentAssetId },
+    })
+    if (!assetExists) {
+      throw new NotFoundException(
+        `Asset with ID ${supportDocumentAssetId} not found`,
+      )
+    }
+
+    const existingPendingRequest = await this.movieClaimRequestRepository.findOne({
+      where: {
+        movieId,
+        claimantUserId,
+        status: MovieClaimRequestStatus.PENDING,
+      },
+    })
+
+    if (existingPendingRequest) {
+      throw new BadRequestException(
+        'Ya existe una solicitud pendiente para esta película',
+      )
+    }
+
+    const claimRequest = this.movieClaimRequestRepository.create({
+      movieId,
+      claimantUserId,
+      supportDocumentAssetId,
+      status: MovieClaimRequestStatus.PENDING,
+    })
+
+    const savedClaimRequest = await this.movieClaimRequestRepository.save(claimRequest)
+
+    try {
+      const movieTitle = movie.title?.trim() || `ID ${movie.id}`
+
+      await this.notificationsService.create({
+        userId: claimantUserId,
+        title: 'Solicitud de reclamo enviada',
+        message: `Tu solicitud para gestionar la película "${movieTitle}" fue enviada y está pendiente de revisión.`,
+        type: NotificationTypeEnum.SUCCESS,
+        link: '/movies-management',
+        referenceType: 'movie_claim_request',
+        referenceId: savedClaimRequest.id,
+      })
+
+      await this.notificationsService.notifyAdminsByPermission(
+        PermissionEnum.ADMIN_MOVIES,
+        'Nueva solicitud de reclamo de película',
+        `Se recibió una solicitud de reclamo para la película "${movieTitle}".`,
+        NotificationTypeEnum.INFO,
+        '/admin/movies-management',
+        'movie_claim_request',
+        savedClaimRequest.id,
+      )
+    } catch (error) {
+      this.logger.warn(
+        `No se pudieron crear notificaciones para la solicitud de reclamo ${savedClaimRequest.id}: ${
+          error instanceof Error ? error.message : 'Error desconocido'
+        }`,
+      )
+    }
+
+    return savedClaimRequest
   }
 
   async findOne(id: number): Promise<Movie> {
@@ -122,6 +449,44 @@ export class MoviesService {
     }
 
     return movie
+  }
+
+  async updateStatus(
+    id: number,
+    status: MovieStatusEnum,
+    requesterUserId?: number,
+  ): Promise<Movie> {
+    if (!requesterUserId) {
+      throw new ForbiddenException('Usuario inválido')
+    }
+
+    const requester = await this.userRepository.findOne({
+      where: { id: requesterUserId },
+      select: ['id', 'role'],
+    })
+
+    if (!requester) {
+      throw new ForbiddenException('Usuario inválido')
+    }
+
+    const movie = await this.movieRepository.findOne({
+      where: { id },
+      relations: ['languages', 'country', 'cities'],
+    })
+
+    if (!movie) {
+      throw new NotFoundException(`Movie with ID ${id} not found`)
+    }
+
+    const isAdmin = requester.role === UserRole.ADMIN
+    if (!isAdmin && movie.ownerId !== requesterUserId) {
+      throw new ForbiddenException(
+        'No tienes permisos para actualizar el estado de esta película',
+      )
+    }
+
+    movie.status = status
+    return this.movieRepository.save(movie)
   }
 
   async create(createMovieDto: CreateMovieDto, userId?: number): Promise<Movie> {
@@ -186,11 +551,12 @@ export class MoviesService {
       loglineEn: createMovieDto.logLineEn ?? null,
       classification: createMovieDto.classification,
       projectStatus: createMovieDto.projectStatus,
-      status: 'draft' as any,
+      status: MovieStatusEnum.APPROVED,
       isActive: false,
       projectNeed: createMovieDto.projectNeed ?? null,
       projectNeedEn: createMovieDto.projectNeedEn ?? null,
       createdBy: { id: userId } as Movie['createdBy'],
+      ownerId: userId,
       subgenres,
       languages,
       cities: filmingCities,
