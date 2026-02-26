@@ -33,6 +33,7 @@ export enum MovieType {
   SHORT_FILM = 'Cortometraje',
   MEDIUM_FILM = 'Mediometraje',
   FEATURE_FILM = 'Largometraje',
+  UNCATEGORIZED = 'Sin catalogar',
 }
 
 export enum GenreType {
@@ -40,6 +41,7 @@ export enum GenreType {
   DOCUMENTARY = 'Documental',
   DOCU_FICTION = 'Docu-ficción',
   MOCKUMENTARY = 'Falso Documental',
+  UNCATEGORIZED = 'Sin catalogar',
 }
 
 export enum MovieClassification {
