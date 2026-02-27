@@ -9,7 +9,6 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
-  ForbiddenException,
   ParseIntPipe,
 } from '@nestjs/common'
 import {
@@ -22,7 +21,7 @@ import { CompaniesService } from './companies.service'
 import { CreateCompanyDto } from './dto/create-company.dto'
 import { UpdateCompanyDto } from './dto/update-company.dto'
 import { JwtAuthGuard } from '../users/guards/jwt-auth.guard'
-import { CurrentUser } from '../users/decorators/current-user.decorator'
+import { CurrentUser, JwtPayload } from '../users/decorators/current-user.decorator'
 
 @ApiTags('Companies')
 @Controller('companies')
@@ -33,28 +32,19 @@ export class CompaniesController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Crear una nueva empresa (solo admin)' })
+  @ApiOperation({ summary: 'Crear una nueva empresa' })
   @ApiResponse({
     status: 201,
     description: 'Empresa creada exitosamente',
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'Acceso denegado - Solo administradores',
   })
   @ApiResponse({
     status: 409,
     description: 'El RUC ya está registrado',
   })
   async create(
-    @CurrentUser() user: { role: string },
+    @CurrentUser() _user: JwtPayload,
     @Body() createCompanyDto: CreateCompanyDto,
   ) {
-    if (user.role !== 'admin') {
-      throw new ForbiddenException(
-        'Solo los administradores pueden crear empresas',
-      )
-    }
     return await this.companiesService.create(createCompanyDto)
   }
 

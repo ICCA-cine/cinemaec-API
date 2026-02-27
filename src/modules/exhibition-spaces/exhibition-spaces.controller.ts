@@ -9,7 +9,6 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
-  ForbiddenException,
   ParseIntPipe,
 } from '@nestjs/common'
 import {
@@ -22,7 +21,7 @@ import { ExhibitionSpacesService } from './exhibition-spaces.service'
 import { CreateExhibitionSpaceDto } from './dto/create-exhibition-space.dto'
 import { UpdateExhibitionSpaceDto } from './dto/update-exhibition-space.dto'
 import { JwtAuthGuard } from '../users/guards/jwt-auth.guard'
-import { CurrentUser } from '../users/decorators/current-user.decorator'
+import { CurrentUser, JwtPayload } from '../users/decorators/current-user.decorator'
 
 @ApiTags('Exhibition Spaces')
 @Controller('exhibition-spaces')
@@ -36,29 +35,20 @@ export class ExhibitionSpacesController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
-    summary: 'Crear un nuevo espacio de exhibición (solo admin)',
+    summary: 'Crear un nuevo espacio de exhibición',
   })
   @ApiResponse({
     status: 201,
     description: 'Espacio de exhibición creado exitosamente',
   })
   @ApiResponse({
-    status: 403,
-    description: 'Acceso denegado - Solo administradores',
-  })
-  @ApiResponse({
     status: 409,
     description: 'El RUC ya está registrado',
   })
   async create(
-    @CurrentUser() user: { role: string },
+    @CurrentUser() _user: JwtPayload,
     @Body() createExhibitionSpaceDto: CreateExhibitionSpaceDto,
   ) {
-    if (user.role !== 'admin') {
-      throw new ForbiddenException(
-        'Solo los administradores pueden crear espacios de exhibición',
-      )
-    }
     return await this.exhibitionSpacesService.create(createExhibitionSpaceDto)
   }
 
