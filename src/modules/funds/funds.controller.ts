@@ -9,7 +9,6 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
-  ForbiddenException,
   ParseIntPipe,
 } from '@nestjs/common'
 import {
@@ -34,25 +33,16 @@ export class FundsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
-    summary: 'Crear un nuevo fondo/festival/premio (solo admin)',
+    summary: 'Crear un nuevo fondo/festival/premio',
   })
   @ApiResponse({
     status: 201,
     description: 'Fondo creado exitosamente',
   })
-  @ApiResponse({
-    status: 403,
-    description: 'Acceso denegado - Solo administradores',
-  })
   async create(
-    @CurrentUser() user: { role: string },
+    @CurrentUser() _user: { role: string },
     @Body() createFundDto: CreateFundDto,
   ) {
-    if (user.role !== 'admin') {
-      throw new ForbiddenException(
-        'Solo los administradores pueden crear fondos',
-      )
-    }
     return await this.fundsService.create(createFundDto)
   }
 
