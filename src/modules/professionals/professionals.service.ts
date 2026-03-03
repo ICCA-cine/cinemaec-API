@@ -17,7 +17,7 @@ import {
   ProfessionalClaimResponse,
 } from './dto/professional-claim-check.response'
 import { User, PermissionEnum, UserRole } from '../users/entities/user.entity'
-import { Profile } from '../profiles/entities/profile.entity'
+import { Profile, LegalStatus } from '../profiles/entities/profile.entity'
 import { NotificationsService } from '../notifications/notifications.service'
 import { NotificationTypeEnum } from '../notifications/entities/notification.entity'
 import { EmailsService } from '../emails/emails.service'
@@ -297,20 +297,34 @@ export class ProfessionalsService {
       order: { id: 'ASC' },
     })
 
-    // Normalizar la cédula del usuario (solo dígitos)
-    const userCedulaDigits = cedula.replace(/\D/g, '')
+    const profile = user.profileId
+      ? await this.profileRepository.findOne({
+          where: { id: user.profileId },
+          select: ['legalStatus'],
+        })
+      : null
 
-    // Buscar coincidencia: primero exacta, luego por dígitos normalizados
-    let professional = professionals.find(
-      (p) => p.dniNumber === cedula || p.dniNumber?.trim() === cedula,
+    const cedulaCandidates = this.getCedulaComparisonCandidates(
+      cedula,
+      profile?.legalStatus,
     )
 
-    if (!professional && userCedulaDigits) {
-      professional = professionals.find((p) => {
-        const pDigits = (p.dniNumber || '').replace(/\D/g, '')
-        return pDigits === userCedulaDigits
-      })
-    }
+    let professional = professionals.find(
+      (p) => {
+        const professionalDni = p.dniNumber?.trim()
+
+        if (!professionalDni) {
+          return false
+        }
+
+        const professionalDniDigits = professionalDni.replace(/\D/g, '')
+
+        return cedulaCandidates.some(
+          (candidate) =>
+            candidate === professionalDni || candidate === professionalDniDigits,
+        )
+      },
+    )
 
     // Si no encontró por cédula, buscar por nombre si el usuario tiene profile
     if (!professional && user.profileId) {
@@ -371,6 +385,33 @@ export class ProfessionalsService {
       professionalName: professional.name,
       dniNumber: professional.dniNumber,
     }
+  }
+
+  private getCedulaComparisonCandidates(
+    cedula: string,
+    legalStatus?: LegalStatus,
+  ): string[] {
+    const trimmedCedula = cedula.trim()
+    const digits = trimmedCedula.replace(/\D/g, '')
+    const candidates = new Set<string>()
+
+    if (trimmedCedula) {
+      candidates.add(trimmedCedula)
+    }
+
+    if (digits) {
+      candidates.add(digits)
+    }
+
+    if (
+      legalStatus === LegalStatus.NATURAL_PERSON &&
+      digits.length === 13 &&
+      digits.endsWith('001')
+    ) {
+      candidates.add(digits.slice(0, 10))
+    }
+
+    return Array.from(candidates)
   }
 
   private async getUserFullName(userId: number): Promise<string | null> {
