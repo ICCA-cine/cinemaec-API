@@ -9,7 +9,7 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator'
-import { Type } from 'class-transformer'
+import { Transform, Type } from 'class-transformer'
 
 export class ProfessionalMovieParticipationDto {
   @IsInt()
@@ -40,6 +40,18 @@ export class CreateProfessionalDto {
   phone?: string
 
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === null || value === undefined) {
+      return undefined
+    }
+
+    if (typeof value !== 'string') {
+      return value
+    }
+
+    const normalized = value.trim()
+    return normalized.length > 0 ? normalized : undefined
+  })
   @IsString()
   @Length(10, 10)
   mobile?: string
