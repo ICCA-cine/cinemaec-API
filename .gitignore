@@ -61,3 +61,7 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Local migration CSV templates
+professionals_template.csv
+movies_template.csv
