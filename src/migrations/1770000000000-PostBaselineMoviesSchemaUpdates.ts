@@ -292,8 +292,8 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
         `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "name" character varying(255)`,
       )
 
-    // Migrate firstName + lastName to name (only if those columns exist)
-    await queryRunner.query(`
+      // Migrate firstName + lastName to name (only if those columns exist)
+      await queryRunner.query(`
       DO $$
       BEGIN
         IF EXISTS (
@@ -305,8 +305,8 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
       END $$;
     `)
 
-    // Rename idNumber to dniNumber if exists
-    await queryRunner.query(`
+      // Rename idNumber to dniNumber if exists
+      await queryRunner.query(`
       DO $$
       BEGIN
         IF EXISTS (
@@ -321,40 +321,40 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
       END $$;
     `)
 
-    // Add new columns
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "dniNumber" character varying(20)`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "phone" character varying(20)`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "ownerId" integer`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "isActive" boolean DEFAULT false`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "status" character varying(20) DEFAULT 'inactive'`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "createdAt" timestamp DEFAULT now()`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "updatedAt" timestamp NULL DEFAULT NULL`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "mobile" character varying(10)`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "website" character varying(255)`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "linkedin" character varying(255)`,
-    )
+      // Add new columns
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "dniNumber" character varying(20)`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "phone" character varying(20)`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "ownerId" integer`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "isActive" boolean DEFAULT false`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "status" character varying(20) DEFAULT 'inactive'`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "createdAt" timestamp DEFAULT now()`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "updatedAt" timestamp NULL DEFAULT NULL`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "mobile" character varying(10)`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "website" character varying(255)`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ADD COLUMN IF NOT EXISTS "linkedin" character varying(255)`,
+      )
 
-    // Migrate old Spanish column names (only if they exist)
-    await queryRunner.query(`
+      // Migrate old Spanish column names (only if they exist)
+      await queryRunner.query(`
       DO $$
       BEGIN
         IF EXISTS (
@@ -366,50 +366,50 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
       END $$;
     `)
 
-    // Drop old columns
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "firstName"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "lastName"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "gender"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "email"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "nombre"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "cedula"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "cedulaDni"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "telefono"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "celular"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "sitioWeb"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "linkedIn"`,
-    )
+      // Drop old columns
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "firstName"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "lastName"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "gender"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "email"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "nombre"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "cedula"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "cedulaDni"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "telefono"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "celular"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "sitioWeb"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" DROP COLUMN IF EXISTS "linkedIn"`,
+      )
 
-    // Set defaults for name
-    await queryRunner.query(
-      `UPDATE "professionals" SET "name" = 'N/A' WHERE "name" IS NULL OR TRIM("name") = ''`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "professionals" ALTER COLUMN "name" SET NOT NULL`,
-    )
+      // Set defaults for name
+      await queryRunner.query(
+        `UPDATE "professionals" SET "name" = 'N/A' WHERE "name" IS NULL OR TRIM("name") = ''`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "professionals" ALTER COLUMN "name" SET NOT NULL`,
+      )
 
-    // Drop old enum types
+      // Drop old enum types
       await queryRunner.query(
         `DROP TYPE IF EXISTS "public"."professionals_status_enum"`,
       )
@@ -444,8 +444,8 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
         `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "name" character varying(255)`,
       )
 
-    // Migrate commercialName or legalName to name (only if those columns exist)
-    await queryRunner.query(`
+      // Migrate commercialName or legalName to name (only if those columns exist)
+      await queryRunner.query(`
       DO $$
       BEGIN
         IF EXISTS (
@@ -457,8 +457,8 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
       END $$;
     `)
 
-    // Rename representativeIdNumber to representativeDniNumber if exists
-    await queryRunner.query(`
+      // Rename representativeIdNumber to representativeDniNumber if exists
+      await queryRunner.query(`
       DO $$
       BEGIN
         IF EXISTS (
@@ -473,104 +473,104 @@ export class PostBaselineMoviesSchemaUpdates1770000000000
       END $$;
     `)
 
-    // Add new columns
-    await queryRunner.query(
-      `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "representative" character varying(255)`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "phone" character varying(20)`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "ownerId" integer`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "isActive" boolean DEFAULT false`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "status" character varying(20) DEFAULT 'inactive'`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "createdAt" timestamp DEFAULT now()`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "updatedAt" timestamp NULL DEFAULT NULL`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "representativeDniNumber" character varying(20)`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "mobile" character varying(10)`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "instagram" character varying(255)`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "linkedin" character varying(255)`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "website" character varying(255)`,
-    )
+      // Add new columns
+      await queryRunner.query(
+        `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "representative" character varying(255)`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "phone" character varying(20)`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "ownerId" integer`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "isActive" boolean DEFAULT false`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "status" character varying(20) DEFAULT 'inactive'`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "createdAt" timestamp DEFAULT now()`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "updatedAt" timestamp NULL DEFAULT NULL`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "representativeDniNumber" character varying(20)`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "mobile" character varying(10)`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "instagram" character varying(255)`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "linkedin" character varying(255)`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "website" character varying(255)`,
+      )
 
-    // Update RUC column
-    await queryRunner.query(
-      `ALTER TABLE "companies" ALTER COLUMN "ruc" TYPE character varying(13)`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" ALTER COLUMN "ruc" DROP NOT NULL`,
-    )
+      // Update RUC column
+      await queryRunner.query(
+        `ALTER TABLE "companies" ALTER COLUMN "ruc" TYPE character varying(13)`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" ALTER COLUMN "ruc" DROP NOT NULL`,
+      )
 
-    // Set NOT NULL for createdAt
-    await queryRunner.query(
-      `UPDATE "companies" SET "createdAt" = now() WHERE "createdAt" IS NULL`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" ALTER COLUMN "createdAt" SET NOT NULL`,
-    )
+      // Set NOT NULL for createdAt
+      await queryRunner.query(
+        `UPDATE "companies" SET "createdAt" = now() WHERE "createdAt" IS NULL`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" ALTER COLUMN "createdAt" SET NOT NULL`,
+      )
 
-    // Drop old columns
-    await queryRunner.query(
-      `ALTER TABLE "companies" DROP COLUMN IF EXISTS "countryId"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" DROP COLUMN IF EXISTS "email"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" DROP COLUMN IF EXISTS "legalName"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" DROP COLUMN IF EXISTS "commercialName"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" DROP COLUMN IF EXISTS "nombre"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" DROP COLUMN IF EXISTS "representante"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" DROP COLUMN IF EXISTS "cedulaRepresentante"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" DROP COLUMN IF EXISTS "telefono"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" DROP COLUMN IF EXISTS "celular"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" DROP COLUMN IF EXISTS "sitioWeb"`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" DROP COLUMN IF EXISTS "linkedIn"`,
-    )
+      // Drop old columns
+      await queryRunner.query(
+        `ALTER TABLE "companies" DROP COLUMN IF EXISTS "countryId"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" DROP COLUMN IF EXISTS "email"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" DROP COLUMN IF EXISTS "legalName"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" DROP COLUMN IF EXISTS "commercialName"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" DROP COLUMN IF EXISTS "nombre"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" DROP COLUMN IF EXISTS "representante"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" DROP COLUMN IF EXISTS "cedulaRepresentante"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" DROP COLUMN IF EXISTS "telefono"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" DROP COLUMN IF EXISTS "celular"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" DROP COLUMN IF EXISTS "sitioWeb"`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" DROP COLUMN IF EXISTS "linkedIn"`,
+      )
 
-    // Set defaults for name
-    await queryRunner.query(
-      `UPDATE "companies" SET "name" = 'N/A' WHERE "name" IS NULL OR TRIM("name") = ''`,
-    )
-    await queryRunner.query(
-      `ALTER TABLE "companies" ALTER COLUMN "name" SET NOT NULL`,
-    )
+      // Set defaults for name
+      await queryRunner.query(
+        `UPDATE "companies" SET "name" = 'N/A' WHERE "name" IS NULL OR TRIM("name") = ''`,
+      )
+      await queryRunner.query(
+        `ALTER TABLE "companies" ALTER COLUMN "name" SET NOT NULL`,
+      )
 
-    // Drop old enum types
+      // Drop old enum types
       await queryRunner.query(
         `DROP TYPE IF EXISTS "public"."companies_status_enum"`,
       )

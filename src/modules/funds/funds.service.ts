@@ -23,13 +23,14 @@ export class FundsService {
   }
 
   private async usesLegacySchema(): Promise<boolean> {
-    const columns: Array<{ column_name: string }> = await this.fundRepository.query(
-      `
+    const columns: Array<{ column_name: string }> =
+      await this.fundRepository.query(
+        `
       SELECT column_name
       FROM information_schema.columns
       WHERE table_schema = 'public' AND table_name = 'funds'
       `,
-    )
+      )
 
     return columns.some((column) => column.column_name === 'nombre')
   }

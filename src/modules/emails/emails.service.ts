@@ -204,9 +204,7 @@ export class EmailsService {
         `,
       })
 
-      this.logger.log(
-        `✅ Email de perfil reclamado enviado a: ${email}`,
-      )
+      this.logger.log(`✅ Email de perfil reclamado enviado a: ${email}`)
     } catch (error) {
       this.logger.error(
         `❌ Error SMTP al enviar email de perfil reclamado a ${email}: ${error.message}`,

@@ -21,7 +21,10 @@ import { ExhibitionSpacesService } from './exhibition-spaces.service'
 import { CreateExhibitionSpaceDto } from './dto/create-exhibition-space.dto'
 import { UpdateExhibitionSpaceDto } from './dto/update-exhibition-space.dto'
 import { JwtAuthGuard } from '../users/guards/jwt-auth.guard'
-import { CurrentUser, JwtPayload } from '../users/decorators/current-user.decorator'
+import {
+  CurrentUser,
+  JwtPayload,
+} from '../users/decorators/current-user.decorator'
 
 @ApiTags('Exhibition Spaces')
 @Controller('exhibition-spaces')

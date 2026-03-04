@@ -37,5 +37,4 @@ export class MovieProfessional {
 
   @Column({ type: 'boolean', default: false, nullable: false })
   accredited: boolean
-
 }

@@ -12,7 +12,10 @@ import { MovieStatusEnum } from './entities/movie.entity'
 import { MovieProfessional } from './entities/movie-professional.entity'
 import { UpdateMovieCastCrewDto } from './dto/update-cast-crew.dto'
 import { CinematicRole } from '../catalog/entities/cinematic-role.entity'
-import { MovieCompany, CompanyParticipationType } from './entities/movie-company.entity'
+import {
+  MovieCompany,
+  CompanyParticipationType,
+} from './entities/movie-company.entity'
 import { MovieInternationalCoproduction } from './entities/movie-international-coproduction.entity'
 import { MovieFilmingCountry } from './entities/movie-filming-country.entity'
 import { MovieFunding } from './entities/movie-funding.entity'
@@ -33,9 +36,7 @@ import { Language } from '../catalog/entities/language.entity'
 import { Asset } from '../assets/entities/asset.entity'
 import { City } from '../catalog/entities/city.entity'
 import { Country } from '../catalog/entities/country.entity'
-import {
-  NotificationTypeEnum,
-} from '../notifications/entities/notification.entity'
+import { NotificationTypeEnum } from '../notifications/entities/notification.entity'
 import { NotificationsService } from '../notifications/notifications.service'
 import { PermissionEnum, User, UserRole } from '../users/entities/user.entity'
 
@@ -105,7 +106,11 @@ export class MoviesService {
     const hasAdminMoviesPermission =
       adminUser?.permissions?.includes(PermissionEnum.ADMIN_MOVIES) ?? false
 
-    if (!adminUser || adminUser.role !== UserRole.ADMIN || !hasAdminMoviesPermission) {
+    if (
+      !adminUser ||
+      adminUser.role !== UserRole.ADMIN ||
+      !hasAdminMoviesPermission
+    ) {
       throw new ForbiddenException(
         'No tienes permisos para consultar solicitudes de películas',
       )
@@ -238,7 +243,11 @@ export class MoviesService {
     const hasAdminMoviesPermission =
       adminUser?.permissions?.includes(PermissionEnum.ADMIN_MOVIES) ?? false
 
-    if (!adminUser || adminUser.role !== UserRole.ADMIN || !hasAdminMoviesPermission) {
+    if (
+      !adminUser ||
+      adminUser.role !== UserRole.ADMIN ||
+      !hasAdminMoviesPermission
+    ) {
       throw new ForbiddenException(
         'No tienes permisos para revisar solicitudes de películas',
       )
@@ -272,13 +281,13 @@ export class MoviesService {
       await this.movieRepository.save(claimRequest.movie)
     }
 
-    const updatedClaimRequest = await this.movieClaimRequestRepository.save(
-      claimRequest,
-    )
+    const updatedClaimRequest =
+      await this.movieClaimRequestRepository.save(claimRequest)
 
     const decisionLabel =
       status === MovieClaimRequestStatus.APPROVED ? 'aprobada' : 'rechazada'
-    const movieTitle = claimRequest.movie.title?.trim() || `ID ${claimRequest.movieId}`
+    const movieTitle =
+      claimRequest.movie.title?.trim() || `ID ${claimRequest.movieId}`
 
     await this.notificationsService.create({
       userId: claimRequest.claimantUserId,
@@ -348,13 +357,14 @@ export class MoviesService {
       )
     }
 
-    const existingPendingRequest = await this.movieClaimRequestRepository.findOne({
-      where: {
-        movieId,
-        claimantUserId,
-        status: MovieClaimRequestStatus.PENDING,
-      },
-    })
+    const existingPendingRequest =
+      await this.movieClaimRequestRepository.findOne({
+        where: {
+          movieId,
+          claimantUserId,
+          status: MovieClaimRequestStatus.PENDING,
+        },
+      })
 
     if (existingPendingRequest) {
       throw new BadRequestException(
@@ -369,7 +379,8 @@ export class MoviesService {
       status: MovieClaimRequestStatus.PENDING,
     })
 
-    const savedClaimRequest = await this.movieClaimRequestRepository.save(claimRequest)
+    const savedClaimRequest =
+      await this.movieClaimRequestRepository.save(claimRequest)
 
     try {
       const movieTitle = movie.title?.trim() || `ID ${movie.id}`
@@ -489,7 +500,10 @@ export class MoviesService {
     return this.movieRepository.save(movie)
   }
 
-  async create(createMovieDto: CreateMovieDto, userId?: number): Promise<Movie> {
+  async create(
+    createMovieDto: CreateMovieDto,
+    userId?: number,
+  ): Promise<Movie> {
     if (!userId) {
       throw new NotFoundException('Usuario creador no encontrado')
     }
@@ -503,17 +517,19 @@ export class MoviesService {
       ? MoviesService.ACTOR_ROLE_ID
       : null
 
-    const posterAsset = await this.findAssetOrThrow(createMovieDto.posterAssetId)
-    const dossierAsset = await this.findAssetOrThrow(createMovieDto.dossierAssetId)
+    const posterAsset = await this.findAssetOrThrow(
+      createMovieDto.posterAssetId,
+    )
+    const dossierAsset = await this.findAssetOrThrow(
+      createMovieDto.dossierAssetId,
+    )
     const dossierAssetEn = await this.findAssetOrThrow(
       createMovieDto.dossierEnAssetId,
     )
     const pedagogicalSheetAsset = await this.findAssetOrThrow(
       createMovieDto.pedagogicalGuideAssetId,
     )
-    const frameAssets = await this.findAssetsByIds(
-      createMovieDto.stillAssetIds,
-    )
+    const frameAssets = await this.findAssetsByIds(createMovieDto.stillAssetIds)
 
     const subgenres = createMovieDto.subGenreIds?.length
       ? await this.subGenreRepository.findBy({
@@ -577,8 +593,7 @@ export class MoviesService {
         createMovieDto.economicRecovery !== undefined
           ? String(createMovieDto.economicRecovery)
           : null,
-      spectatorsCount:
-        createMovieDto.totalAudience ?? null,
+      spectatorsCount: createMovieDto.totalAudience ?? null,
     })
 
     const savedMovie = await this.movieRepository.save(movie)
@@ -722,10 +737,10 @@ export class MoviesService {
           exhibitionWindow: entry.exhibitionWindow,
           licensingStartDate: new Date(entry.licensingStartDate),
           licensingEndDate: new Date(entry.licensingEndDate),
-          geolocationRestrictionCountryIds:
-            entry.geolocationRestrictionCountryIds?.length
-              ? entry.geolocationRestrictionCountryIds
-              : null,
+          geolocationRestrictionCountryIds: entry
+            .geolocationRestrictionCountryIds?.length
+            ? entry.geolocationRestrictionCountryIds
+            : null,
         }),
       )
       await this.movieContentBankRepository.save(contentRows)
@@ -810,8 +825,12 @@ export class MoviesService {
       ? MoviesService.ACTOR_ROLE_ID
       : null
 
-    const posterAsset = await this.findAssetOrThrow(updateMovieDto.posterAssetId)
-    const dossierAsset = await this.findAssetOrThrow(updateMovieDto.dossierAssetId)
+    const posterAsset = await this.findAssetOrThrow(
+      updateMovieDto.posterAssetId,
+    )
+    const dossierAsset = await this.findAssetOrThrow(
+      updateMovieDto.dossierAssetId,
+    )
     const dossierAssetEn = await this.findAssetOrThrow(
       updateMovieDto.dossierEnAssetId,
     )
@@ -859,7 +878,8 @@ export class MoviesService {
       projectStatus: updateMovieDto.projectStatus,
       projectNeed: updateMovieDto.projectNeed ?? null,
       projectNeedEn: updateMovieDto.projectNeedEn ?? null,
-      createdBy: existingMovie.createdBy ?? ({ id: userId } as Movie['createdBy']),
+      createdBy:
+        existingMovie.createdBy ?? ({ id: userId } as Movie['createdBy']),
       subgenres,
       languages,
       cities: filmingCities,
@@ -1037,10 +1057,10 @@ export class MoviesService {
           exhibitionWindow: entry.exhibitionWindow,
           licensingStartDate: new Date(entry.licensingStartDate),
           licensingEndDate: new Date(entry.licensingEndDate),
-          geolocationRestrictionCountryIds:
-            entry.geolocationRestrictionCountryIds?.length
-              ? entry.geolocationRestrictionCountryIds
-              : null,
+          geolocationRestrictionCountryIds: entry
+            .geolocationRestrictionCountryIds?.length
+            ? entry.geolocationRestrictionCountryIds
+            : null,
         }),
       )
       await this.movieContentBankRepository.save(contentRows)
@@ -1121,9 +1141,7 @@ export class MoviesService {
     const missing = assetIds.filter((id) => !foundIds.has(id))
 
     if (missing.length > 0) {
-      throw new NotFoundException(
-        `Assets not found: ${missing.join(', ')}`,
-      )
+      throw new NotFoundException(`Assets not found: ${missing.join(', ')}`)
     }
 
     return assets
@@ -1150,9 +1168,7 @@ export class MoviesService {
     const missing = codes.filter((code) => !foundCodes.has(code))
 
     if (missing.length > 0) {
-      throw new NotFoundException(
-        `Countries not found: ${missing.join(', ')}`,
-      )
+      throw new NotFoundException(`Countries not found: ${missing.join(', ')}`)
     }
 
     return countries

@@ -1,9 +1,4 @@
-import {
-  IsOptional,
-  IsString,
-  Length,
-  MaxLength,
-} from 'class-validator'
+import { IsOptional, IsString, Length, MaxLength } from 'class-validator'
 
 export class CreateCompanyDto {
   @IsString()

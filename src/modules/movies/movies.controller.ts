@@ -84,9 +84,7 @@ export class MoviesController {
     status: 200,
     description: 'Solicitudes de reclamo del usuario listadas exitosamente',
   })
-  findMyClaimRequests(
-    @CurrentUser() user: { userId?: number; sub?: number },
-  ) {
+  findMyClaimRequests(@CurrentUser() user: { userId?: number; sub?: number }) {
     const userId = user.userId ?? user.sub
     return this.moviesService.findClaimRequestsForUser(userId)
   }
@@ -147,7 +145,10 @@ export class MoviesController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Actualizar estado enum de una película' })
   @ApiResponse({ status: 200, description: 'Estado actualizado exitosamente' })
-  @ApiResponse({ status: 403, description: 'No autorizado para actualizar estado' })
+  @ApiResponse({
+    status: 403,
+    description: 'No autorizado para actualizar estado',
+  })
   @ApiResponse({ status: 404, description: 'Película no encontrada' })
   updateStatus(
     @Param('id', ParseIntPipe) id: number,
@@ -179,7 +180,10 @@ export class MoviesController {
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Actualizar una película' })
-  @ApiResponse({ status: 200, description: 'Película actualizada exitosamente' })
+  @ApiResponse({
+    status: 200,
+    description: 'Película actualizada exitosamente',
+  })
   @ApiResponse({ status: 404, description: 'Película no encontrada' })
   update(
     @Param('id', ParseIntPipe) id: number,

@@ -24,5 +24,4 @@ export class Province {
 
   @OneToMany(() => City, (city) => city.province)
   cities: City[]
-
 }

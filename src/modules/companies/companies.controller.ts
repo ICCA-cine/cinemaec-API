@@ -21,7 +21,10 @@ import { CompaniesService } from './companies.service'
 import { CreateCompanyDto } from './dto/create-company.dto'
 import { UpdateCompanyDto } from './dto/update-company.dto'
 import { JwtAuthGuard } from '../users/guards/jwt-auth.guard'
-import { CurrentUser, JwtPayload } from '../users/decorators/current-user.decorator'
+import {
+  CurrentUser,
+  JwtPayload,
+} from '../users/decorators/current-user.decorator'
 
 @ApiTags('Companies')
 @Controller('companies')

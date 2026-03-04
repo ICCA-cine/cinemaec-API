@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { QueryFailedError, Repository } from 'typeorm'
+import { Repository } from 'typeorm'
 import { Professional } from './entities/professional.entity'
 import { ProfessionalPortfolioImage } from './entities/professional-portfolio-image.entity'
 import { MovieProfessional } from '../movies/entities/movie-professional.entity'
@@ -47,9 +47,8 @@ export class ProfessionalsService {
       movieParticipations,
       ...professionalPayload
     } = createProfessionalDto
-    const professional = this.professionalsRepository.create(
-      professionalPayload,
-    )
+    const professional =
+      this.professionalsRepository.create(professionalPayload)
     const savedProfessional =
       await this.professionalsRepository.save(professional)
 
@@ -86,169 +85,24 @@ export class ProfessionalsService {
       movieParticipations,
       ...professionalPayload
     } = createProfessionalDto
+    const professional = this.professionalsRepository.create({
+      ...professionalPayload,
+      ownerId: userId,
+    })
+    const savedProfessional =
+      await this.professionalsRepository.save(professional)
 
-    try {
-      const professional = this.professionalsRepository.create({
-        ...professionalPayload,
-        ownerId: userId,
-      })
-
-      let savedProfessional: Professional
-
-      try {
-        savedProfessional = await this.professionalsRepository.save(professional)
-      } catch (error) {
-        if (this.isMissingColumnError(error)) {
-          savedProfessional = await this.saveProfessionalWithSchemaFallback({
-            ...professionalPayload,
-            ownerId: userId,
-          })
-        } else {
-          this.throwMappedRegistrationError(error)
-        }
-      }
-
-      await this.attachPortfolioImages(
-        savedProfessional.id,
-        portfolioImageAssetIds,
-      )
-
-      await this.replaceMovieParticipations(
-        savedProfessional.id,
-        movieParticipations,
-      )
-
-      return savedProfessional
-    } catch (error) {
-      this.throwMappedRegistrationError(error)
-    }
-  }
-
-  private async saveProfessionalWithSchemaFallback(
-    payload: Partial<Professional>,
-  ): Promise<Professional> {
-    const columns: Array<{ column_name: string }> =
-      await this.professionalsRepository.query(
-        `
-          SELECT column_name
-          FROM information_schema.columns
-          WHERE table_schema = 'public'
-            AND table_name = 'professionals'
-        `,
-      )
-
-    const existingColumns = new Set(columns.map((column) => column.column_name))
-
-    const values: Record<string, unknown> = {}
-
-    const assignIfExists = (columnName: string, value: unknown) => {
-      if (!existingColumns.has(columnName)) {
-        return
-      }
-
-      values[columnName] = value
-    }
-
-    assignIfExists('name', payload.name)
-    assignIfExists('nickName', payload.nickName ?? null)
-    assignIfExists('dniNumber', payload.dniNumber ?? null)
-    assignIfExists('phone', payload.phone ?? null)
-    assignIfExists('mobile', payload.mobile ?? null)
-    assignIfExists('website', payload.website ?? null)
-    assignIfExists('linkedin', payload.linkedin ?? null)
-    assignIfExists('rrss', payload.rrss ?? null)
-    assignIfExists('bio', payload.bio ?? null)
-    assignIfExists('bioEn', payload.bioEn ?? null)
-    assignIfExists('profilePhotoAssetId', payload.profilePhotoAssetId ?? null)
-    assignIfExists('reelLink', payload.reelLink ?? null)
-    assignIfExists('companyNameCEO', payload.companyNameCEO ?? null)
-    assignIfExists('primaryActivityRoleId1', payload.primaryActivityRoleId1 ?? null)
-    assignIfExists('primaryActivityRoleId2', payload.primaryActivityRoleId2 ?? null)
-    assignIfExists(
-      'secondaryActivityRoleId1',
-      payload.secondaryActivityRoleId1 ?? null,
+    await this.attachPortfolioImages(
+      savedProfessional.id,
+      portfolioImageAssetIds,
     )
-    assignIfExists(
-      'secondaryActivityRoleId2',
-      payload.secondaryActivityRoleId2 ?? null,
+
+    await this.replaceMovieParticipations(
+      savedProfessional.id,
+      movieParticipations,
     )
-    assignIfExists('ownerId', payload.ownerId ?? null)
 
-    if (existingColumns.has('isActive') && !('isActive' in values)) {
-      values.isActive = false
-    }
-
-    if (existingColumns.has('status') && !('status' in values)) {
-      values.status = 'inactive'
-    }
-
-    const insertResult = await this.professionalsRepository
-      .createQueryBuilder()
-      .insert()
-      .into(Professional)
-      .values(values)
-      .returning('id')
-      .execute()
-
-    const savedId =
-      insertResult.identifiers?.[0]?.id ?? insertResult.raw?.[0]?.id
-
-    if (!savedId) {
-      throw new BadRequestException(
-        'No se pudo registrar el perfil profesional en base de datos',
-      )
-    }
-
-    return await this.findOne(savedId)
-  }
-
-  private isMissingColumnError(error: unknown): boolean {
-    if (!(error instanceof QueryFailedError)) {
-      return false
-    }
-
-    const databaseError = error as QueryFailedError & {
-      code?: string
-      message?: string
-    }
-
-    return (
-      databaseError.code === '42703' ||
-      databaseError.message?.toLowerCase().includes('column') === true
-    )
-  }
-
-  private throwMappedRegistrationError(error: unknown): never {
-    if (error instanceof ConflictException || error instanceof BadRequestException) {
-      throw error
-    }
-
-    if (error instanceof QueryFailedError) {
-      const databaseError = error as QueryFailedError & {
-        code?: string
-        detail?: string
-      }
-
-      if (databaseError.code === '23505') {
-        throw new ConflictException(
-          'Tu usuario ya tiene un perfil profesional asociado',
-        )
-      }
-
-      if (databaseError.code === '23503') {
-        throw new BadRequestException(
-          'Verifica los archivos, películas o roles seleccionados antes de registrar el perfil',
-        )
-      }
-
-      if (databaseError.code === '42703') {
-        throw new BadRequestException(
-          'La base de datos no está actualizada para este registro. Ejecuta las migraciones pendientes en producción',
-        )
-      }
-    }
-
-    throw error
+    return savedProfessional
   }
 
   private async attachPortfolioImages(
@@ -362,7 +216,9 @@ export class ProfessionalsService {
       return
     }
 
-    throw new ForbiddenException('No tienes permisos para modificar este perfil')
+    throw new ForbiddenException(
+      'No tienes permisos para modificar este perfil',
+    )
   }
 
   async findAll(): Promise<Professional[]> {
@@ -454,22 +310,20 @@ export class ProfessionalsService {
       profile?.legalStatus,
     )
 
-    let professional = professionals.find(
-      (p) => {
-        const professionalDni = p.dniNumber?.trim()
+    let professional = professionals.find((p) => {
+      const professionalDni = p.dniNumber?.trim()
 
-        if (!professionalDni) {
-          return false
-        }
+      if (!professionalDni) {
+        return false
+      }
 
-        const professionalDniDigits = professionalDni.replace(/\D/g, '')
+      const professionalDniDigits = professionalDni.replace(/\D/g, '')
 
-        return cedulaCandidates.some(
-          (candidate) =>
-            candidate === professionalDni || candidate === professionalDniDigits,
-        )
-      },
-    )
+      return cedulaCandidates.some(
+        (candidate) =>
+          candidate === professionalDni || candidate === professionalDniDigits,
+      )
+    })
 
     // Si no encontró por cédula, buscar por nombre si el usuario tiene profile
     if (!professional && user.profileId) {
@@ -479,7 +333,9 @@ export class ProfessionalsService {
         // Buscar profesionales sin dniNumber que coincidan por nombre
         const nameMatches = this.findProfessionalNameMatches(
           userFullName,
-          professionals.filter((p) => !p.dniNumber || p.dniNumber.trim() === ''),
+          professionals.filter(
+            (p) => !p.dniNumber || p.dniNumber.trim() === '',
+          ),
         )
 
         if (nameMatches.length === 1) {
@@ -594,8 +450,8 @@ export class ProfessionalsService {
 
       // Contar cuántas palabras del usuario coinciden en el nombre del profesional
       const matchCount = userNameWords.filter((userWord) =>
-        proNameWords.some((proWord) =>
-          proWord.includes(userWord) || userWord.includes(proWord),
+        proNameWords.some(
+          (proWord) => proWord.includes(userWord) || userWord.includes(proWord),
         ),
       ).length
 
@@ -675,9 +531,8 @@ export class ProfessionalsService {
     professional.ownerId = userId
     professional.updatedAt = new Date()
 
-    const savedProfessional = await this.professionalsRepository.save(
-      professional,
-    )
+    const savedProfessional =
+      await this.professionalsRepository.save(professional)
 
     await this.notifyUserAboutProfessionalClaim(userId, savedProfessional)
     await this.notifyAdminsAboutProfessionalClaim(savedProfessional)

@@ -28,7 +28,10 @@ import {
 } from './dto/professional-claim-check.response'
 import { ClaimProfessionalDto } from './dto/claim-professional.dto'
 import { JwtAuthGuard } from '../users/guards/jwt-auth.guard'
-import { CurrentUser, JwtPayload } from '../users/decorators/current-user.decorator'
+import {
+  CurrentUser,
+  JwtPayload,
+} from '../users/decorators/current-user.decorator'
 
 @ApiTags('Professionals')
 @Controller('professionals')
@@ -89,7 +92,8 @@ export class ProfessionalsController {
   @Post('claim/register')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
-    summary: 'Registrar un nuevo perfil profesional para el usuario autenticado',
+    summary:
+      'Registrar un nuevo perfil profesional para el usuario autenticado',
   })
   @ApiResponse({
     status: 201,
