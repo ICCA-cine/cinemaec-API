@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { In, Repository } from 'typeorm'
+import { In, QueryFailedError, Repository } from 'typeorm'
 import { Movie } from './entities/movie.entity'
 import { MovieStatusEnum } from './entities/movie.entity'
 import { MovieProfessional } from './entities/movie-professional.entity'
@@ -596,7 +596,7 @@ export class MoviesService {
       spectatorsCount: createMovieDto.totalAudience ?? null,
     })
 
-    const savedMovie = await this.movieRepository.save(movie)
+    const savedMovie = await this.saveMovieWithSequenceRecovery(movie)
 
     const companyRows: MovieCompany[] = []
 
@@ -1128,6 +1128,54 @@ export class MoviesService {
     }
 
     return asset
+  }
+
+  private async saveMovieWithSequenceRecovery(movie: Movie): Promise<Movie> {
+    try {
+      return await this.movieRepository.save(movie)
+    } catch (error) {
+      if (!this.isMoviePrimaryKeyDuplicate(error)) {
+        throw error
+      }
+
+      this.logger.warn(
+        'Detected desynced movies id sequence. Syncing sequence and retrying insert.',
+      )
+
+      await this.syncMoviesIdSequence()
+      return await this.movieRepository.save(movie)
+    }
+  }
+
+  private isMoviePrimaryKeyDuplicate(error: unknown): boolean {
+    if (!(error instanceof QueryFailedError)) {
+      return false
+    }
+
+    const databaseError = error as QueryFailedError & {
+      code?: string
+      message?: string
+      detail?: string
+      constraint?: string
+    }
+
+    const payload = `${databaseError.message ?? ''} ${databaseError.detail ?? ''}`
+
+    return (
+      databaseError.code === '23505' &&
+      (databaseError.constraint === 'movies_pkey' ||
+        payload.includes('movies_pkey'))
+    )
+  }
+
+  private async syncMoviesIdSequence(): Promise<void> {
+    await this.movieRepository.query(`
+      SELECT setval(
+        pg_get_serial_sequence('movies', 'id'),
+        COALESCE((SELECT MAX(id) FROM "movies"), 0) + 1,
+        false
+      )
+    `)
   }
 
   private async findAssetsByIds(assetIds?: number[]): Promise<Asset[]> {
