@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { QueryFailedError, Repository } from 'typeorm'
 import { Professional } from './entities/professional.entity'
 import { ProfessionalPortfolioImage } from './entities/professional-portfolio-image.entity'
 import { MovieProfessional } from '../movies/entities/movie-professional.entity'
@@ -50,7 +50,7 @@ export class ProfessionalsService {
     const professional =
       this.professionalsRepository.create(professionalPayload)
     const savedProfessional =
-      await this.professionalsRepository.save(professional)
+      await this.saveProfessionalWithSequenceRecovery(professional)
 
     await this.attachPortfolioImages(
       savedProfessional.id,
@@ -90,7 +90,7 @@ export class ProfessionalsService {
       ownerId: userId,
     })
     const savedProfessional =
-      await this.professionalsRepository.save(professional)
+      await this.saveProfessionalWithSequenceRecovery(professional)
 
     await this.attachPortfolioImages(
       savedProfessional.id,
@@ -103,6 +103,52 @@ export class ProfessionalsService {
     )
 
     return savedProfessional
+  }
+
+  private async saveProfessionalWithSequenceRecovery(
+    professional: Professional,
+  ): Promise<Professional> {
+    try {
+      return await this.professionalsRepository.save(professional)
+    } catch (error) {
+      if (!this.isProfessionalPrimaryKeyDuplicate(error)) {
+        throw error
+      }
+
+      await this.syncProfessionalsIdSequence()
+      return await this.professionalsRepository.save(professional)
+    }
+  }
+
+  private isProfessionalPrimaryKeyDuplicate(error: unknown): boolean {
+    if (!(error instanceof QueryFailedError)) {
+      return false
+    }
+
+    const databaseError = error as QueryFailedError & {
+      code?: string
+      message?: string
+      detail?: string
+      constraint?: string
+    }
+
+    const payload = `${databaseError.message ?? ''} ${databaseError.detail ?? ''}`
+
+    return (
+      databaseError.code === '23505' &&
+      (databaseError.constraint === 'professionals_pkey' ||
+        payload.includes('professionals_pkey'))
+    )
+  }
+
+  private async syncProfessionalsIdSequence(): Promise<void> {
+    await this.professionalsRepository.query(`
+      SELECT setval(
+        pg_get_serial_sequence('professionals', 'id'),
+        COALESCE((SELECT MAX(id) FROM "professionals"), 0) + 1,
+        false
+      )
+    `)
   }
 
   private async attachPortfolioImages(
