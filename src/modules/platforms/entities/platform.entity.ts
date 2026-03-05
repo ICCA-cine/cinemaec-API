@@ -15,10 +15,10 @@ export class Platform {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({ name: 'nombre', type: 'text', nullable: false })
+  @Column({ type: 'text', nullable: false })
   name: string
 
-  @Column({ name: 'tipo', type: 'varchar', enum: PlatformType, nullable: false })
+  @Column({ type: 'varchar', enum: PlatformType, nullable: false })
   type: PlatformType
 
   @Column({ type: 'integer', nullable: true })

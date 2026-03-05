@@ -14,11 +14,10 @@ export class Fund {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({ name: 'nombre', type: 'varchar', length: 255, nullable: false })
+  @Column({ type: 'varchar', length: 255, nullable: false })
   name: string
 
   @Column({
-    name: 'tipo',
     type: 'enum',
     enum: FundType,
     array: true,
@@ -30,7 +29,6 @@ export class Fund {
   countryId: number
 
   @Column({
-    name: 'origenFinanciero',
     type: 'enum',
     enum: FinancialOrigin,
     nullable: false,

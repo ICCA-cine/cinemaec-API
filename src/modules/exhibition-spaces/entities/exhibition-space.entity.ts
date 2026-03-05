@@ -12,7 +12,7 @@ export class ExhibitionSpace {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({ name: 'nombre', type: 'varchar', length: 255, nullable: false })
+  @Column({ type: 'varchar', length: 255, nullable: false })
   name: string
 
   @Column({ type: 'integer', nullable: false })
