@@ -216,7 +216,7 @@ export class UpdateCinematicRolesWithCategories1770200000000
       (14, 'Producción de Campo', 'Field Producer'),
       (14, 'Locacionista', 'Location Scout'),
       (14, 'Asistencia de Producción', 'Production Assistant'),
-      (14, 'Realización de Making Of', 'Behind the Scenes / Making Of'),
+      (14, 'Realización de MakingOf', 'Behind the Scenes / MakingOf'),
       (14, 'Técnico/a de Gestión de Datos (DMT)', 'Data Management Technician'),
       
       -- Servicios Complementarios (Category 15)
