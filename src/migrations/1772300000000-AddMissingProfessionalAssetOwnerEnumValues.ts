@@ -5,23 +5,28 @@ export class AddMissingProfessionalAssetOwnerEnumValues1772300000000
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-      ALTER TYPE "asset_owner_enum" ADD VALUE IF NOT EXISTS 'professional_profile_photo'
-    `)
+      DO $$
+      DECLARE
+        enum_name text;
+      BEGIN
+        SELECT t.typname
+        INTO enum_name
+        FROM pg_type t
+        JOIN pg_namespace n ON n.oid = t.typnamespace
+        WHERE n.nspname = 'public'
+          AND t.typname IN ('assets_ownertype_enum', 'asset_owner_enum')
+        LIMIT 1;
 
-    await queryRunner.query(`
-      ALTER TYPE "asset_owner_enum" ADD VALUE IF NOT EXISTS 'professional_portfolio_image'
-    `)
+        IF enum_name IS NULL THEN
+          RETURN;
+        END IF;
 
-    await queryRunner.query(`
-      ALTER TYPE "asset_owner_enum" ADD VALUE IF NOT EXISTS 'movie_dossier'
-    `)
-
-    await queryRunner.query(`
-      ALTER TYPE "asset_owner_enum" ADD VALUE IF NOT EXISTS 'movie_dossier_en'
-    `)
-
-    await queryRunner.query(`
-      ALTER TYPE "asset_owner_enum" ADD VALUE IF NOT EXISTS 'movie_pedagogical_guide'
+        EXECUTE format('ALTER TYPE public.%I ADD VALUE IF NOT EXISTS ''professional_profile_photo''', enum_name);
+        EXECUTE format('ALTER TYPE public.%I ADD VALUE IF NOT EXISTS ''professional_portfolio_image''', enum_name);
+        EXECUTE format('ALTER TYPE public.%I ADD VALUE IF NOT EXISTS ''movie_dossier''', enum_name);
+        EXECUTE format('ALTER TYPE public.%I ADD VALUE IF NOT EXISTS ''movie_dossier_en''', enum_name);
+        EXECUTE format('ALTER TYPE public.%I ADD VALUE IF NOT EXISTS ''movie_pedagogical_guide''', enum_name);
+      END $$;
     `)
   }
 
