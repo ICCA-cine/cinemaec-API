@@ -12,12 +12,57 @@ export class FundsService {
     private readonly fundRepository: Repository<Fund>,
   ) {}
 
+  private normalizeEnumValue(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim()
+  }
+
+  private mapFundTypeToDb(value: string): string {
+    const normalized = this.normalizeEnumValue(value)
+    switch (normalized) {
+      case 'fondo':
+        return 'fondo'
+      case 'festival':
+        return 'festival'
+      case 'premio':
+        return 'premio'
+      case 'espacios de participacion':
+      case 'espacios_participacion':
+        return 'espacios_participacion'
+      default:
+        return 'fondo'
+    }
+  }
+
+  private mapFundTypesToDb(values: string[]): string[] {
+    return values.map((value) => this.mapFundTypeToDb(value))
+  }
+
+  private mapFinancialOriginToDb(value: string): string {
+    const normalized = this.normalizeEnumValue(value)
+    switch (normalized) {
+      case 'publico':
+        return 'publico'
+      case 'privado':
+        return 'privado'
+      case 'mixto':
+        return 'mixto'
+      case 'desconocido':
+        return 'desconocido'
+      default:
+        return 'desconocido'
+    }
+  }
+
   async create(createFundDto: CreateFundDto): Promise<Fund> {
     const fund = this.fundRepository.create({
       name: createFundDto.name,
-      type: createFundDto.type,
+      type: this.mapFundTypesToDb(createFundDto.type) as Fund['type'],
       countryId: createFundDto.countryId,
-      financialOrigin: createFundDto.financialOrigin,
+      financialOrigin: this.mapFinancialOriginToDb(createFundDto.financialOrigin) as Fund['financialOrigin'],
     })
     return await this.fundRepository.save(fund)
   }
@@ -44,7 +89,23 @@ export class FundsService {
 
   async update(id: number, updateFundDto: UpdateFundDto): Promise<Fund> {
     const fund = await this.findOne(id)
-    Object.assign(fund, updateFundDto)
+
+    if (updateFundDto.name !== undefined) {
+      fund.name = updateFundDto.name
+    }
+
+    if (updateFundDto.countryId !== undefined) {
+      fund.countryId = updateFundDto.countryId
+    }
+
+    if (updateFundDto.type !== undefined) {
+      fund.type = this.mapFundTypesToDb(updateFundDto.type) as Fund['type']
+    }
+
+    if (updateFundDto.financialOrigin !== undefined) {
+      fund.financialOrigin = this.mapFinancialOriginToDb(updateFundDto.financialOrigin) as Fund['financialOrigin']
+    }
+
     return await this.fundRepository.save(fund)
   }
 
