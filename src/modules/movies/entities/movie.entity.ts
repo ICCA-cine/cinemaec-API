@@ -33,6 +33,8 @@ export enum MovieType {
   SHORT_FILM = 'Cortometraje',
   MEDIUM_FILM = 'Mediometraje',
   FEATURE_FILM = 'Largometraje',
+  SERIES = 'Series',
+  VIDEO_GAMES = 'Videojuegos',
   UNCATEGORIZED = 'Sin catalogar',
 }
 

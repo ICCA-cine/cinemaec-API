@@ -13,6 +13,54 @@ export class FundsService {
   ) {}
 
   async create(createFundDto: CreateFundDto): Promise<Fund> {
+    if (await this.usesLegacySchema()) {
+      const rows: Array<{
+        id: number
+        name: string
+        type: string[]
+        countryId: number
+        financialOrigin: string
+        country_id: number | null
+        country_name: string | null
+      }> = await this.fundRepository.query(
+        `
+        WITH inserted AS (
+          INSERT INTO funds (nombre, tipo, "countryId", "origenFinanciero")
+          VALUES ($1, $2, $3, $4)
+          RETURNING id, nombre, tipo, "countryId", "origenFinanciero"
+        )
+        SELECT
+          i.id,
+          i.nombre AS "name",
+          i.tipo AS "type",
+          i."countryId" AS "countryId",
+          i."origenFinanciero" AS "financialOrigin",
+          c.id AS "country_id",
+          c.name AS "country_name"
+        FROM inserted i
+        LEFT JOIN countries c ON c.id = i."countryId"
+        `,
+        [
+          createFundDto.name,
+          createFundDto.type,
+          createFundDto.countryId,
+          createFundDto.financialOrigin,
+        ],
+      )
+
+      const row = rows[0]
+      return {
+        id: row.id,
+        name: row.name,
+        type: row.type as any,
+        countryId: row.countryId,
+        financialOrigin: row.financialOrigin as any,
+        country: row.country_id
+          ? ({ id: row.country_id, name: row.country_name } as any)
+          : null,
+      } as Fund
+    }
+
     const fund = this.fundRepository.create({
       name: createFundDto.name,
       type: createFundDto.type,
