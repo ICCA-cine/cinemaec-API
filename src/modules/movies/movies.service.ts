@@ -1310,6 +1310,21 @@ export class MoviesService {
     return this.findOne(id)
   }
 
+  async togglePublishedToCatalog(id: number): Promise<Movie> {
+    const movie = await this.movieRepository.findOne({
+      where: { id },
+    })
+
+    if (!movie) {
+      throw new NotFoundException(`Movie with ID ${id} not found`)
+    }
+
+    movie.isPublishedToCatalog = !movie.isPublishedToCatalog
+    await this.movieRepository.save(movie)
+
+    return this.findOne(id)
+  }
+
   async getProfessionalsByRole(
     movieId: number,
     cinematicRoleId: number,
@@ -1318,5 +1333,67 @@ export class MoviesService {
       where: { movieId, cinematicRoleId },
       relations: ['professional'],
     })
+  }
+
+  async findPublicCatalog(): Promise<Movie[]> {
+    return this.movieRepository.find({
+      where: { isPublishedToCatalog: true },
+      relations: [
+        'country',
+        'professionals',
+        'professionals.professional',
+        'professionals.cinematicRole',
+        'posterAsset',
+      ],
+      order: { createdAt: 'DESC' },
+    })
+  }
+
+  async findPublicById(id: number): Promise<Movie> {
+    const movie = await this.movieRepository.findOne({
+      where: { id, isPublishedToCatalog: true },
+      relations: [
+        'subgenres',
+        'languages',
+        'subtitles',
+        'subtitles.language',
+        'country',
+        'cities',
+        'frameAssets',
+        'posterAsset',
+        'dossierAsset',
+        'dossierAssetEn',
+        'pedagogicalSheetAsset',
+        'professionals',
+        'professionals.professional',
+        'professionals.cinematicRole',
+        'companies',
+        'companies.company',
+        'internationalCoproductions',
+        'internationalCoproductions.country',
+        'filmingCountries',
+        'filmingCountries.country',
+        'funding',
+        'funding.fund',
+        'nationalReleases',
+        'nationalReleases.exhibitionSpace',
+        'nationalReleases.city',
+        'internationalReleases',
+        'internationalReleases.country',
+        'festivalNominations',
+        'festivalNominations.fund',
+        'platforms',
+        'contentBank',
+        'createdBy',
+      ],
+    })
+
+    if (!movie) {
+      throw new NotFoundException(
+        `Public movie with ID ${id} not found or not published`,
+      )
+    }
+
+    return movie
   }
 }

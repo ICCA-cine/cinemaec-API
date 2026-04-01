@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { MoviesService } from './movies.service'
 import { MoviesController } from './movies.controller'
+import { MoviesPublicController } from './movies-public.controller'
 import { Movie } from './entities/movie.entity'
 import { MovieProfessional } from './entities/movie-professional.entity'
 import { MovieCompany } from './entities/movie-company.entity'
@@ -56,7 +57,7 @@ import { User } from '../users/entities/user.entity'
       User,
     ]),
   ],
-  controllers: [MoviesController],
+  controllers: [MoviesController, MoviesPublicController],
   providers: [MoviesService],
   exports: [MoviesService],
 })

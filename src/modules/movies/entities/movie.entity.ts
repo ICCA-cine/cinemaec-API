@@ -160,6 +160,9 @@ export class Movie {
   @Column({ type: 'boolean', default: true })
   isActive: boolean
 
+  @Column({ type: 'boolean', default: false })
+  isPublishedToCatalog: boolean
+
   @Column({ type: 'numeric', precision: 14, scale: 2, nullable: true })
   totalBudget: string | null
 

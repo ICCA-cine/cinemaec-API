@@ -228,6 +228,21 @@ export class MoviesController {
     return this.moviesService.toggleActive(id)
   }
 
+  @Put(':id/toggle-published-to-catalog')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Alternar publicación en catálogo de una película' })
+  @ApiResponse({
+    status: 200,
+    description: 'Estado de publicación actualizado exitosamente',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Película no encontrada',
+  })
+  togglePublishedToCatalog(@Param('id', ParseIntPipe) id: number) {
+    return this.moviesService.togglePublishedToCatalog(id)
+  }
+
   @Get('professionals/list')
   @ApiOperation({
     summary: 'Listar todos los profesionales disponibles',
