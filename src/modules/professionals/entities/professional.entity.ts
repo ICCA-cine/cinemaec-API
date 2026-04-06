@@ -8,6 +8,7 @@ import {
   Index,
 } from 'typeorm'
 import { User } from '../../users/entities/user.entity'
+import { Asset } from '../../assets/entities/asset.entity'
 
 @Entity('professionals')
 @Index('IDX_professionals_owner_unique', ['ownerId'], {
@@ -50,6 +51,10 @@ export class Professional {
 
   @Column({ type: 'integer', nullable: true })
   profilePhotoAssetId: number | null
+
+  @ManyToOne(() => Asset, { nullable: true, eager: false, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'profilePhotoAssetId' })
+  profilePhotoAsset: Asset | null
 
   @Column({ type: 'varchar', length: 500, nullable: true })
   reelLink: string | null
