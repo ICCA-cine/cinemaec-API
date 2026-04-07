@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { QueryFailedError, Repository } from 'typeorm'
+import { In, QueryFailedError, Repository } from 'typeorm'
 import { Professional } from './entities/professional.entity'
 import { ProfessionalPortfolioImage } from './entities/professional-portfolio-image.entity'
 import { MovieProfessional } from '../movies/entities/movie-professional.entity'
@@ -21,6 +21,7 @@ import { Profile, LegalStatus } from '../profiles/entities/profile.entity'
 import { NotificationsService } from '../notifications/notifications.service'
 import { NotificationTypeEnum } from '../notifications/entities/notification.entity'
 import { EmailsService } from '../emails/emails.service'
+import { CinematicRole } from '../catalog/entities/cinematic-role.entity'
 
 @Injectable()
 export class ProfessionalsService {
@@ -31,6 +32,8 @@ export class ProfessionalsService {
     private readonly portfolioImagesRepository: Repository<ProfessionalPortfolioImage>,
     @InjectRepository(MovieProfessional)
     private readonly movieProfessionalsRepository: Repository<MovieProfessional>,
+    @InjectRepository(CinematicRole)
+    private readonly cinematicRolesRepository: Repository<CinematicRole>,
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     @InjectRepository(Profile)
@@ -275,6 +278,151 @@ export class ProfessionalsService {
     })
   }
 
+  async findPublic() {
+    const professionals = await this.professionalsRepository.find({
+      where: { isPublic: true },
+      relations: ['profilePhotoAsset'],
+      order: {
+        name: 'ASC',
+      },
+    })
+
+    return professionals.map((professional) => ({
+      id: professional.id,
+      name: professional.name,
+      nickName: professional.nickName,
+      bio: professional.bio,
+      bioEn: professional.bioEn,
+      profilePhotoAssetId: professional.profilePhotoAssetId,
+      profilePhotoAsset: professional.profilePhotoAsset,
+      isPublic: professional.isPublic,
+    }))
+  }
+
+  async findPublicOne(id: number) {
+    const professional = await this.professionalsRepository.findOne({
+      where: { id },
+      relations: ['profilePhotoAsset', 'owner'],
+    })
+
+    if (!professional) {
+      throw new NotFoundException(`Professional with ID ${id} not found`)
+    }
+
+    const roleIds = [
+      professional.primaryActivityRoleId1,
+      professional.primaryActivityRoleId2,
+      professional.secondaryActivityRoleId1,
+      professional.secondaryActivityRoleId2,
+    ].filter((roleId): roleId is number => typeof roleId === 'number')
+
+    const [portfolioImages, movieParticipations, cinematicRoles] =
+      await Promise.all([
+        professional.isPublic
+          ? this.portfolioImagesRepository.find({
+              where: { professionalId: professional.id },
+              relations: ['asset'],
+              order: { id: 'ASC' },
+            })
+          : Promise.resolve([]),
+        this.movieProfessionalsRepository.find({
+          where: { professionalId: professional.id },
+          relations: [
+            'movie',
+            'movie.posterAsset',
+            'cinematicRole',
+            'cinematicRole.roleCategory',
+          ],
+          order: { id: 'ASC' },
+        }),
+        roleIds.length
+          ? this.cinematicRolesRepository.find({
+              where: { id: In(roleIds) },
+              relations: ['roleCategory'],
+            })
+          : Promise.resolve([]),
+      ])
+
+    const rolesById = new Map(cinematicRoles.map((role) => [role.id, role]))
+
+    const toPublicRole = (roleId: number | null) => {
+      if (!roleId) {
+        return null
+      }
+
+      const role = rolesById.get(roleId)
+      if (!role) {
+        return null
+      }
+
+      return {
+        id: role.id,
+        name: role.name,
+        nameEn: role.nameEn,
+        category: role.roleCategory
+          ? {
+              id: role.roleCategory.id,
+              name: role.roleCategory.name,
+              nameEn: role.roleCategory.nameEn,
+            }
+          : null,
+      }
+    }
+
+    return {
+      id: professional.id,
+      name: professional.name,
+      nickName: professional.nickName,
+      email: professional.isPublic ? (professional.owner?.email ?? null) : null,
+      website: professional.isPublic ? professional.website : null,
+      linkedin: professional.isPublic ? professional.linkedin : null,
+      rrss: professional.isPublic ? professional.rrss : null,
+      bio: professional.isPublic ? professional.bio : null,
+      bioEn: professional.isPublic ? professional.bioEn : null,
+      profilePhotoAssetId: professional.profilePhotoAssetId,
+      profilePhotoAsset: professional.profilePhotoAsset,
+      reelLink: professional.isPublic ? professional.reelLink : null,
+      companyNameCEO: professional.isPublic ? professional.companyNameCEO : null,
+      isPublic: professional.isPublic,
+      primaryActivityRoles: [
+        toPublicRole(professional.primaryActivityRoleId1),
+        toPublicRole(professional.primaryActivityRoleId2),
+      ].filter(Boolean),
+      secondaryActivityRoles: [
+        toPublicRole(professional.secondaryActivityRoleId1),
+        toPublicRole(professional.secondaryActivityRoleId2),
+      ].filter(Boolean),
+      portfolioImages: portfolioImages
+        .map((entry) => entry.asset)
+        .filter((asset) => Boolean(asset)),
+      movieParticipations: movieParticipations
+        .filter((entry) => entry.movie?.isPublishedToCatalog)
+        .map((entry) => ({
+          id: entry.id,
+          movieId: entry.movieId,
+          movieTitle: entry.movie?.title ?? '',
+          movieTitleEn: entry.movie?.titleEn ?? null,
+          releaseYear: entry.movie?.releaseYear ?? null,
+          cinematicRoleId: entry.cinematicRoleId,
+          cinematicRole: entry.cinematicRole
+            ? {
+                id: entry.cinematicRole.id,
+                name: entry.cinematicRole.name,
+                nameEn: entry.cinematicRole.nameEn,
+                category: entry.cinematicRole.roleCategory
+                  ? {
+                      id: entry.cinematicRole.roleCategory.id,
+                      name: entry.cinematicRole.roleCategory.name,
+                      nameEn: entry.cinematicRole.roleCategory.nameEn,
+                    }
+                  : null,
+              }
+            : null,
+          posterAsset: entry.movie?.posterAsset ?? null,
+        })),
+    }
+  }
+
   async findOne(id: number): Promise<Professional> {
     const professional = await this.professionalsRepository.findOne({
       where: { id },
@@ -289,8 +437,11 @@ export class ProfessionalsService {
 
   async update(
     id: number,
+    userId: number,
     updateProfessionalDto: UpdateProfessionalDto,
   ): Promise<Professional> {
+    await this.assertCanManageProfessional(id, userId)
+
     const professional = await this.findOne(id)
 
     Object.assign(professional, updateProfessionalDto)

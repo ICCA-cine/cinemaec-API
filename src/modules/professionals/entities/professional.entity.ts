@@ -84,6 +84,9 @@ export class Professional {
   @Column({ type: 'boolean', default: false })
   isActive: boolean
 
+  @Column({ type: 'boolean', default: false })
+  isPublic: boolean
+
   @Column({ type: 'varchar', length: 20, default: 'inactive' })
   status: string
 

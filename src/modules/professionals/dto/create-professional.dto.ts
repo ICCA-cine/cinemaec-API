@@ -2,6 +2,7 @@ import {
   ArrayMaxSize,
   ArrayUnique,
   IsArray,
+  IsBoolean,
   IsInt,
   IsOptional,
   IsString,
@@ -108,6 +109,10 @@ export class CreateProfessionalDto {
   @IsOptional()
   @IsInt()
   secondaryActivityRoleId2?: number
+
+  @IsOptional()
+  @IsBoolean()
+  isPublic?: boolean
 
   @IsOptional()
   @IsArray()

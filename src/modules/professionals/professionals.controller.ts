@@ -181,9 +181,14 @@ export class ProfessionalsController {
   })
   async update(
     @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: JwtPayload,
     @Body() updateProfessionalDto: UpdateProfessionalDto,
   ) {
-    return await this.professionalsService.update(id, updateProfessionalDto)
+    return await this.professionalsService.update(
+      id,
+      user.sub,
+      updateProfessionalDto,
+    )
   }
 
   @Delete(':id')
