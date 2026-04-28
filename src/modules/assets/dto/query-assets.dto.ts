@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional } from 'class-validator'
+import {IsEnum, IsOptional} from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { AssetTypeEnum, AssetOwnerEnum } from '../entities/asset.entity'
 

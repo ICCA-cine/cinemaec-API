@@ -80,6 +80,10 @@ export class CreateProfessionalDto {
   @IsString()
   bioEn?: string
 
+  @IsString()
+  @MaxLength(1000)
+  extendedBiofilmography: string
+
   @IsOptional()
   @IsInt()
   profilePhotoAssetId?: number

@@ -35,6 +35,7 @@ export enum MovieType {
   FEATURE_FILM = 'Largometraje',
   SERIES = 'Series',
   VIDEO_GAMES = 'Videojuegos',
+  FESTIVAL = 'Festival y muestra',
   UNCATEGORIZED = 'Sin catalogar',
 }
 

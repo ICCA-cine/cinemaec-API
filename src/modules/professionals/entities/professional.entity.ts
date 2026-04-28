@@ -49,6 +49,9 @@ export class Professional {
   @Column({ type: 'text', nullable: true })
   bioEn: string | null
 
+  @Column({ type: 'text', nullable: false, default: '' })
+  extendedBiofilmography: string
+
   @Column({ type: 'integer', nullable: true })
   profilePhotoAssetId: number | null
 
