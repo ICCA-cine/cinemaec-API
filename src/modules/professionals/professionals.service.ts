@@ -383,6 +383,7 @@ export class ProfessionalsService {
       profilePhotoAsset: professional.profilePhotoAsset,
       reelLink: professional.isPublic ? professional.reelLink : null,
       companyNameCEO: professional.isPublic ? professional.companyNameCEO : null,
+      imdbProfile: professional.isPublic ? professional.imdbProfile : null,
       isPublic: professional.isPublic,
       primaryActivityRoles: [
         toPublicRole(professional.primaryActivityRoleId1),
@@ -396,7 +397,6 @@ export class ProfessionalsService {
         .map((entry) => entry.asset)
         .filter((asset) => Boolean(asset)),
       movieParticipations: movieParticipations
-        .filter((entry) => entry.movie?.isPublishedToCatalog)
         .map((entry) => ({
           id: entry.id,
           movieId: entry.movieId,
@@ -419,6 +419,7 @@ export class ProfessionalsService {
               }
             : null,
           posterAsset: entry.movie?.posterAsset ?? null,
+          accredited: entry.accredited,
         })),
     }
   }
