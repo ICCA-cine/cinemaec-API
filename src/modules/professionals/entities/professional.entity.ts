@@ -52,6 +52,9 @@ export class Professional {
   @Column({ type: 'text', nullable: false, default: '' })
   extendedBiofilmography: string
 
+  @Column({ type: 'varchar', nullable: true })
+  imdbProfile: string | null
+
   @Column({ type: 'integer', nullable: true })
   profilePhotoAssetId: number | null
 

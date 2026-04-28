@@ -27,6 +27,10 @@ export class CreateProfessionalDto {
 
   @IsOptional()
   @IsString()
+  imdbProfile?: string | null
+
+  @IsOptional()
+  @IsString()
   @MaxLength(255)
   nickName?: string
 
