@@ -1352,13 +1352,9 @@ export class MoviesService {
   }
 
   async findPublicById(id: number): Promise<Movie> {
-    const movie = await this.movieRepository.findOne({
-<<<<<<< HEAD
-      where: { id },
-=======
+        const movie = await this.movieRepository.findOne({
       relationLoadStrategy: 'query',
       where: { id, isPublishedToCatalog: true },
->>>>>>> 67866472085ff51af81747e34453b4abe8ba4973
       relations: [
         'subgenres',
         'languages',
