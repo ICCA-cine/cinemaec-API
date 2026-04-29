@@ -97,11 +97,12 @@ export class CreateProfileDto {
     description: 'Teléfono celular (formato: 09XXXXXXXX)',
     example: '0987654321',
   })
+  @IsOptional()
   @IsString({ message: 'El teléfono debe ser un texto' })
+  @ValidateIf((o) => o.phone !== undefined && o.phone !== null && o.phone !== "")
   @Matches(/^09\d{8}$/, {
     message:
       'El teléfono debe tener formato de celular ecuatoriano (09XXXXXXXX)',
   })
-  @IsOptional()
   phone?: string
 }
