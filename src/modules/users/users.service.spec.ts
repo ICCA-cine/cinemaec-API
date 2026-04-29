@@ -381,10 +381,11 @@ describe('UsersService', () => {
         email: user.email,
         cedula: user.cedula,
         role: user.role,
-        is_active: user.isActive,
-        has_profile: true,
-        has_uploaded_agreement: true,
-        last_login: user.lastLogin,
+        isActive: user.isActive,
+        hasProfile: true,
+        hasUploadedAgreement: true,
+        lastLogin: user.lastLogin,
+        permissions: undefined,
       })
     })
 
@@ -409,7 +410,7 @@ describe('UsersService', () => {
 
       const result = await service.getProfile(userId)
 
-      expect(result.has_uploaded_agreement).toBe(false)
+      expect(result.hasUploadedAgreement).toBe(false)
     })
 
     it('should return has_uploaded_agreement false when no profile exists', async () => {
@@ -427,8 +428,8 @@ describe('UsersService', () => {
 
       const result = await service.getProfile(userId)
 
-      expect(result.has_profile).toBe(false)
-      expect(result.has_uploaded_agreement).toBe(false)
+      expect(result.hasProfile).toBe(false)
+      expect(result.hasUploadedAgreement).toBe(false)
     })
 
     it('should throw UnauthorizedException if user not found', async () => {

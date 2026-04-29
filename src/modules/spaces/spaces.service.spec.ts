@@ -138,8 +138,15 @@ describe('SpacesService', () => {
         ...createSpaceDto,
         userId,
         status: SpaceStatusEnum.PENDING,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        mainActivity: '',
+        otherActivities: [],
+        commercialActivities: [],
+        assets: undefined,
+        contractId: null,
+        ruc: null,
+        rucDocument: null,
       }
 
       mockSpacesRepository.create.mockReturnValue(expectedSpace)
