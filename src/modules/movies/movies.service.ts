@@ -1354,7 +1354,7 @@ export class MoviesService {
   async findPublicById(id: number): Promise<Movie> {
         const movie = await this.movieRepository.findOne({
       relationLoadStrategy: 'query',
-      where: { id, isPublishedToCatalog: true },
+      where: { id },
       relations: [
         'subgenres',
         'languages',
@@ -1395,7 +1395,7 @@ export class MoviesService {
 
     if (!movie) {
       throw new NotFoundException(
-        `Public movie with ID ${id} not found or not published`,
+        `Movie with ID ${id} not found`,
       )
     }
 
