@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
-export class NormalizeLegacyCatalogColumnNames1772400000000
-  implements MigrationInterface
-{
+export class NormalizeLegacyCatalogColumnNames1772400000000 implements MigrationInterface {
   name = 'NormalizeLegacyCatalogColumnNames1772400000000'
 
   public async up(queryRunner: QueryRunner): Promise<void> {

@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
-export class AddMissingProfessionalAssetOwnerEnumValues1772300000000
-  implements MigrationInterface
-{
+export class AddMissingProfessionalAssetOwnerEnumValues1772300000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       DO $$

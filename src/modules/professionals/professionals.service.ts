@@ -272,6 +272,7 @@ export class ProfessionalsService {
 
   async findAll(): Promise<Professional[]> {
     return await this.professionalsRepository.find({
+      relations: ['profilePhotoAsset'],
       order: {
         name: 'ASC',
       },
@@ -382,7 +383,9 @@ export class ProfessionalsService {
       profilePhotoAssetId: professional.profilePhotoAssetId,
       profilePhotoAsset: professional.profilePhotoAsset,
       reelLink: professional.isPublic ? professional.reelLink : null,
-      companyNameCEO: professional.isPublic ? professional.companyNameCEO : null,
+      companyNameCEO: professional.isPublic
+        ? professional.companyNameCEO
+        : null,
       imdbProfile: professional.isPublic ? professional.imdbProfile : null,
       isPublic: professional.isPublic,
       primaryActivityRoles: [
@@ -396,31 +399,30 @@ export class ProfessionalsService {
       portfolioImages: portfolioImages
         .map((entry) => entry.asset)
         .filter((asset) => Boolean(asset)),
-      movieParticipations: movieParticipations
-        .map((entry) => ({
-          id: entry.id,
-          movieId: entry.movieId,
-          movieTitle: entry.movie?.title ?? '',
-          movieTitleEn: entry.movie?.titleEn ?? null,
-          releaseYear: entry.movie?.releaseYear ?? null,
-          cinematicRoleId: entry.cinematicRoleId,
-          cinematicRole: entry.cinematicRole
-            ? {
-                id: entry.cinematicRole.id,
-                name: entry.cinematicRole.name,
-                nameEn: entry.cinematicRole.nameEn,
-                category: entry.cinematicRole.roleCategory
-                  ? {
-                      id: entry.cinematicRole.roleCategory.id,
-                      name: entry.cinematicRole.roleCategory.name,
-                      nameEn: entry.cinematicRole.roleCategory.nameEn,
-                    }
-                  : null,
-              }
-            : null,
-          posterAsset: entry.movie?.posterAsset ?? null,
-          accredited: entry.accredited,
-        })),
+      movieParticipations: movieParticipations.map((entry) => ({
+        id: entry.id,
+        movieId: entry.movieId,
+        movieTitle: entry.movie?.title ?? '',
+        movieTitleEn: entry.movie?.titleEn ?? null,
+        releaseYear: entry.movie?.releaseYear ?? null,
+        cinematicRoleId: entry.cinematicRoleId,
+        cinematicRole: entry.cinematicRole
+          ? {
+              id: entry.cinematicRole.id,
+              name: entry.cinematicRole.name,
+              nameEn: entry.cinematicRole.nameEn,
+              category: entry.cinematicRole.roleCategory
+                ? {
+                    id: entry.cinematicRole.roleCategory.id,
+                    name: entry.cinematicRole.roleCategory.name,
+                    nameEn: entry.cinematicRole.roleCategory.nameEn,
+                  }
+                : null,
+            }
+          : null,
+        posterAsset: entry.movie?.posterAsset ?? null,
+        accredited: entry.accredited,
+      })),
     }
   }
 

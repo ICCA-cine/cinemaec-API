@@ -22,9 +22,6 @@ export default tseslint.config(
       parserOptions: {
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
-        // Ensure the parser knows where the TS config is. This helps the
-        // VS Code ESLint extension resolve types for type-aware rules.
-        project: ['./tsconfig.json'],
       },
     },
   },

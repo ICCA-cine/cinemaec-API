@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
-export class AddIsPublishedToCatalogToMovies1773100000000
-  implements MigrationInterface
-{
+export class AddIsPublishedToCatalogToMovies1773100000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.addColumn(
       'movies',

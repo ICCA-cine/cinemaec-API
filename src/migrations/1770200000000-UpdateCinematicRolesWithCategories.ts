@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
-export class UpdateCinematicRolesWithCategories1770200000000
-  implements MigrationInterface
-{
+export class UpdateCinematicRolesWithCategories1770200000000 implements MigrationInterface {
   name = 'UpdateCinematicRolesWithCategories1770200000000'
 
   public async up(queryRunner: QueryRunner): Promise<void> {

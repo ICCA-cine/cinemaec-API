@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
-export class DropAssetsOwnerIdUserFk1772217000000
-  implements MigrationInterface
-{
+export class DropAssetsOwnerIdUserFk1772217000000 implements MigrationInterface {
   name = 'DropAssetsOwnerIdUserFk1772217000000'
 
   public async up(queryRunner: QueryRunner): Promise<void> {

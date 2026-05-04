@@ -133,17 +133,29 @@ describe('SpacesService', () => {
         operatingLicense: 8,
       }
 
+      const mockCreatedAt = new Date()
+      const mockUpdatedAt = new Date()
       const expectedSpace = {
         id: 1,
         ...createSpaceDto,
         userId,
         status: SpaceStatusEnum.PENDING,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: mockCreatedAt.toString(),
+        updatedAt: mockUpdatedAt.toString(),
         mainActivity: '',
         otherActivities: [],
         commercialActivities: [],
-        assets: undefined,
+        assets: {
+          documents: {
+            ci: null,
+            manager: null,
+            ruc: null,
+            operatingLicense: null,
+            serviceBill: null,
+          },
+          logo: null,
+          photos: [],
+        },
         contractId: null,
         ruc: null,
         rucDocument: null,
@@ -171,6 +183,7 @@ describe('SpacesService', () => {
         limit: 10,
       }
 
+      const now = new Date()
       const spaces: any[] = [
         {
           id: 1,
@@ -181,6 +194,8 @@ describe('SpacesService', () => {
           address: 'Calle 1',
           userId: 1,
           status: SpaceStatusEnum.ACTIVE,
+          createdAt: now,
+          updatedAt: now,
           photosId: [],
           logoId: 1,
           ciDocument: 2,
@@ -197,6 +212,8 @@ describe('SpacesService', () => {
           address: 'Calle 2',
           userId: 2,
           status: SpaceStatusEnum.VERIFIED,
+          createdAt: now,
+          updatedAt: now,
           photosId: [],
           logoId: 1,
           ciDocument: 2,
@@ -228,6 +245,7 @@ describe('SpacesService', () => {
     it('should return spaces without filters', async () => {
       const queryDto = { page: 1, limit: 10 }
 
+      const now2 = new Date()
       const spaces: any[] = [
         {
           id: 1,
@@ -238,6 +256,8 @@ describe('SpacesService', () => {
           address: 'Calle 1',
           userId: 1,
           status: SpaceStatusEnum.ACTIVE,
+          createdAt: now2,
+          updatedAt: now2,
           photosId: [],
           logoId: 1,
           ciDocument: 2,
@@ -261,6 +281,7 @@ describe('SpacesService', () => {
   describe('findOne', () => {
     it('should return a space by id', async () => {
       const spaceId = 1
+      const now3 = new Date()
       const space = {
         id: spaceId,
         name: 'Teatro Nacional',
@@ -270,6 +291,8 @@ describe('SpacesService', () => {
         address: 'Calle Venezuela',
         userId: 1,
         status: SpaceStatusEnum.ACTIVE,
+        createdAt: now3,
+        updatedAt: now3,
         photosId: [],
         logoId: 1,
         ciDocument: 2,
@@ -307,6 +330,7 @@ describe('SpacesService', () => {
         capacity: 900,
       }
 
+      const now4 = new Date()
       const existingSpace = {
         id: spaceId,
         name: 'Teatro Nacional',
@@ -316,6 +340,8 @@ describe('SpacesService', () => {
         address: 'Calle Venezuela',
         userId,
         status: SpaceStatusEnum.ACTIVE,
+        createdAt: now4,
+        updatedAt: now4,
         photosId: [],
       }
 
@@ -339,6 +365,7 @@ describe('SpacesService', () => {
       const userId = 2
       const updateDto = { name: 'Nuevo nombre' }
 
+      const now5 = new Date()
       const existingSpace = {
         id: spaceId,
         name: 'Teatro Nacional',
@@ -348,6 +375,8 @@ describe('SpacesService', () => {
         city: 'Quito',
         address: 'Calle Venezuela',
         status: SpaceStatusEnum.ACTIVE,
+        createdAt: now5,
+        updatedAt: now5,
         photosId: [],
       }
 
@@ -365,6 +394,7 @@ describe('SpacesService', () => {
       const spaceId = 1
       const userId = 1
 
+      const now7 = new Date()
       const space = {
         id: spaceId,
         name: 'Teatro Nacional',
@@ -374,6 +404,8 @@ describe('SpacesService', () => {
         city: 'Quito',
         address: 'Calle Venezuela',
         status: SpaceStatusEnum.ACTIVE,
+        createdAt: now7,
+        updatedAt: now7,
         photosId: [],
       }
 
@@ -390,6 +422,7 @@ describe('SpacesService', () => {
       const spaceId = 1
       const userId = 2
 
+      const now8 = new Date()
       const space = {
         id: spaceId,
         name: 'Teatro Nacional',
@@ -399,6 +432,8 @@ describe('SpacesService', () => {
         city: 'Quito',
         address: 'Calle Venezuela',
         status: SpaceStatusEnum.ACTIVE,
+        createdAt: now8,
+        updatedAt: now8,
         photosId: [],
       }
 
@@ -415,6 +450,7 @@ describe('SpacesService', () => {
     it('should update space status', async () => {
       const spaceId = 1
       const newStatus = SpaceStatusEnum.VERIFIED
+      const now6 = new Date()
 
       const space = {
         id: spaceId,
@@ -425,6 +461,8 @@ describe('SpacesService', () => {
         city: 'Quito',
         address: 'Calle Venezuela',
         status: SpaceStatusEnum.PENDING,
+        createdAt: now6,
+        updatedAt: now6,
         photosId: [],
       }
 

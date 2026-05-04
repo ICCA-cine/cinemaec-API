@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
-export class AddMissingAssetOwnerEnumValues1736100000000
-  implements MigrationInterface
-{
+export class AddMissingAssetOwnerEnumValues1736100000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Agregar valores faltantes al enum asset_owner_enum
     await queryRunner.query(`

@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm'
 
-export class RemoveFirstNameLastNameFromUsers1737000000000
-  implements MigrationInterface
-{
+export class RemoveFirstNameLastNameFromUsers1737000000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Verificar si las columnas existen antes de intentar eliminarlas
     const table = await queryRunner.getTable('users')

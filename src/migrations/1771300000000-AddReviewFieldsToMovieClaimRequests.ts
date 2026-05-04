@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
-export class AddReviewFieldsToMovieClaimRequests1771300000000
-  implements MigrationInterface
-{
+export class AddReviewFieldsToMovieClaimRequests1771300000000 implements MigrationInterface {
   name = 'AddReviewFieldsToMovieClaimRequests1771300000000'
 
   public async up(queryRunner: QueryRunner): Promise<void> {

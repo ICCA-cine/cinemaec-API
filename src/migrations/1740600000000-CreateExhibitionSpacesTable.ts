@@ -5,9 +5,7 @@ import {
   TableForeignKey,
 } from 'typeorm'
 
-export class CreateExhibitionSpacesTable1740600000000
-  implements MigrationInterface
-{
+export class CreateExhibitionSpacesTable1740600000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({

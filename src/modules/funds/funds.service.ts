@@ -62,7 +62,9 @@ export class FundsService {
       name: createFundDto.name,
       type: this.mapFundTypesToDb(createFundDto.type) as Fund['type'],
       countryId: createFundDto.countryId,
-      financialOrigin: this.mapFinancialOriginToDb(createFundDto.financialOrigin) as Fund['financialOrigin'],
+      financialOrigin: this.mapFinancialOriginToDb(
+        createFundDto.financialOrigin,
+      ) as Fund['financialOrigin'],
     })
     return await this.fundRepository.save(fund)
   }
@@ -103,7 +105,9 @@ export class FundsService {
     }
 
     if (updateFundDto.financialOrigin !== undefined) {
-      fund.financialOrigin = this.mapFinancialOriginToDb(updateFundDto.financialOrigin) as Fund['financialOrigin']
+      fund.financialOrigin = this.mapFinancialOriginToDb(
+        updateFundDto.financialOrigin,
+      ) as Fund['financialOrigin']
     }
 
     return await this.fundRepository.save(fund)

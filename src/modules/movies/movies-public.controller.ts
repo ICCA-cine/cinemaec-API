@@ -20,7 +20,9 @@ export class MoviesPublicController {
   }
 
   @Get('catalog/:id')
-  @ApiOperation({ summary: 'Obtener detalles de una película del catálogo público' })
+  @ApiOperation({
+    summary: 'Obtener detalles de una película del catálogo público',
+  })
   @ApiResponse({
     status: 200,
     description: 'Película encontrada',

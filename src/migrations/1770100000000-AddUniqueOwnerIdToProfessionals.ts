@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
-export class AddUniqueOwnerIdToProfessionals1770100000000
-  implements MigrationInterface
-{
+export class AddUniqueOwnerIdToProfessionals1770100000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const hasProfessionalsTable = await queryRunner.hasTable('professionals')
     if (!hasProfessionalsTable) return

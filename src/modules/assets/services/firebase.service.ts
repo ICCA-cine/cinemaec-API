@@ -88,7 +88,7 @@ export class FirebaseService {
       const fileName = `${this.environmentPrefix}/${path}/${Date.now()}_${file.originalname}`
       const fileUpload = bucket.file(fileName)
 
-      await fileUpload.save(file.buffer as Buffer, {
+      await fileUpload.save(file.buffer, {
         metadata: {
           contentType: file.mimetype,
         },

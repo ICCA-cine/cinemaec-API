@@ -58,7 +58,11 @@ export class Professional {
   @Column({ type: 'integer', nullable: true })
   profilePhotoAssetId: number | null
 
-  @ManyToOne(() => Asset, { nullable: true, eager: false, onDelete: 'SET NULL' })
+  @ManyToOne(() => Asset, {
+    nullable: true,
+    eager: false,
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'profilePhotoAssetId' })
   profilePhotoAsset: Asset | null
 

@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
-export class AddUncategorizedMovieGenre1771500000000
-  implements MigrationInterface
-{
+export class AddUncategorizedMovieGenre1771500000000 implements MigrationInterface {
   name = 'AddUncategorizedMovieGenre1771500000000'
 
   public async up(queryRunner: QueryRunner): Promise<void> {

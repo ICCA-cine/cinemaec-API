@@ -248,8 +248,8 @@ describe('UsersService', () => {
           email: user.email,
           cedula: user.cedula,
           role: user.role,
-          is_active: user.isActive,
-          has_profile: true,
+          isActive: user.isActive,
+          hasProfile: true,
           permissions: ['admin_spaces'],
         },
       })

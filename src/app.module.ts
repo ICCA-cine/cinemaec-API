@@ -17,6 +17,7 @@ import { FirebaseModule } from './common/firebase/firebase.module'
 import { MoviesModule } from './modules/movies/movies.module'
 import { ProfessionalsModule } from './modules/professionals/professionals.module'
 import { CompaniesModule } from './modules/companies/companies.module'
+import { FestivalsModule } from './modules/festivals/festivals.module'
 import { getDatabaseConfig } from './config/database.config'
 
 import envConfig from './config/env.config'
@@ -48,6 +49,7 @@ import envConfig from './config/env.config'
     MoviesModule,
     ProfessionalsModule,
     CompaniesModule,
+    FestivalsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

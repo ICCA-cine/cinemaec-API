@@ -5,9 +5,7 @@ interface ProvinceSeed {
   cities: string[]
 }
 
-export class CreateGeoAndLanguageTables1738000000000
-  implements MigrationInterface
-{
+export class CreateGeoAndLanguageTables1738000000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
