@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Festival } from './entities/festival.entity'
+import { FestivalType } from './entities/festival-type.entity'
+import { FestivalClassification } from './entities/festival-classification.entity'
 import { FestivalCity } from './entities/festival-city.entity'
 import { FestivalCompany } from './entities/festival-company.entity'
 import { FestivalStill } from './entities/festival-still.entity'
@@ -15,6 +17,8 @@ import { PublicFestivalsController } from './public-festivals.controller'
   imports: [
     TypeOrmModule.forFeature([
       Festival,
+      FestivalType,
+      FestivalClassification,
       FestivalCity,
       FestivalCompany,
       FestivalStill,

@@ -15,6 +15,8 @@ import { FestivalStill } from './festival-still.entity'
 import { FestivalProfessional } from './festival-professional.entity'
 import { FestivalSection } from './festival-section.entity'
 import { FestivalModality } from './festival-modality.entity'
+import { FestivalType } from './festival-type.entity'
+import { FestivalClassification } from './festival-classification.entity'
 
 @Entity('festivals')
 export class Festival {
@@ -30,8 +32,12 @@ export class Festival {
   @Column({ type: 'int', nullable: false })
   firstEditionYear: number
 
-  @Column({ type: 'varchar', length: 100, nullable: false })
-  type: string
+  @Column({ type: 'int', nullable: false })
+  typeId: number
+
+  @ManyToOne(() => FestivalType, { nullable: false, eager: false, onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'typeId' })
+  type: FestivalType
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   website: string | null
@@ -45,8 +51,12 @@ export class Festival {
   @Column({ type: 'text', nullable: true })
   descriptionEn: string | null
 
-  @Column({ type: 'varchar', length: 100, nullable: false })
-  classification: string
+  @Column({ type: 'int', nullable: false })
+  classificationId: number
+
+  @ManyToOne(() => FestivalClassification, { nullable: false, eager: false, onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'classificationId' })
+  classification: FestivalClassification
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   contactName: string

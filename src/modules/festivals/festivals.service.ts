@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { EntityManager, Repository } from 'typeorm'
 import { Festival } from './entities/festival.entity'
+import { FestivalType } from './entities/festival-type.entity'
+import { FestivalClassification } from './entities/festival-classification.entity'
 import { CreateFestivalDto } from './dto/create-festival.dto'
 import { UpdateFestivalDto } from './dto/update-festival.dto'
 import { FestivalCity } from './entities/festival-city.entity'
@@ -19,6 +21,7 @@ type FestivalResponse = {
   name: string
   editionCount: number
   firstEditionYear: number
+  typeId: number
   type: string
   hostCities: number[]
   modality: string[]
@@ -43,6 +46,7 @@ type FestivalResponse = {
     photoUrl: string | null
     filmography: string | null
   }>
+  classificationId: number
   classification: string
   contactName: string
   contactEmail: string
@@ -72,6 +76,8 @@ type FestivalResponse = {
 @Injectable()
 export class FestivalsService {
   private readonly festivalRelations = [
+    'type',
+    'classification',
     'hostCitiesRelations',
     'modalities',
     'companies',
@@ -89,6 +95,10 @@ export class FestivalsService {
   constructor(
     @InjectRepository(Festival)
     private readonly festivalsRepository: Repository<Festival>,
+    @InjectRepository(FestivalType)
+    private readonly festivalTypeRepository: Repository<FestivalType>,
+    @InjectRepository(FestivalClassification)
+    private readonly festivalClassificationRepository: Repository<FestivalClassification>,
   ) {}
 
   async create(
@@ -99,16 +109,25 @@ export class FestivalsService {
       async (manager) => {
         const festivalRepository = manager.getRepository(Festival)
 
+        const festivalType = await this.festivalTypeRepository.findOne({ where: { code: createFestivalDto.type.trim() } })
+        if (!festivalType) {
+          throw new BadRequestException(`Festival type '${createFestivalDto.type}' not found`)
+        }
+        const festivalClassification = await this.festivalClassificationRepository.findOne({ where: { code: createFestivalDto.classification.trim() } })
+        if (!festivalClassification) {
+          throw new BadRequestException(`Festival classification '${createFestivalDto.classification}' not found`)
+        }
+
         const festival = festivalRepository.create({
           name: createFestivalDto.name,
           editionCount: createFestivalDto.editionCount,
           firstEditionYear: createFestivalDto.firstEditionYear,
-          type: createFestivalDto.type.trim(),
+          typeId: festivalType.id,
           website: createFestivalDto.website ?? null,
           theme: createFestivalDto.theme,
           description: createFestivalDto.description,
           descriptionEn: createFestivalDto.descriptionEn ?? null,
-          classification: createFestivalDto.classification.trim(),
+          classificationId: festivalClassification.id,
           contactName: createFestivalDto.contactName,
           contactEmail: createFestivalDto.contactEmail,
           contactPhone: createFestivalDto.contactPhone,
@@ -218,7 +237,11 @@ export class FestivalsService {
           festival.firstEditionYear = updateFestivalDto.firstEditionYear
         }
         if (updateFestivalDto.type !== undefined) {
-          festival.type = updateFestivalDto.type.trim()
+          const festivalType = await this.festivalTypeRepository.findOne({ where: { code: updateFestivalDto.type.trim() } })
+          if (!festivalType) {
+            throw new BadRequestException(`Festival type '${updateFestivalDto.type}' not found`)
+          }
+          festival.typeId = festivalType.id
         }
         if (updateFestivalDto.website !== undefined) {
           festival.website = updateFestivalDto.website ?? null
@@ -233,7 +256,11 @@ export class FestivalsService {
           festival.descriptionEn = updateFestivalDto.descriptionEn ?? null
         }
         if (updateFestivalDto.classification !== undefined) {
-          festival.classification = updateFestivalDto.classification.trim()
+          const festivalClassification = await this.festivalClassificationRepository.findOne({ where: { code: updateFestivalDto.classification.trim() } })
+          if (!festivalClassification) {
+            throw new BadRequestException(`Festival classification '${updateFestivalDto.classification}' not found`)
+          }
+          festival.classificationId = festivalClassification.id
         }
         if (updateFestivalDto.contactName !== undefined) {
           festival.contactName = updateFestivalDto.contactName
@@ -386,7 +413,8 @@ export class FestivalsService {
       name: festival.name,
       editionCount: festival.editionCount,
       firstEditionYear: festival.firstEditionYear,
-      type: festival.type,
+      typeId: festival.typeId,
+      type: festival.type?.code ?? '',
       hostCities: festival.hostCitiesRelations.map((row) => row.cityId),
       modality: festival.modalities.map((row) => row.value),
       mainVenue,
@@ -400,7 +428,8 @@ export class FestivalsService {
       directorObjects,
       producerObjects,
       programmers,
-      classification: festival.classification,
+      classificationId: festival.classificationId,
+      classification: festival.classification?.code ?? '',
       contactName: festival.contactName,
       contactEmail: festival.contactEmail,
       contactPhone: festival.contactPhone,
