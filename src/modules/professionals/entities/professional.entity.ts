@@ -31,7 +31,7 @@ export class Professional {
   @Column({ type: 'varchar', length: 20, nullable: true })
   phone: string | null
 
-  @Column({ type: 'varchar', length: 10, nullable: true })
+  @Column({ type: 'varchar', length: 30, nullable: true })
   mobile: string | null
 
   @Column({ type: 'varchar', length: 255, nullable: true })

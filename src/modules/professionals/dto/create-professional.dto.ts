@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsInt,
   IsOptional,
+  Matches,
   IsString,
   Length,
   MaxLength,
@@ -58,7 +59,10 @@ export class CreateProfessionalDto {
     return normalized.length > 0 ? normalized : undefined
   })
   @IsString()
-  @Length(10, 10)
+  @MaxLength(30)
+  @Matches(/^\+?[0-9()\-\s]{7,30}$/, {
+    message: 'mobile must be a valid phone number',
+  })
   mobile?: string
 
   @IsOptional()
