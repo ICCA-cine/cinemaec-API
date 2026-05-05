@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Get,
   Patch,
   Put,
@@ -241,6 +242,15 @@ export class MoviesController {
   })
   togglePublishedToCatalog(@Param('id', ParseIntPipe) id: number) {
     return this.moviesService.togglePublishedToCatalog(id)
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Eliminar una película' })
+  @ApiResponse({ status: 204, description: 'Película eliminada exitosamente' })
+  @ApiResponse({ status: 404, description: 'Película no encontrada' })
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.moviesService.remove(id)
   }
 
   @Get('professionals/list')

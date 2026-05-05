@@ -1326,6 +1326,33 @@ export class MoviesService {
     return this.findOne(id)
   }
 
+  async remove(id: number): Promise<void> {
+    const movie = await this.movieRepository.findOne({
+      where: { id },
+      select: ['id'],
+    })
+
+    if (!movie) {
+      throw new NotFoundException(`Movie with ID ${id} not found`)
+    }
+
+    await this.movieCompanyRepository.delete({ movieId: id })
+    await this.movieInternationalCoproductionRepository.delete({ movieId: id })
+    await this.movieFilmingCountryRepository.delete({ movieId: id })
+    await this.movieFundingRepository.delete({ movieId: id })
+    await this.movieNationalReleaseRepository.delete({ movieId: id })
+    await this.movieInternationalReleaseRepository.delete({ movieId: id })
+    await this.movieFestivalNominationRepository.delete({ movieId: id })
+    await this.moviePlatformRepository.delete({ movieId: id })
+    await this.movieContactRepository.delete({ movieId: id })
+    await this.movieContentBankRepository.delete({ movieId: id })
+    await this.movieSubtitleRepository.delete({ movieId: id })
+    await this.movieProfessionalRepository.delete({ movieId: id })
+    await this.movieClaimRequestRepository.delete({ movieId: id })
+
+    await this.movieRepository.delete({ id })
+  }
+
   async getProfessionalsByRole(
     movieId: number,
     cinematicRoleId: number,
