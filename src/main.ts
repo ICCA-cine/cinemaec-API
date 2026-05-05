@@ -41,10 +41,11 @@ async function bootstrap() {
       logger.error('Stack trace:', error.stack)
 
       if (nodeEnv === 'production') {
-        logger.error('💥 Migrations failed in production (continuing startup)')
-      } else {
-        logger.warn('⚠️ Continuing in development mode despite migration error')
+        logger.error('💥 Migrations failed in production, aborting startup')
+        throw error
       }
+
+      logger.warn('⚠️ Continuing in development mode despite migration error')
     }
   }
 
@@ -94,30 +95,16 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig)
   SwaggerModule.setup('api', app, document)
 
-  // En producción: iniciar servidor PRIMERO, luego ejecutar migraciones en background
-  // En desarrollo: ejecutar migraciones antes de iniciar servidor
-  if (nodeEnv === 'production') {
-    await app.listen(port, '0.0.0.0')
-    logger.log(
-      `✅ Application is running in ${nodeEnv} mode on: http://0.0.0.0:${port}`,
-    )
-    logger.log(
-      `📚 Swagger documentation available at: http://0.0.0.0:${port}/api`,
-    )
-    logger.log('🎯 Application is ready to accept requests')
-    logger.log('🔄 Starting migrations in background...')
-    void runMigrations()
-  } else {
-    await runMigrations()
-    await app.listen(port, '0.0.0.0')
-    logger.log(
-      `✅ Application is running in ${nodeEnv} mode on: http://0.0.0.0:${port}`,
-    )
-    logger.log(
-      `📚 Swagger documentation available at: http://0.0.0.0:${port}/api`,
-    )
-    logger.log('🎯 Application is ready to accept requests')
-  }
+  // Always complete migrations before accepting traffic.
+  await runMigrations()
+  await app.listen(port, '0.0.0.0')
+  logger.log(
+    `✅ Application is running in ${nodeEnv} mode on: http://0.0.0.0:${port}`,
+  )
+  logger.log(
+    `📚 Swagger documentation available at: http://0.0.0.0:${port}/api`,
+  )
+  logger.log('🎯 Application is ready to accept requests')
 }
 
 void bootstrap()

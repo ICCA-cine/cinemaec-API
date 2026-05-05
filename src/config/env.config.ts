@@ -11,6 +11,10 @@ export default registerAs('env', () => ({
   DB_PASSWORD: process.env.DB_PASSWORD || '',
   DB_NAME: process.env.DB_NAME || 'cinemaec',
   DB_SSL: String(process.env.DB_SSL || '').toLowerCase() === 'true',
+  DB_SYNCHRONIZE:
+    String(process.env.DB_SYNCHRONIZE || '').toLowerCase() === 'true',
+  DB_MIGRATIONS_RUN:
+    String(process.env.DB_MIGRATIONS_RUN || '').toLowerCase() === 'true',
 
   // Firebase configuration
   FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
