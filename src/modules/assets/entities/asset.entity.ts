@@ -33,6 +33,7 @@ export enum AssetOwnerEnum {
   MOVIE_DOSSIER = 'movie_dossier',
   MOVIE_DOSSIER_EN = 'movie_dossier_en',
   MOVIE_PEDAGOGICAL_GUIDE = 'movie_pedagogical_guide',
+  CATALOG_IMAGE = 'catalog_image',
 }
 
 @Entity('assets')

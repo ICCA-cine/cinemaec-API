@@ -48,12 +48,16 @@ type FestivalResponse = {
   contactEmail: string
   contactPhone: string
   posterId: number | null
+  posterUrl: string | null
   trailer: string | null
   stillsIds: number[]
+  stillUrls: string[]
   needs: string | null
   needsEn: string | null
   dossierEsId: number | null
+  dossierEsUrl: string | null
   dossierEnId: number | null
+  dossierEnUrl: string | null
   sections: Array<{ name: string; competitive: boolean }>
   hasCall: boolean
   callProcess: string | null
@@ -71,10 +75,14 @@ export class FestivalsService {
     'hostCitiesRelations',
     'modalities',
     'companies',
+    'poster',
+    'dossierEs',
+    'dossierEn',
     'professionals',
     'professionals.professional',
     'professionals.professional.profilePhotoAsset',
     'stills',
+    'stills.asset',
     'sections',
   ] as const
 
@@ -160,6 +168,19 @@ export class FestivalsService {
   async findOne(id: number): Promise<FestivalResponse> {
     const festival = await this.festivalsRepository.findOne({
       where: { id },
+      relations: [...this.festivalRelations],
+    })
+
+    if (!festival) {
+      throw new NotFoundException(`Festival with ID ${id} not found`)
+    }
+
+    return this.mapFestivalToResponse(festival)
+  }
+
+  async findPublicOne(id: number): Promise<FestivalResponse> {
+    const festival = await this.festivalsRepository.findOne({
+      where: { id, isActive: true },
       relations: [...this.festivalRelations],
     })
 
@@ -384,12 +405,18 @@ export class FestivalsService {
       contactEmail: festival.contactEmail,
       contactPhone: festival.contactPhone,
       posterId: festival.posterId,
+      posterUrl: festival.poster?.url ?? null,
       trailer: festival.trailer,
       stillsIds: festival.stills.map((row) => row.assetId),
+      stillUrls: festival.stills
+        .map((row) => row.asset?.url)
+        .filter((url): url is string => Boolean(url)),
       needs: festival.needs,
       needsEn: festival.needsEn,
       dossierEsId: festival.dossierEsId,
+      dossierEsUrl: festival.dossierEs?.url ?? null,
       dossierEnId: festival.dossierEnId,
+      dossierEnUrl: festival.dossierEn?.url ?? null,
       sections: festival.sections.map((row) => ({
         name: row.name,
         competitive: row.competitive,

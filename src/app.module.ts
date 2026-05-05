@@ -18,6 +18,7 @@ import { MoviesModule } from './modules/movies/movies.module'
 import { ProfessionalsModule } from './modules/professionals/professionals.module'
 import { CompaniesModule } from './modules/companies/companies.module'
 import { FestivalsModule } from './modules/festivals/festivals.module'
+import { AdminCatalogsModule } from './modules/admin-catalogs/admin-catalogs.module'
 import { getDatabaseConfig } from './config/database.config'
 
 import envConfig from './config/env.config'
@@ -50,6 +51,7 @@ import envConfig from './config/env.config'
     ProfessionalsModule,
     CompaniesModule,
     FestivalsModule,
+    AdminCatalogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

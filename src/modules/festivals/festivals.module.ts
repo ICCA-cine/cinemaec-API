@@ -9,6 +9,7 @@ import { FestivalSection } from './entities/festival-section.entity'
 import { FestivalModality } from './entities/festival-modality.entity'
 import { FestivalsController } from './festivals.controller'
 import { FestivalsService } from './festivals.service'
+import { PublicFestivalsController } from './public-festivals.controller'
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { FestivalsService } from './festivals.service'
       FestivalModality,
     ]),
   ],
-  controllers: [FestivalsController],
+  controllers: [FestivalsController, PublicFestivalsController],
   providers: [FestivalsService],
   exports: [FestivalsService],
 })
