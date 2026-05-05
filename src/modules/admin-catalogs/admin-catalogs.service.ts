@@ -136,6 +136,7 @@ export class AdminCatalogsService {
       relations: [
         'imageAsset',
         'movies',
+        'movies.country',
         'movies.posterAsset',
         'festivals',
         'festivals.poster',
