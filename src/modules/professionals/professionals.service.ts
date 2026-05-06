@@ -445,11 +445,30 @@ export class ProfessionalsService {
   ): Promise<Professional> {
     await this.assertCanManageProfessional(id, userId)
 
+    const { portfolioImageAssetIds, ...professionalPayload } =
+      updateProfessionalDto
+
     const professional = await this.findOne(id)
 
-    Object.assign(professional, updateProfessionalDto)
+    Object.assign(professional, professionalPayload)
 
-    return await this.professionalsRepository.save(professional)
+    const updatedProfessional = await this.professionalsRepository.save(
+      professional,
+    )
+
+    if (portfolioImageAssetIds !== undefined) {
+      await this.replacePortfolioImages(id, portfolioImageAssetIds)
+    }
+
+    return updatedProfessional
+  }
+
+  private async replacePortfolioImages(
+    professionalId: number,
+    assetIds?: number[],
+  ): Promise<void> {
+    await this.portfolioImagesRepository.delete({ professionalId })
+    await this.attachPortfolioImages(professionalId, assetIds)
   }
 
   async remove(id: number): Promise<void> {
