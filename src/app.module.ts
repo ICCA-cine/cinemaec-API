@@ -19,6 +19,7 @@ import { ProfessionalsModule } from './modules/professionals/professionals.modul
 import { CompaniesModule } from './modules/companies/companies.module'
 import { FestivalsModule } from './modules/festivals/festivals.module'
 import { AdminCatalogsModule } from './modules/admin-catalogs/admin-catalogs.module'
+import { ContactUsModule } from './modules/contact-us/contact-us.module'
 import { getDatabaseConfig } from './config/database.config'
 
 import envConfig from './config/env.config'
@@ -52,6 +53,7 @@ import envConfig from './config/env.config'
     CompaniesModule,
     FestivalsModule,
     AdminCatalogsModule,
+    ContactUsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

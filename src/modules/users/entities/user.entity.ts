@@ -16,6 +16,7 @@ export enum PermissionEnum {
   ADMIN_MOVIES = 'admin_movies',
   ADMIN_FESTIVALS = 'admin_festivals',
   ADMIN_CATALOGS = 'admin_catalogs',
+  ADMIN_CONTACT_MESSAGES = 'admin_contact_messages',
   ADMIN_PROFESSIONALS = 'admin_professionals',
   APPROVE_MOVIES_REQUEST = 'approve_movies_request',
   ADMIN_USERS = 'admin_users',
